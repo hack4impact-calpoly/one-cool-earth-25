@@ -1,4 +1,4 @@
-# name of non-profit
+# One Cool Earth
 
 {One sentence description of the project}
 
