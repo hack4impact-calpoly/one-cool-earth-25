@@ -19,10 +19,10 @@
 
 The {non-profit name} team consists of {#} Cal Poly students. Over the course of about 9 months, we worked as a team to deploy this web application. The team members are listed below:
 
-- [First Last](https://www.linkedin.com/) - Project Manager
+- [Sydney Lynch](https://www.linkedin.com/in/sydneymlynch/) - Project Manager
 - [First Last](https://www.linkedin.com/) - Designer
-- [First Last](https://www.linkedin.com/) - Tech Lead
-- [First Last](https://www.linkedin.com/) - Tech Lead
+- [Emily Yarvis](https://www.linkedin.com/in/emily-yarvis/) - Tech Lead
+- [Jodi Yamane](https://www.linkedin.com/in/jodi-yamane-615708253/) - Tech Lead
 - [First Last](https://www.linkedin.com/) - Software Developer
 
 ## Getting Started And Contributing
