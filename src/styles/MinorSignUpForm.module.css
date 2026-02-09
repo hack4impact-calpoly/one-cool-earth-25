@@ -43,6 +43,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
+  border: 2px solid #2f6b55;
   background: #2f6b55;
 
   color: #fff;
@@ -79,10 +80,6 @@
   height: 2px;
   background: #5c7acb;
   margin-top: -14px;
-}
-
-.stepTextMuted {
-  color: #5c7acb;
 }
 
 .sectionTitle {
