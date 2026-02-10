@@ -1,6 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import styles from "../styles/LoginForm.module.css";
+import Image from "next/image";
+import eyeClosed from "../icons/eyeClosed.svg";
+import eyeShow from "../icons/eyeShow.svg";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -15,24 +19,25 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="login">
-      <h1 className="login-title">Login</h1>
+    <div className={styles.loginCard}>
+      <h1 className={styles.title}>Login</h1>
 
-      <p className="login-subtitle">
+      <p className={styles.subtitle}>
         Don&apos;t have an account?{" "}
-        <a className="login-link" href="/create-account">
+        <a className={styles.loginLink} href="/create-account">
           Create Account
         </a>
       </p>
 
-      <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label" htmlFor="email">
+      <form className={styles.loginForm} onSubmit={handleSubmit}>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel} htmlFor="email">
             Email Address
           </label>
+
           <input
             id="email"
-            className="form-input"
+            className={styles.formInput}
             placeholder="example@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -41,15 +46,15 @@ export default function LoginForm() {
           />
         </div>
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="password">
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel} htmlFor="password">
             Password
           </label>
 
-          <div className="password-row">
+          <div className={styles.passwordWrapper}>
             <input
               id="password"
-              className="form-input"
+              className={styles.formInput}
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -57,21 +62,26 @@ export default function LoginForm() {
               autoComplete="current-password"
             />
 
-            <button type="button" className="password-toggle" onClick={() => setShowPassword((prev) => !prev)}>
-              {showPassword ? "Hide" : "Show"}
+            <button type="button" className={styles.passwordToggle} onClick={() => setShowPassword((prev) => !prev)}>
+              {showPassword ? (
+                <Image src={eyeClosed} alt="Hide" width={25} height={25} />
+              ) : (
+                <Image src={eyeShow} alt="Show" width={25} height={25} />
+              )}
             </button>
           </div>
         </div>
 
-        <button className="login-button" type="submit" disabled={!canSubmit}>
+        <button className={styles.loginButton} type="submit" disabled={!canSubmit}>
           Next
         </button>
 
-        <div className="oauth-row">
-          <button type="button" className="oauth-button" onClick={() => alert("OAuth later")}>
+        <div className={styles.oauthRow}>
+          <button type="button" className={styles.oauthButton}>
             Log in w/
           </button>
-          <button type="button" className="oauth-button" onClick={() => alert("OAuth later")}>
+
+          <button type="button" className={styles.oauthButton}>
             Log in w/
           </button>
         </div>
