@@ -1,0 +1,179 @@
+.page {
+  background: #f2f2f2;
+  color: #1c1c1c;
+  font-family: Arial;
+}
+
+.whiteBox {
+  margin: 24px auto 64px;
+  background: #ffffff;
+  padding: 32px 32px 40px;
+  border: 1px solid #e3e8ef;
+}
+
+.title {
+  text-align: center;
+  font-size: 32px;
+  margin: 8px 0 4px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.registerSteps {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 12px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stepCircle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #2f6b55;
+  background: #2f6b55;
+
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.stepCircleOutline {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #5c7acb;
+
+  color: #5c7acb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.stepLineGreen {
+  width: 64px;
+  height: 2px;
+  background: #2f6b55;
+  margin-top: -14px;
+}
+
+.stepLineBlue {
+  width: 64px;
+  height: 2px;
+  background: #5c7acb;
+  margin-top: -14px;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 18px;
+  margin: 6px 0 16px;
+}
+
+.formRow {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 240px;
+}
+
+.fieldSmall {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.fieldWide {
+  min-width: 360px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.input {
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1.5px solid #8fb1f0;
+  background: #e8f1ff;
+  font-size: 14px;
+  outline: none;
+}
+
+.notice {
+  border: 2px solid #5c7acb;
+  padding: 12px 14px;
+  margin: 12px auto 24px;
+  max-width: 520px;
+  font-size: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.noticeIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #c45757;
+  color: #c45757;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.passwordRow {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.passwordColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.requirements {
+  border: 2px solid #5c7acb;
+  padding: 12px 16px;
+  font-size: 12px;
+  min-width: 180px;
+}
+
+.requirementsList {
+  margin: 8px 0 0 18px;
+  padding: 0;
+}
