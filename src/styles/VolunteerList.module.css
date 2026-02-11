@@ -1,0 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap");
+
+.card {
+  width: 100%;
+  height: 713px;
+  background: #f9fbff;
+  border: 1px solid #527abe;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  overflow: hidden;
+  font-family: "Lora", serif;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 100%;
+}
+
+.headerIcon {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  line-height: 0;
+}
+
+.list {
+  flex: 1;
+  overflow: auto;
+  padding-right: 6px;
+  box-sizing: border-box;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 14px;
+  table-layout: fixed;
+}
+
+.colName {
+  width: 84px;
+}
+
+.colGap {
+  width: 37px;
+}
+
+.colEmail {
+  width: 151px;
+}
+
+.colFlex {
+  width: auto;
+}
+
+.colActions {
+  width: 60px;
+}
+
+.row td {
+  padding: 0;
+  height: 26px;
+  vertical-align: middle;
+}
+
+.name,
+.email {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 26px;
+  white-space: nowrap;
+}
+
+.gap,
+.flex {
+  padding: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.iconButton {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
