@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import styles from "./VolunteerList.module.css";
+import styles from "../styles/VolunteerList.module.css";
 
 import approvedWaiver from "../icons/approvedWaiver.svg";
 import missingWaiver from "../icons/missingWaiver.svg";
