@@ -1,3 +1,5 @@
+import { ClerkProvider } from "@clerk/nextjs";
+import "./globals.css";
 import { Patua_One } from "next/font/google";
 import "./globals.css"; // Ensure your global styles are imported
 
@@ -8,10 +10,14 @@ const patua = Patua_One({
   variable: "--font-patua", // This creates the hook for Tailwind
 });
 
+
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${patua.variable} antialiased`}>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${patua.variable} antialiased`}>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }

@@ -1,8 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSignUp } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function CreateAccountForm() {
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const router = useRouter();
+  const [error, setError] = useState("");
+
+  const [step, setStep] = useState("create");
+
   const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
@@ -28,6 +36,43 @@ export default function CreateAccountForm() {
     return 3;
   }, [step1Done, step2Done]);
 
+  const handleSubmit = async () => {
+    if (!isLoaded) return;
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const result = await signUp.create({
+        emailAddress: email,
+        password,
+        firstName: fullName.split(" ")[0],
+        lastName: fullName.split(" ")[1] || "",
+      });
+
+      // IMPORTANT: Ensure signup was created
+      if (result.status === "complete") {
+        // Rare case: email verification disabled
+        await setActive({ session: result.createdSessionId });
+        router.push("/");
+        return;
+      }
+
+      // Prepare verification ONLY if signup is pending
+      if (result.status === "missing_requirements") {
+        await signUp.prepareEmailAddressVerification({
+          strategy: "email_code",
+        });
+
+        router.push("/confirm-email");
+      }
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      setError(err.errors?.[0]?.message || "Something went wrong");
+    }
+  };
   return (
     <div className="w-full max-w-[820px] pt-14 pb-24">
       <h1 className="text-center text-4xl font-semibold text-black">Create Account</h1>
@@ -118,7 +163,9 @@ export default function CreateAccountForm() {
           <div className="mt-10 flex justify-center">
             <button
               type="button"
-              className="rounded-full border border-[#7db456] bg-[#b9e08c] px-10 py-3 font-semibold text-black shadow-[0_2px_0_rgba(0,0,0,0.10)] transition hover:brightness-95 active:brightness-90"
+              onClick={handleSubmit}
+              disabled={!step3Done}
+              className="rounded-full border border-[#7db456] bg-[#b9e08c] px-10 py-3 font-semibold text-black shadow-[0_2px_0_rgba(0,0,0,0.10)] transition hover:brightness-95 active:brightness-90 disabled:opacity-50"
             >
               Create Account
             </button>
