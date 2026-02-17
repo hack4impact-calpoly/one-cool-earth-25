@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSignIn, useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import styles from "../styles/LoginForm.module.css";
 import Image from "next/image";
 import eyeClosed from "../icons/eyeClosed.svg";
@@ -13,9 +15,28 @@ export default function LoginForm() {
 
   const canSubmit = useMemo(() => email.trim().length > 0 && password.length > 0, [email, password]);
 
-  function handleSubmit(e: React.FormEvent) {
+  const { signIn, isLoaded } = useSignIn();
+  const { setActive } = useClerk();
+  const router = useRouter();
+
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log("Login attempt:", { email, password: "REDACTED" });
+    if (!isLoaded) return;
+
+    setError(null);
+
+    try {
+      const result = await signIn.create({ identifier: email, password });
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/");
+      }
+    } catch (err: any) {
+      console.error(err.errors);
+      setError(err.errors?.[0]?.message || "Login failed");
+    }
   }
 
   return (
@@ -71,6 +92,8 @@ export default function LoginForm() {
             </button>
           </div>
         </div>
+
+        {error && <p className={styles.error}>{error}</p>}
 
         <button className={styles.loginButton} type="submit" disabled={!canSubmit}>
           Next
