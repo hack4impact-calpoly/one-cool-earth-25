@@ -17,6 +17,11 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.38.2",
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
+    "lucide-react": "^0.574.0",
     "@clerk/nextjs": "^6.37.4",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
