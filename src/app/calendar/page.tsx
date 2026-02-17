@@ -22,17 +22,12 @@ export default function CalendarPage() {
   };
   return (
     <div className="p-8">
-      {/* Search Bar Placeholder */}
-
       <div className="flex justify-between items-center mb-6">
         {" "}
-        {/* Parent: Pushes groups apart */}
         <div className="flex items-center gap-4">
           {" "}
-          {/* Left Group: Keeps items together */}
           <div className="flex gap-2">
             {" "}
-            {/* Just the arrows */}
             <button onClick={handlePrev} className="p-2 border rounded">
               {" "}
               &lt;{" "}
@@ -44,7 +39,7 @@ export default function CalendarPage() {
           </div>
           <h2 className="text-2xl font-bold">January 2026</h2>
         </div>
-        <div className="Search Bar">{/* We will put your SearchBarCalendar here next */}</div>
+        <div className="Search Bar"></div>
       </div>
 
       <div className="mb-4">
