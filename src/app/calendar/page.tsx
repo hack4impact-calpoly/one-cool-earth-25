@@ -5,6 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
+import EventCard from "./components/EventCard";
 import "@/app/globals.css";
 
 export default function CalendarPage() {
@@ -47,8 +48,19 @@ export default function CalendarPage() {
       setViewDate(new Date());
     }
   };
+
+  const events = [];
+  for (let i = 0; i < 10; i++) {
+    events[i] = { eventTitle: "Gardening", date: new Date() };
+  }
   return (
     <div className="p-8">
+      <div className="font-patua text-3xl">Upcoming Events</div>
+      <div className="flex justify-start flex-nowrap overflow-x-scroll">
+        {events.map((event, idx) => {
+          return <EventCard key={idx} eventTitle={event.eventTitle} date={event.date} />;
+        })}
+      </div>
       <div className="flex justify-between items-center mb-6">
         {" "}
         <div className="flex items-center gap-4">
