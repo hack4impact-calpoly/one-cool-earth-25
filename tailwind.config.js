@@ -10,6 +10,7 @@ module.exports = {
         // This 'patua' key is what you'll use in your className (e.g., font-patua)
         patua: ["var(--font-patua)", "serif"],
         lora: ["Lora", "serif"],
+
       },
     },
   },

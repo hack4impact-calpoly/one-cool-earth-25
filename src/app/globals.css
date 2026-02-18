@@ -33,6 +33,46 @@
   width: 35px;
   height: 35px;
   border-radius: 50%;
+  font-family: var(--font-patua);
+  transition: all 0.2s ease;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+  background-color: #226999 !important;
+  color: white !important;
+  opacity: 1 !important;
+}
+
+.fc .fc-cell-shaded,
+.fc .fc-daygrid-day,
+.fc td,
+.fc th {
+  border: 2px solid white !important;
+}
+
+.fc {
+  border: none !important;
+}
+
+.fc .fc-daygrid-day,
+.fc .fc-day-today {
+  background-color: #d1e3f0 !important;
+  background: #d1e3f0 !important;
+}
+
+.fc .fc-daygrid-day-top {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.fc .fc-daygrid-day-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
   font-family: var(--font-lora);
   transition: all 0.2s ease;
 }

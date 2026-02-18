@@ -9,7 +9,6 @@ const patua = Patua_One({
   subsets: ["latin"],
   variable: "--font-patua", // This creates the hook for Tailwind
 });
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
@@ -18,4 +17,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </html>
     </ClerkProvider>
   );
+
 }
