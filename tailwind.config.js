@@ -5,7 +5,12 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        // This 'patua' key is what you'll use in your className (e.g., font-patua)
+        patua: ["var(--font-patua)", "serif"],
+      },
+    },
   },
   plugins: [],
 };

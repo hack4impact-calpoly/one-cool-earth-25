@@ -4,6 +4,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"; // Import the icons
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { Button } from "@mui/material";
+import "@/app/globals.css";
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
@@ -12,7 +14,6 @@ export default function CalendarPage() {
   const handleNext = () => {
     if (calendarRef.current) {
       const threeMonthsAhead = new Date(today.getFullYear(), today.getMonth() + 3, 1);
-
       if (viewDate < threeMonthsAhead) {
         const calendarApi = calendarRef.current.getApi();
         calendarApi.next();
@@ -37,6 +38,15 @@ export default function CalendarPage() {
       }
     }
   };
+
+  const handleReset = () => {
+    if (calendarRef.current) {
+      const calendarApi = calendarRef.current.getApi();
+      calendarApi.today();
+
+      setViewDate(new Date());
+    }
+  };
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
@@ -51,13 +61,22 @@ export default function CalendarPage() {
               <ChevronRight size={40} color="#BEBEBE" />
             </button>
           </div>
-          <h2 className="text-2xl font-bold">January 2026</h2>
+          <h2 className="text-2xl font-patua font-bold">
+            {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
+          </h2>
         </div>
-        <div className="Search Bar"></div>
-      </div>
-
-      <div className="mb-4">
-        <input type="text" placeholder="Search events..." className="border p-2 rounded w-full md:w-1/3" />
+        <div>
+          <Button className="hover:opacity-70 transition-opacity font-patua" variant="outlined" onClick={handleReset}>
+            Today
+          </Button>
+        </div>
+        <div className="w-[291px] h-[50px] flex-shrink-0">
+          <input
+            type="text"
+            placeholder="Search"
+            className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-patua font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
+          />
+        </div>
       </div>
 
       <FullCalendar
