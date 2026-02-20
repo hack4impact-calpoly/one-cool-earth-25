@@ -10,9 +10,8 @@ let connection: typeof mongoose;
  */
 const connectDB = async () => {
   if (!connection) {
-    // uncomment this line once you have the MONGO_URI set up
-    // connection = await mongoose.connect(url);
-    connection = "remove me" as any; // remove me
+    connection = await mongoose.connect(url); // comment this line out if you do not have the mongo uri set up in your env vars.
+    //connection = "remove me" as any; // uncomment this line if you do not have the mongo uri set up in your env vars
     return connection;
   }
 };
