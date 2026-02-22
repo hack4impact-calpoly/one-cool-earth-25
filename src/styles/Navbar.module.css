@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Patua+One&display=swap");
+
+.nav {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+}
+
+/* outer white pill */
+.container {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 0px;
+  height: 42px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  background: #fff;
+  gap: 10px;
+
+  white-space: nowrap;
+}
+
+/* individual page pill */
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 42px;
+  padding: 10px 17px;
+
+  border-radius: 20px;
+  border: 1px solid transparent;
+
+  font-family: "Patua One";
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0%;
+  line-height: 100%;
+
+  text-decoration: none;
+  color: #000;
+  background: transparent;
+}
+
+/* current page pill */
+.active {
+  background: #e7f0ff;
+  border: 1px solid #000;
+}
