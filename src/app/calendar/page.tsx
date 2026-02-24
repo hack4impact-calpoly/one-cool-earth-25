@@ -54,8 +54,8 @@ export default function CalendarPage() {
     events[i] = { eventTitle: "Gardening", date: new Date() };
   }
   return (
-    <div className="p-8">
-      <div className="font-patua text-3xl">Upcoming Events</div>
+    <div className="p-8 font-lora">
+      <div className="text-4xl">Upcoming Events</div>
       <div className="flex justify-start flex-nowrap overflow-x-scroll">
         {events.map((event, idx) => {
           return <EventCard key={idx} eventTitle={event.eventTitle} date={event.date} />;
@@ -73,12 +73,12 @@ export default function CalendarPage() {
               <ChevronRight size={40} color="#BEBEBE" />
             </button>
           </div>
-          <h2 className="text-2xl font-patua font-bold">
+          <h2 className="text-2xl font-bold">
             {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
           </h2>
         </div>
         <div>
-          <Button className="hover:opacity-70 transition-opacity font-patua" variant="outlined" onClick={handleReset}>
+          <Button className="hover:opacity-70 transition-opacity" variant="outlined" onClick={handleReset}>
             Today
           </Button>
         </div>
@@ -86,7 +86,7 @@ export default function CalendarPage() {
           <input
             type="text"
             placeholder="Search"
-            className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-patua font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
+            className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
           />
         </div>
       </div>
