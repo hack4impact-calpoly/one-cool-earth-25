@@ -6,53 +6,58 @@ import { useRouter } from "next/navigation";
 import ConfirmAccountPage from "./ConfirmAccountForm";
 import { BeatLoader } from "react-spinners";
 
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+function hasNumberOrSymbol(password: string) {
+  return /(\d|[^a-zA-Z0-9])/.test(password);
+}
+
 export default function CreateAccountForm() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
-  const [error, setError] = useState("");
 
   const [step, setStep] = useState("create");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const step1Done = useMemo(() => email.trim().length > 0, [email]);
-  const step2Done = useMemo(() => fullName.trim().length > 0 && dob.trim().length > 0, [fullName, dob]);
+  const step1Done = useMemo(() => {
+    const e = email.trim();
+    return e.length > 0 && isValidEmail(e);
+  }, [email]);
 
-  const passwordsFilled = useMemo(() => password.length > 0 && confirmPassword.length > 0, [password, confirmPassword]);
+  const step2Done = useMemo(() => {
+    return fullName.trim().length > 0 && dob.trim().length > 0;
+  }, [fullName, dob]);
+
+  const passwordsFilled = useMemo(() => {
+    return password.length > 0 && confirmPassword.length > 0;
+  }, [password, confirmPassword]);
 
   const step3Done = useMemo(() => {
     if (!passwordsFilled) return false;
-    return password === confirmPassword && password.length >= 8;
+    return password === confirmPassword && password.length >= 8 && hasNumberOrSymbol(password);
   }, [password, confirmPassword, passwordsFilled]);
-
-  const [step4Done, setStep4Done] = useState(false);
-
-  const [loading, setLoading] = useState(false);
-
-  const currentStep = useMemo(() => {
-    if (!step1Done) return 1;
-    if (!step2Done) return 2;
-    if (!step3Done) return 3;
-    return 4;
-  }, [step1Done, step2Done, step3Done]);
 
   const handleSubmit = async () => {
     if (!isLoaded) return;
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    if (!step1Done || !step2Done || !step3Done) return;
 
     try {
       setLoading(true);
+      setError("");
 
       const result = await signUp.create({
         emailAddress: email,
@@ -61,15 +66,12 @@ export default function CreateAccountForm() {
         lastName: fullName.split(" ")[1] || "",
       });
 
-      // IMPORTANT: Ensure signup was created
       if (result.status === "complete") {
-        // Rare case: email verification disabled
         await setActive({ session: result.createdSessionId });
         router.push("/");
         return;
       }
 
-      // Prepare verification ONLY if signup is pending
       if (result.status === "missing_requirements") {
         await signUp.prepareEmailAddressVerification({
           strategy: "email_code",
@@ -78,8 +80,6 @@ export default function CreateAccountForm() {
         setStep("confirm");
       }
     } catch (err: any) {
-      console.error("Signup error:", err);
-
       const clerkError = err?.errors?.[0];
 
       if (clerkError?.code === "form_identifier_exists") {
@@ -91,30 +91,19 @@ export default function CreateAccountForm() {
       setLoading(false);
     }
   };
+
   return (
     <div className="w-full max-w-[820px] pt-14 pb-24">
       <h1 className="text-center text-4xl font-semibold text-black">Create Account</h1>
 
       <p className="mt-2 text-center text-sm text-gray-700">
         Already have an Account?{" "}
-        <a href="#" className="text-black underline">
+        <a href="/login" className="text-black underline">
           Log in
         </a>
       </p>
 
-      <div className="mt-8 flex justify-center">
-        <div className="w-full max-w-[720px]">
-          <div className="flex items-center justify-center gap-6">
-            <StepCircle label="Basic Information" number={1} done={step3Done} active={currentStep === 3} />
-
-            <StepLine active={step3Done} />
-
-            <StepCircle label="Confirm Email" number={2} done={step4Done} active={currentStep === 4} />
-          </div>
-        </div>
-      </div>
-
-      {step == "create" ? (
+      {step === "create" ? (
         <div className="mt-10 flex justify-center">
           <div className="w-full max-w-[520px]">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -127,14 +116,29 @@ export default function CreateAccountForm() {
               </Field>
 
               <Field label="Date of Birth">
-                <PillInput placeholder="XX/XX/XXXX" value={dob} onChange={(e) => setDob(e.target.value)} />
+                <PillInput type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
               </Field>
             </div>
 
             <div className="mt-6">
               <Field label="Email Address">
-                <PillInput placeholder="example@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <PillInput
+                  placeholder="example@email.com"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (emailError) setEmailError("");
+                  }}
+                  onBlur={() => {
+                    const eTrim = email.trim();
+                    if (eTrim.length === 0) setEmailError("Email is required.");
+                    else if (!isValidEmail(eTrim)) setEmailError("Please enter a valid email address.");
+                    else setEmailError("");
+                  }}
+                />
               </Field>
+
+              {emailError && <p className="mt-2 text-xs text-red-600">{emailError}</p>}
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-[1fr_190px]">
@@ -158,9 +162,16 @@ export default function CreateAccountForm() {
                     />
                   </Field>
 
-                  {passwordsFilled && password !== confirmPassword ? (
+                  {passwordsFilled && password !== confirmPassword && (
                     <p className="mt-2 text-xs text-red-600">Passwords do not match.</p>
-                  ) : null}
+                  )}
+
+                  {passwordsFilled &&
+                    password === confirmPassword &&
+                    password.length >= 8 &&
+                    !hasNumberOrSymbol(password) && (
+                      <p className="mt-2 text-xs text-red-600">Password must include at least 1 number or symbol.</p>
+                    )}
                 </div>
               </div>
 
@@ -185,6 +196,7 @@ export default function CreateAccountForm() {
                 {loading ? <BeatLoader /> : "Confirm Details"}
               </button>
             </div>
+
             {error && <p className="mt-4 text-center text-sm text-red-600">{error}</p>}
           </div>
         </div>
@@ -192,37 +204,6 @@ export default function CreateAccountForm() {
         <ConfirmAccountPage />
       )}
     </div>
-  );
-}
-
-function StepCircle({
-  label,
-  number,
-  done,
-  active,
-}: {
-  label: string;
-  number: 1 | 2 | 3 | 4;
-  done: boolean;
-  active: boolean;
-}) {
-  const baseCircle = "h-8 w-8 rounded-full flex items-center justify-center font-semibold";
-  const baseLabel = "mt-2 text-xs font-semibold text-center w-[150px]";
-
-  const circleClass = done ? "bg-[#1f7a5a] text-white" : "bg-[#4e78b7] text-white";
-
-  const labelClass = done ? "text-[#1f7a5a]" : active ? "text-[#4e78b7]" : "text-[#8aa0ba]";
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className={`${baseCircle} ${circleClass}`}>{done ? "✓" : number}</div>
-      <div className={`${baseLabel} ${labelClass}`}>{label}</div>
-    </div>
-  );
-}
-function StepLine({ active }: { active: boolean }) {
-  return (
-    <div className={`h-[4px] min-w-[100px] rounded-full ${active ? "bg-[#1f7a5a]" : "bg-[#d3dbe3]"}`} aria-hidden />
   );
 }
 
