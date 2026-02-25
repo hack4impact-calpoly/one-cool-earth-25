@@ -13,13 +13,12 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.37.4",
+    "@clerk/nextjs": "^6.38.2",
     "mongoose": "^8",
-    "next": "^16.1.6",
+    "next": "^14",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.5.0",
-    "react-spinner": "^0.2.7",
     "react-spinners": "^0.17.0"
   },
   "devDependencies": {
@@ -27,8 +26,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.24",
-    "eslint": "^9.39.3",
-    "eslint-config-next": "^16.1.6",
+    "eslint": "^8",
+    "eslint-config-next": "^14",
     "eslint-config-prettier": "^9",
     "eslint-plugin-prettier": "^5",
     "husky": "^9",
