@@ -1,0 +1,79 @@
+.inputContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.inputContainer input {
+  width: 5rem;
+  height: 5rem;
+  border: 2px solid #c9e5b6;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.inputContainer input:focus {
+  border: 3px solid #307433;
+  outline: none;
+}
+
+.confirmDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: fit-content;
+}
+
+.verifyButton {
+  width: fit-content;
+  font-size: 1rem;
+  border-radius: 10px;
+  background-color: #dcf9c9;
+  border: 2px solid #307433;
+  color: #307433;
+  padding: 0.25rem 1rem;
+  align-self: flex-end;
+  transition: 0.2s ease-in-out;
+  font-weight: bold;
+}
+
+.verifyButton:disabled {
+  background-color: #e9e7e7;
+  border: 2px solid #989898;
+  color: #989898;
+  cursor: not-allowed;
+}
+
+.headerText {
+  font-size: 1.75rem;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.spaceApart {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  font-weight: normal;
+}
+
+.resendButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #e9e7e7;
+  padding: 0.25rem 0.5rem;
+  border-radius: 10px;
+  color: #989898;
+}
