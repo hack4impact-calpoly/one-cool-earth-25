@@ -10,8 +10,6 @@ const patua = Patua_One({
   variable: "--font-patua", // This creates the hook for Tailwind
 });
 
-
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
