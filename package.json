@@ -12,6 +12,9 @@
     "test": "echo 'Install jest (or another unit test suite) to use this command.'",
     "prepare": "husky"
   },
+  "overrides": {
+    "string-width": "4.2.0"
+  },
   "dependencies": {
     "@clerk/nextjs": "^6.38.2",
     "mongoose": "^8",
