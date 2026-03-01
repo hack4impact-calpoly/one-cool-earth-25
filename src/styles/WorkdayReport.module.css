@@ -1,0 +1,133 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap");
+
+.container {
+  width: 100%;
+  font-family: "Lora", serif;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.headerTitle {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.subTitle {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 30px 0 10px;
+}
+
+.dateFilter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #527abe;
+  border-radius: 14px;
+  padding: 1px;
+  background: #f9fbff;
+}
+
+.dateInput {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 20px;
+}
+
+.toText {
+  font-weight: 600;
+}
+
+.arrowButton {
+  background: #dcf9c9;
+  color: #307433;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.card {
+  width: 100%;
+  background: #f9fbff;
+  border: 1px solid #527abe;
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.row {
+  height: 55px;
+}
+
+/* Alternating rows */
+.rowLight {
+  background-color: #e8f1ff;
+}
+
+.rowDark {
+  background-color: #cfe0ff;
+}
+
+.nameCell {
+  padding-left: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  width: 1%; /* forces shrink to content */
+  white-space: nowrap;
+}
+
+.infoCell {
+  padding-right: 20px;
+}
+
+.infoGroup {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 40px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #666666;
+  white-space: nowrap;
+}
+
+.summaryRow {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.summaryBox {
+  flex: 1;
+  background-color: #e8f1ff;
+  border: 1px solid #527abe;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryValue {
+  font-size: 28px;
+  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
+  color: #444;
+}
