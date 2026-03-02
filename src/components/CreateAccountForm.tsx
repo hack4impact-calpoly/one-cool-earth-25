@@ -18,7 +18,7 @@ export default function CreateAccountForm() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
 
-  const [step, setStep] = useState("create");
+  const [step, setStep] = useState<"create" | "confirm">("create");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -52,7 +52,6 @@ export default function CreateAccountForm() {
 
   const handleSubmit = async () => {
     if (!isLoaded) return;
-
     if (!step1Done || !step2Done || !step3Done) return;
 
     try {
@@ -76,7 +75,6 @@ export default function CreateAccountForm() {
         await signUp.prepareEmailAddressVerification({
           strategy: "email_code",
         });
-
         setStep("confirm");
       }
     } catch (err: any) {
@@ -216,11 +214,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function PillInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+function PillInput({ className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-12 w-full rounded-full border border-[#bcd1ea] bg-[#eaf3ff] px-5 text-sm text-[#1e2b3a] placeholder:text-[#6d8197] outline-none focus:border-[#4e78b7] focus:ring-2 focus:ring-[#4e78b7]/30"
+      className={
+        "h-12 w-full rounded-full border border-[#bcd1ea] bg-[#eaf3ff] px-5 text-sm text-[#1e2b3a] placeholder:text-[#6d8197] outline-none focus:border-[#4e78b7] focus:ring-2 focus:ring-[#4e78b7]/30 " +
+        className
+      }
     />
   );
 }
