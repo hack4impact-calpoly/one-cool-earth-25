@@ -131,3 +131,10 @@
   font-weight: 600;
   color: #444;
 }
+
+.summaryValueBold {
+  font-size: 28px;
+  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
+}

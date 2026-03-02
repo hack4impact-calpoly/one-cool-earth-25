@@ -57,7 +57,7 @@ export default function WorkdayReport() {
       <div className={styles.summaryRow}>
         <div className={styles.summaryBox}>
           <div className={styles.summaryItem}>
-            <span className={styles.summaryValue}>120 Volunteers</span>
+            <span className={styles.summaryValueBold}>120 Volunteers</span>
           </div>
 
           <div className={styles.summaryItem}>
@@ -67,7 +67,7 @@ export default function WorkdayReport() {
 
         <div className={styles.summaryBox}>
           <div className={styles.summaryItem}>
-            <span className={styles.summaryValue}>22 Events</span>
+            <span className={styles.summaryValueBold}>22 Events</span>
           </div>
 
           <div className={styles.summaryItem}>
