@@ -87,7 +87,7 @@ export default function CalendarPage() {
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
           {events.map((event) => {
-            return <EventCard key={event.id} eventId={event.id} eventTitle={event.eventTitle} date={event.date} />;
+            return <EventCard key={event.id} eventId={event.id} eventTitle={event.title} date={event.start} />;
           })}
         </div>
         <div className="flex justify-between items-center mb-6">
