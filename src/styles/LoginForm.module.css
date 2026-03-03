@@ -115,3 +115,9 @@
   line-height: 100%;
   cursor: pointer;
 }
+
+.fieldError {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #c0392b;
+}
