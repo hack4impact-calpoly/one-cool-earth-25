@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Import the icons
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -8,10 +8,33 @@ import { Button } from "@mui/material";
 import EventCard from "./components/EventCard";
 import "@/app/globals.css";
 
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  description?: string;
+  location?: string;
+}
+
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const today = new Date();
+  const [events, setEvents] = useState<CalendarEvent[]>([]); // New state for live data
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/events");
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+      }
+    };
+    fetchEvents();
+  }, []); // Empty array ensures this only runs once on mount
+
   const handleNext = () => {
     if (calendarRef.current) {
       const threeMonthsAhead = new Date(today.getFullYear(), today.getMonth() + 3, 1);
@@ -49,17 +72,15 @@ export default function CalendarPage() {
     }
   };
 
-  const events = [];
-  for (let i = 0; i < 10; i++) {
-    events[i] = { eventTitle: "Gardening", date: new Date() };
-  }
   return (
     <div className="p-8 font-lora">
       <div className="text-4xl">Upcoming Events</div>
-      <div className="flex justify-start flex-nowrap overflow-x-scroll">
-        {events.map((event, idx) => {
-          return <EventCard key={idx} eventTitle={event.eventTitle} date={event.date} />;
-        })}
+      <div className="flex justify-start flex-nowrap overflow-x-scroll gap-4 py-4">
+        {events.length > 0 ? (
+          events.map((event) => <EventCard key={event.id} eventTitle={event.title} date={new Date(event.start)} />)
+        ) : (
+          <p className="text-gray-400">No upcoming events found.</p>
+        )}
       </div>
       <div className="flex justify-between items-center mb-6">
         {" "}
@@ -97,6 +118,7 @@ export default function CalendarPage() {
         initialView="dayGridMonth"
         headerToolbar={false}
         height="auto"
+        events={events}
       />
     </div>
   );
