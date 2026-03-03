@@ -61,6 +61,17 @@ export default function CreateAccountForm() {
         lastName: fullName.split(" ")[1] || "",
       });
 
+      await fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clerkId: result.createdUserId,
+          email,
+          firstName: fullName.split(" ")[0],
+          lastName: fullName.split(" ")[1] || "",
+        }),
+      });
+
       // IMPORTANT: Ensure signup was created
       if (result.status === "complete") {
         // Rare case: email verification disabled
