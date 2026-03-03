@@ -12,7 +12,6 @@ const connectDB = async () => {
   console.log("Attempting to connect with URI:", url ? "Defined" : "UNDEFINED");
   if (!connection) {
     connection = await mongoose.connect(url); // comment this line out if you do not have the mongo uri set up in your env vars.
-    //connection = "remove me" as any; // uncomment this line if you do not have the mongo uri set up in your env vars
     return connection;
   }
 };
