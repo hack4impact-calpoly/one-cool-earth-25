@@ -168,7 +168,8 @@
   left: 0;
   right: 0;
   display: flex;
-  justify-content: center;
+  justify-content: right;
+  padding-right: 10px;
   z-index: 2;
   transition: opacity 100ms ease;
 }
