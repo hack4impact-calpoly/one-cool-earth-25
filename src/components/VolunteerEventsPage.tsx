@@ -275,6 +275,8 @@ export default function VolunteerEventsPage() {
 
   const upcoming = events.filter((e) => e.section === "upcoming" && upStart <= e.date && e.date <= upEnd);
   const past = events.filter((e) => e.section === "past" && pastStart <= e.date && e.date <= pastEnd);
+  const upcomingSorted = [...upcoming].sort((a, b) => a.date.getTime() - b.date.getTime());
+  const pastSorted = [...past].sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
     <main className={styles.page}>
@@ -284,7 +286,7 @@ export default function VolunteerEventsPage() {
         <DateRangeControl start={upStart} end={upEnd} setStart={setUpStart} setEnd={setUpEnd} />
 
         <div className={styles.row}>
-          {upcoming.map((event) => (
+          {upcomingSorted.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>
@@ -296,7 +298,7 @@ export default function VolunteerEventsPage() {
         <DateRangeControl start={pastStart} end={pastEnd} setStart={setPastStart} setEnd={setPastEnd} />
 
         <div className={styles.row}>
-          {past.map((event) => (
+          {pastSorted.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>
