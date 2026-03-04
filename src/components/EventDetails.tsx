@@ -69,6 +69,90 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
     return `${hours}:${minutes}`;
   };
 
+  const styles: { [key: string]: CSSProperties } = {
+    container: {
+      background: "#F9FBFF",
+      border: "1px solid #527ABE",
+      borderRadius: "5px",
+      padding: "10px 15px 10px 15px",
+      width: "100%",
+      maxWidth: "none",
+      maxHeight: "none",
+      display: "flex",
+      flexDirection: "column",
+      gap: "25px",
+      fontFamily: "Lora, serif",
+    },
+    headerTitle: {
+      margin: 0,
+      fontSize: "22px",
+      fontWeight: 700,
+      fontFamily: "Lora, serif",
+    },
+    detailLabel: {
+      fontWeight: 700,
+      fontSize: "20px",
+      fontFamily: "Lora, serif",
+    },
+    detailValue: {
+      fontWeight: 400,
+      fontSize: "20px",
+      fontFamily: "Lora, serif",
+    },
+    headerRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+    },
+    input: {
+      width: "100%",
+      fontWeight: 400,
+      fontSize: "20px",
+      fontFamily: "Lora, serif",
+      padding: "8px 12px",
+      borderRadius: "5px",
+      border: "1px solid #527ABE",
+      background: "white",
+      boxSizing: "border-box",
+    },
+    textarea: {
+      width: "100%",
+      minHeight: "110px",
+      fontWeight: 400,
+      fontSize: "20px",
+      fontFamily: "Lora, serif",
+      padding: "8px 12px",
+      borderRadius: "5px",
+      border: "1px solid #527ABE",
+      background: "white",
+      boxSizing: "border-box",
+      resize: "vertical",
+    },
+    timeInputRow: {
+      display: "flex",
+      gap: "10px",
+      alignItems: "center",
+      marginTop: "8px",
+    },
+    footerRow: {
+      display: "flex",
+      justifyContent: "flex-end",
+      width: "100%",
+    },
+    saveButton: {
+      border: "1px solid #568264",
+      background: "#DCF9C9",
+      color: "#568264",
+      borderRadius: "2px",
+      padding: "5px 12px",
+      fontFamily: "Lora, serif",
+      fontWeight: 700,
+      fontSize: "25px",
+      cursor: "pointer",
+    },
+  };
+
   const startEditing = () => {
     setDraft(data);
     setIsEditing(true);
