@@ -8,12 +8,21 @@ import Image from "next/image";
 import eyeClosed from "../icons/eyeClosed.svg";
 import eyeShow from "../icons/eyeShow.svg";
 
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  const canSubmit = useMemo(() => email.trim().length > 0 && password.length > 0, [email, password]);
+  const canSubmit = useMemo(() => {
+    const e = email.trim();
+    return e.length > 0 && isValidEmail(e) && password.length > 0;
+  }, [email, password]);
 
   const { signIn, isLoaded } = useSignIn();
   const { setActive } = useClerk();
@@ -25,10 +34,27 @@ export default function LoginForm() {
     e.preventDefault();
     if (!isLoaded) return;
 
+    const eTrim = email.trim();
+
+    if (eTrim.length === 0) {
+      setEmailError("Email is required.");
+      return;
+    }
+
+    if (!isValidEmail(eTrim)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+
+    setEmailError("");
     setError(null);
 
     try {
-      const result = await signIn.create({ identifier: email, password });
+      const result = await signIn.create({
+        identifier: eTrim,
+        password,
+      });
+
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         router.push("/");
@@ -64,7 +90,16 @@ export default function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             type="email"
             autoComplete="email"
+            onBlur={() => {
+              const eTrim = email.trim();
+              if (eTrim.length === 0) setEmailError("Email is required.");
+              else if (!isValidEmail(eTrim)) setEmailError("Please enter a valid email address.");
+              else setEmailError("");
+            }}
+            aria-invalid={submitted && !!emailError}
           />
+
+          {emailError && <p className={styles.fieldError}>{emailError}</p>}
         </div>
 
         <div className={styles.formGroup}>
