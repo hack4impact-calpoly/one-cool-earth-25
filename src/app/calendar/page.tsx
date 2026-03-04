@@ -5,8 +5,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
-import EventCard from "./components/EventCard";
+import EventCard from "../../components/EventCard";
 import "@/app/globals.css";
+import Navbar from "../../components/Navbar";
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
@@ -54,50 +55,53 @@ export default function CalendarPage() {
     events[i] = { eventTitle: "Gardening", date: new Date() };
   }
   return (
-    <div className="p-8 font-lora">
-      <div className="text-4xl">Upcoming Events</div>
-      <div className="flex justify-start flex-nowrap overflow-x-scroll">
-        {events.map((event, idx) => {
-          return <EventCard key={idx} eventTitle={event.eventTitle} date={event.date} />;
-        })}
-      </div>
-      <div className="flex justify-between items-center mb-6">
-        {" "}
-        <div className="flex items-center gap-4">
+    <div>
+      <Navbar mode={"Admin"} />
+      <div className="p-8 font-lora">
+        <div className="text-4xl font-bold">Upcoming Events</div>
+        <div className="flex justify-start flex-nowrap overflow-x-scroll">
+          {events.map((event, idx) => {
+            return <EventCard key={idx} eventTitle={event.eventTitle} date={event.date} />;
+          })}
+        </div>
+        <div className="flex justify-between items-center mb-6">
           {" "}
-          <div className="flex gap-2">
-            <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
-              <ChevronLeft size={40} color="#BEBEBE" />
-            </button>
-            <button onClick={handleNext} className="hover:opacity-70 transition-opacity">
-              <ChevronRight size={40} color="#BEBEBE" />
-            </button>
+          <div className="flex items-center gap-4">
+            {" "}
+            <div className="flex gap-2">
+              <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
+                <ChevronLeft size={40} color="#BEBEBE" />
+              </button>
+              <button onClick={handleNext} className="hover:opacity-70 transition-opacity">
+                <ChevronRight size={40} color="#BEBEBE" />
+              </button>
+            </div>
+            <h2 className="text-2xl font-bold">
+              {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
+            </h2>
           </div>
-          <h2 className="text-2xl font-bold">
-            {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
-          </h2>
+          <div>
+            <Button className="hover:opacity-70 transition-opacity" variant="outlined" onClick={handleReset}>
+              Today
+            </Button>
+          </div>
+          <div className="w-[291px] h-[50px] flex-shrink-0">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
+            />
+          </div>
         </div>
-        <div>
-          <Button className="hover:opacity-70 transition-opacity" variant="outlined" onClick={handleReset}>
-            Today
-          </Button>
-        </div>
-        <div className="w-[291px] h-[50px] flex-shrink-0">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
-          />
-        </div>
-      </div>
 
-      <FullCalendar
-        ref={calendarRef}
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={false}
-        height="auto"
-      />
+        <FullCalendar
+          ref={calendarRef}
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          headerToolbar={false}
+          height="auto"
+        />
+      </div>
     </div>
   );
 }

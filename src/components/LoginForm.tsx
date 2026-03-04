@@ -57,7 +57,7 @@ export default function LoginForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/");
+        router.push("/calendar");
       }
     } catch (err: any) {
       console.error(err.errors);

@@ -37,7 +37,7 @@ export default function ConfirmAccountPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/");
+        router.push("/calendar");
       }
     } catch (err: any) {
       setError(err.errors?.[0]?.message || "Invalid code");
