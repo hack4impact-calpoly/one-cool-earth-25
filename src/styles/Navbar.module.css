@@ -2,8 +2,34 @@
 
 .nav {
   display: flex;
-  justify-content: flex-end;
-  padding: 20px;
+  justify-content: space-between; /* changed from flex-end */
+  align-items: center;
+  padding: 20px 40px;
+}
+
+/* LEFT SIDE */
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.brandLink {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: black;
+}
+
+.logo {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.brandText {
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 /* outer white pill */
@@ -36,7 +62,6 @@
   font-family: "Patua One";
   font-size: 18px;
   font-weight: 400;
-  letter-spacing: 0%;
   line-height: 100%;
 
   text-decoration: none;
