@@ -22,3 +22,38 @@ export async function GET() {
     return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    await connectDB();
+    const eventData = await request.json();
+
+    const newEvent = new Event({
+      name: eventData.name,
+      description: eventData.description,
+      location: eventData.location,
+      time: eventData.time,
+    });
+
+    await newEvent.save();
+
+    return NextResponse.json({ message: "Event created successfully" }, { status: 201 });
+  } catch (error) {
+    console.error("Database Error:", error);
+    return NextResponse.json({ error: "Failed to create event" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    await connectDB();
+    const { id } = await request.json();
+
+    await Event.findByIdAndDelete(id);
+
+    return NextResponse.json({ message: "Event deleted successfully" });
+  } catch (error) {
+    console.error("Database Error:", error);
+    return NextResponse.json({ error: "Failed to delete event" }, { status: 500 });
+  }
+}
