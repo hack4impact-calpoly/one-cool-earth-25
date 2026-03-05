@@ -27,9 +27,11 @@ const initialVolunteerData: VolunteerMap = {
   volunteer4: { name: "Jane Doe", email: "jdoe@gmail.com", waiver: missingWaiver, attendance: true },
 };
 
-export default function VolunteerList() {
+export default function VolunteerList({ canViewVolunteers = false }: { canViewVolunteers?: boolean }) {
   const [volunteers, setVolunteers] = useState<VolunteerMap>(initialVolunteerData);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  if (!canViewVolunteers) return null;
 
   const toggleAttendance = (id: string) => {
     setVolunteers((prev) => ({

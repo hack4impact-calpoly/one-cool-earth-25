@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/AdminEventsPage.module.css";
 import { AppEvent, MOCK_EVENTS } from "@/data/events";
 
 function EventCard({ event }: { event: AppEvent }) {
   const monthLabel = event.date.toLocaleString("en-US", { month: "long" });
   const dayNumber = event.date.getDate();
+  const router = useRouter();
 
   return (
     <div className={styles.card}>
@@ -52,7 +54,11 @@ function EventCard({ event }: { event: AppEvent }) {
               Edit Event
             </button>
 
-            <button type="button" className={styles.hoverBtnDark}>
+            <button
+              type="button"
+              className={styles.hoverBtnDark}
+              onClick={() => router.push(`/admin-events/${event.id}`)}
+            >
               {event.section === "past" ? "Event Report" : "View Event Info"}
             </button>
           </div>
