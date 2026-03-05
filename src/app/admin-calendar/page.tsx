@@ -56,7 +56,7 @@ export default function CalendarPage() {
   }
   return (
     <div>
-      <Navbar mode={"VolunteerLoggedIn"} />
+      <Navbar mode={"Admin"} />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
