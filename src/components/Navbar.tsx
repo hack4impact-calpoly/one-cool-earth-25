@@ -18,7 +18,7 @@ const NAV_LINKS: Record<NavMode, NavItem[]> = {
     { label: "Events", href: "/admin-events" },
     { label: "Inbox", href: "/inbox" },
     { label: "Report", href: "/report" },
-    { label: "Account", href: "/account" },
+    { label: "Account", href: "/admin-account" },
   ],
   VolunteerNotLoggedIn: [
     { label: "Calendar", href: "/calendar" },
