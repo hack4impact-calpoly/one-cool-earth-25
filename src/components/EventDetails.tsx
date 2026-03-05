@@ -70,8 +70,10 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       border: "1px solid #527ABE",
       borderRadius: "5px",
       padding: "10px 15px 10px 15px",
-      maxWidth: "100%",
-      maxHeight: "auto",
+      width: "100%",
+      maxWidth: "none",
+      maxHeight: "none",
+
       display: "flex",
       flexDirection: "column",
       gap: "25px",
