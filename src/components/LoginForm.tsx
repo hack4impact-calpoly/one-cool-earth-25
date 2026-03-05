@@ -11,7 +11,6 @@ import eyeShow from "../icons/eyeShow.svg";
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
-
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -133,16 +132,6 @@ export default function LoginForm() {
         <button className={styles.loginButton} type="submit" disabled={!canSubmit}>
           Next
         </button>
-
-        <div className={styles.oauthRow}>
-          <button type="button" className={styles.oauthButton}>
-            Log in w/
-          </button>
-
-          <button type="button" className={styles.oauthButton}>
-            Log in w/
-          </button>
-        </div>
       </form>
     </div>
   );

@@ -50,6 +50,16 @@ export default function CreateAccountForm() {
     return password === confirmPassword && password.length >= 8 && hasNumberOrSymbol(password);
   }, [password, confirmPassword, passwordsFilled]);
 
+  const step4Done = step === "confirm";
+
+  const currentStep = useMemo(() => {
+    if (step4Done) return 4;
+    if (!step2Done) return 1;
+    if (!step1Done) return 2;
+    if (!step3Done) return 3;
+    return 4;
+  }, [step1Done, step2Done, step3Done, step4Done]);
+
   const handleSubmit = async () => {
     if (!isLoaded) return;
     if (!step1Done || !step2Done || !step3Done) return;
@@ -110,6 +120,22 @@ export default function CreateAccountForm() {
           Log in
         </a>
       </p>
+
+      <div className="mt-8 flex justify-center">
+        <div className="w-full max-w-[900px]">
+          <div className="flex items-center justify-center gap-6">
+            <StepCircle label="Basic Information" number={1} done={step2Done} active={currentStep === 1} />
+
+            <StepLine active={step2Done} />
+
+            <StepCircle label="Enter Email" number={2} done={step1Done} active={currentStep === 2} />
+
+            <StepLine active={step1Done} />
+
+            <StepCircle label="Create Password" number={3} done={step3Done} active={currentStep === 3} />
+          </div>
+        </div>
+      </div>
 
       {step === "create" ? (
         <div className="mt-10 flex justify-center">
@@ -258,5 +284,36 @@ function PasswordInput({
         {visible ? "Hide" : "Show"}
       </button>
     </div>
+  );
+}
+
+function StepCircle({
+  label,
+  number,
+  done,
+  active,
+}: {
+  label: string;
+  number: 1 | 2 | 3 | 4;
+  done: boolean;
+  active: boolean;
+}) {
+  const baseCircle = "h-8 w-8 rounded-full flex items-center justify-center font-semibold";
+  const baseLabel = "mt-2 text-xs font-semibold text-center w-[150px]";
+
+  const circleClass = done ? "bg-[#1f7a5a] text-white" : "bg-[#4e78b7] text-white";
+
+  const labelClass = done ? "text-[#1f7a5a]" : active ? "text-[#4e78b7]" : "text-[#8aa0ba]";
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className={`${baseCircle} ${circleClass}`}>{done ? "✓" : number}</div>
+      <div className={`${baseLabel} ${labelClass}`}>{label}</div>
+    </div>
+  );
+}
+function StepLine({ active }: { active: boolean }) {
+  return (
+    <div className={`h-[4px] min-w-[100px] rounded-full ${active ? "bg-[#1f7a5a]" : "bg-[#d3dbe3]"}`} aria-hidden />
   );
 }

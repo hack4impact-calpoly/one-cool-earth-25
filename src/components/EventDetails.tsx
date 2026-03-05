@@ -6,6 +6,7 @@ import styles from "../styles/EventDetails.module.css";
 
 interface EventDetailsProps {
   eventData?: EventData;
+  isEditable?: boolean;
 }
 
 interface EventData {
@@ -17,7 +18,7 @@ interface EventData {
   imageUrl?: string;
 }
 
-const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
+const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = false }) => {
   const defaultData: EventData = {
     name: "Garden Workday",
     description:
@@ -68,7 +69,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
     const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${hours}:${minutes}`;
   };
-
 
   const startEditing = () => {
     setDraft(data);
@@ -143,7 +143,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       <div className={styles.headerRow}>
         <h3 className={styles.headerTitle}>Event Details</h3>
 
-        {!isEditing && (
+        {isEditable && !isEditing && (
           <Image
             src={editIcon}
             alt="edit event details"
