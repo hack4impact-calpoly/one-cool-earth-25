@@ -18,7 +18,7 @@ export default function EventQrPage() {
   useEffect(() => {
     (async () => {
       const dataUrl = await QRCode.toDataURL(checkinUrl, {
-        width: 280, // ✅ closer to mock
+        width: 280,
         margin: 1,
         errorCorrectionLevel: "M",
       });
