@@ -4,6 +4,8 @@ import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/Navbar";
 
+// admin only account
+
 export default function AccountPage() {
   const { signOut } = useClerk();
   const router = useRouter();
