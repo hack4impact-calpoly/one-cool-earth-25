@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true },
   firstName: { type: String },
   lastName: { type: String },
+  dob: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
