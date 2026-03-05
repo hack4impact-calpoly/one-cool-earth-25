@@ -1,8 +1,10 @@
 import AdminEventsPage from "@/components/AdminEventsPage";
+import Navbar from "../../components/Navbar";
 
 export default function CreateAdminEventsPage() {
   return (
-    <div className="min-h-screen bg-white flex justify-center">
+    <div>
+      <Navbar mode={"Admin"} />
       <AdminEventsPage />
     </div>
   );
