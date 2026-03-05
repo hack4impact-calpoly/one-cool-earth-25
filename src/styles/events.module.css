@@ -1,0 +1,121 @@
+.page {
+  min-height: 100vh;
+  width: 100%;
+  background: #fff;
+}
+
+.brandRow {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brandLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logoWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+}
+
+.brandTitle {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-size: 40px;
+  font-family: "Lora, serif";
+}
+
+.brandRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 16px;
+}
+
+.pageTitle {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 12px 0 22px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 550px 1fr;
+  gap: 20px;
+  align-items: start;
+  width: 100%;
+}
+
+/* responsive */
+@media (max-width: 980px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+}
+.eventCard {
+  width: 100%;
+  max-width: 550px;
+  align-self: start;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 10px 14px;
+}
+
+.cardTitle {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.iconBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.iconBtn:hover {
+  background: #f2f6ff;
+}
+
+.cardBody {
+  padding: 10px 14px 10px 14px;
+}
+
+.cardBodyScrollable {
+  padding: 10px 14px 16px 14px;
+  max-height: 640px; /* matches screenshot scroll area */
+  overflow: auto;
+}

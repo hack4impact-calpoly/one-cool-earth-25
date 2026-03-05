@@ -3,6 +3,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-lora: "Lora", serif;
+}
+
+html,
+body {
+  font-family: var(--font-lora);
+}
+
 .fc .fc-cell-shaded,
 .fc .fc-daygrid-day,
 .fc td,

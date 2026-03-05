@@ -2,6 +2,7 @@
 
 .container {
   width: 100%;
+  margin: 2%;
   font-family: "Lora", serif;
 }
 
@@ -10,6 +11,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  width: 95%;
 }
 
 .headerTitle {
@@ -53,7 +55,7 @@
 }
 
 .card {
-  width: 100%;
+  width: 95%;
   background: #f9fbff;
   border: 1px solid #527abe;
   border-radius: 14px;
@@ -106,6 +108,7 @@
   display: flex;
   gap: 25px;
   margin-bottom: 40px;
+  width: 95%;
 }
 
 .summaryBox {

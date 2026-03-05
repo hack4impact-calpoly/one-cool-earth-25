@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "@/styles/ConfirmEmail.module.css";
 import { IoReloadOutline } from "react-icons/io5";
 
-export default function ConfirmAccountPage() {
+export default function ConfirmAccountPage({ email, fullName, dob }: { email: string; fullName: string; dob: string }) {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
@@ -28,16 +28,26 @@ export default function ConfirmAccountPage() {
 
   const verify = async () => {
     if (!isLoaded) return;
-
     try {
-      const strCode = code.join("");
       const result = await signUp.attemptEmailAddressVerification({
-        code: strCode,
+        code: code.join(""),
       });
 
       if (result.status === "complete") {
+        await fetch("/api/user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            clerkId: result.createdUserId,
+            email,
+            firstName: fullName.split(" ")[0],
+            lastName: fullName.split(" ").slice(1).join(" ") || "",
+            dob,
+          }),
+        });
+
         await setActive({ session: result.createdSessionId });
-        router.push("/");
+        router.push("/calendar");
       }
     } catch (err: any) {
       setError(err.errors?.[0]?.message || "Invalid code");
