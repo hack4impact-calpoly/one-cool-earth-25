@@ -1,20 +1,9 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import styles from "@/styles/AdminEventsPage.module.css";
+import { AppEvent, MOCK_EVENTS } from "@/data/events";
 
-type EventItem = {
-  id: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  school: string;
-  imageUrl: string;
-  section: "upcoming" | "past";
-  registeredCount: number;
-  attendanceCount?: number;
-};
-
-function EventCard({ event }: { event: EventItem }) {
+function EventCard({ event }: { event: AppEvent }) {
   const monthLabel = event.date.toLocaleString("en-US", { month: "long" });
   const dayNumber = event.date.getDate();
 
@@ -118,140 +107,7 @@ function DateRangeControl({
 }
 
 export default function AdminEventsPage() {
-  //Example Event Data
-  //Images stored in public/images
-  const events = useMemo<EventItem[]>(
-    () => [
-      {
-        id: "u1",
-        date: new Date(2026, 0, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test Elementary LOOOONG",
-        imageUrl: "/images/testImage1.jpg",
-        section: "upcoming",
-        registeredCount: 10,
-      },
-      {
-        id: "u2",
-        date: new Date(2026, 0, 2),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 1 Elementary",
-        imageUrl: "/images/testImage1.jpg",
-        section: "upcoming",
-        registeredCount: 9,
-      },
-      {
-        id: "u3",
-        date: new Date(2026, 0, 3),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 2 Elementary",
-        imageUrl: "/images/testImage1.jpg",
-        section: "upcoming",
-        registeredCount: 8,
-      },
-      {
-        id: "u4",
-        date: new Date(2026, 0, 4),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 3 Elementary",
-        imageUrl: "/images/testImage2.jpg",
-        section: "upcoming",
-        registeredCount: 7,
-      },
-      {
-        id: "u5",
-        date: new Date(2026, 0, 5),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 4 Elementary",
-        imageUrl: "/images/testImage2.jpg",
-        section: "upcoming",
-        registeredCount: 6,
-      },
-      {
-        id: "u6",
-        date: new Date(2026, 1, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 5 Elementary",
-        imageUrl: "/images/testImage3.jpg",
-        section: "upcoming",
-        registeredCount: 5,
-      },
-
-      {
-        id: "p1",
-        date: new Date(2026, 1, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 6 Elementary",
-        imageUrl: "/images/testImage3.jpg",
-        section: "past",
-        registeredCount: 10,
-        attendanceCount: 5,
-      },
-      {
-        id: "p2",
-        date: new Date(2026, 1, 2),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 7 Elementary",
-        imageUrl: "/images/testImage4.jpeg",
-        section: "past",
-        registeredCount: 9,
-        attendanceCount: 4,
-      },
-      {
-        id: "p3",
-        date: new Date(2026, 1, 3),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 8 Elementary",
-        imageUrl: "/images/testImage5.jpg",
-        section: "past",
-        registeredCount: 8,
-        attendanceCount: 3,
-      },
-      {
-        id: "p4",
-        date: new Date(2026, 2, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 9 Elementary",
-        imageUrl: "/images/testImage1.jpg",
-        section: "past",
-        registeredCount: 7,
-        attendanceCount: 2,
-      },
-      {
-        id: "p5",
-        date: new Date(2026, 1, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 10 Elementary",
-        imageUrl: "/images/testImage5.jpg",
-        section: "past",
-        registeredCount: 6,
-        attendanceCount: 1,
-      },
-      {
-        id: "p6",
-        date: new Date(2026, 3, 4),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 11 Elementary",
-        imageUrl: "/images/testImage5.jpg",
-        section: "past",
-        registeredCount: 5,
-        attendanceCount: 0,
-      },
-    ],
-    [],
-  );
+  const events = MOCK_EVENTS;
 
   const curYear = new Date().getFullYear();
   const [upStart, setUpStart] = useState(new Date(curYear, 0, 1));

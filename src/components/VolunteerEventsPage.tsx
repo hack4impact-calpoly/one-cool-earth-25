@@ -1,19 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import styles from "@/styles/VolunteerEventsPage.module.css";
-
-type VolunteerStatus = "missing_waiver" | "attended" | "missed" | "none";
-
-type EventItem = {
-  id: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  school: string;
-  imageUrl: string;
-  section: "upcoming" | "past";
-  status: VolunteerStatus;
-};
+import { AppEvent, MOCK_EVENTS, VolunteerStatus } from "@/data/events";
 
 function Status({ status }: { status: VolunteerStatus }) {
   if (status === "none") return null;
@@ -39,9 +27,10 @@ function Status({ status }: { status: VolunteerStatus }) {
   );
 }
 
-function EventCard({ event }: { event: EventItem }) {
+function EventCard({ event }: { event: AppEvent }) {
   const monthLabel = event.date.toLocaleString("en-US", { month: "long" });
   const dayNumber = event.date.getDate();
+  const status = event.volunteerStatus ?? "none";
 
   return (
     <div className={`${styles.card} ${event.section === "upcoming" ? styles.cardHoverEnabled : ""}`}>
@@ -49,7 +38,7 @@ function EventCard({ event }: { event: EventItem }) {
       <div className={styles.cardOverlay} />
 
       <div className={styles.statusWrap}>
-        <Status status={event.status} />
+        <Status status={status} />
       </div>
 
       <div className={styles.cardContent}>
@@ -80,7 +69,7 @@ function EventCard({ event }: { event: EventItem }) {
 
           <div className={styles.hoverButtons}>
             <button type="button" className={styles.hoverBtnLight}>
-              {event.status === "missing_waiver" ? "Sign Waiver" : "Event Info"}
+              {status === "missing_waiver" ? "Sign Waiver" : "Event Info"}
             </button>
 
             <button type="button" className={styles.hoverBtnDark}>
@@ -138,134 +127,7 @@ function DateRangeControl({
 }
 
 export default function VolunteerEventsPage() {
-  //Example Event Data
-  //Images stored in public/images
-  const events = useMemo<EventItem[]>(
-    () => [
-      {
-        id: "u1",
-        date: new Date(2026, 0, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test Elementary LOOOONG",
-        imageUrl: "/images/testImage1.jpg",
-        section: "upcoming",
-        status: "none",
-      },
-      {
-        id: "u2",
-        date: new Date(2026, 0, 2),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 1 Elementary",
-        imageUrl: "/images/testImage1.jpg",
-        section: "upcoming",
-        status: "missing_waiver",
-      },
-      {
-        id: "u3",
-        date: new Date(2026, 0, 3),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 2 Elementary",
-        imageUrl: "/images/testImage1.jpg",
-        section: "upcoming",
-        status: "missing_waiver",
-      },
-      {
-        id: "u4",
-        date: new Date(2026, 0, 4),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 3 Elementary",
-        imageUrl: "/images/testImage2.jpg",
-        section: "upcoming",
-        status: "none",
-      },
-      {
-        id: "u5",
-        date: new Date(2026, 0, 5),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 4 Elementary",
-        imageUrl: "/images/testImage2.jpg",
-        section: "upcoming",
-        status: "missing_waiver",
-      },
-      {
-        id: "u6",
-        date: new Date(2026, 1, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 5 Elementary",
-        imageUrl: "/images/testImage3.jpg",
-        section: "upcoming",
-        status: "none",
-      },
-
-      {
-        id: "p1",
-        date: new Date(2026, 1, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 6 Elementary",
-        imageUrl: "/images/testImage3.jpg",
-        section: "past",
-        status: "missed",
-      },
-      {
-        id: "p2",
-        date: new Date(2026, 1, 2),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 7 Elementary",
-        imageUrl: "/images/testImage4.jpeg",
-        section: "past",
-        status: "attended",
-      },
-      {
-        id: "p3",
-        date: new Date(2026, 1, 3),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 8 Elementary",
-        imageUrl: "/images/testImage5.jpg",
-        section: "past",
-        status: "attended",
-      },
-      {
-        id: "p4",
-        date: new Date(2026, 2, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 9 Elementary",
-        imageUrl: "/images/testImage1.jpg",
-        section: "past",
-        status: "missed",
-      },
-      {
-        id: "p5",
-        date: new Date(2026, 1, 1),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 10 Elementary",
-        imageUrl: "/images/testImage5.jpg",
-        section: "past",
-        status: "attended",
-      },
-      {
-        id: "p6",
-        date: new Date(2026, 3, 4),
-        startTime: "11:00 am",
-        endTime: "12:00 pm",
-        school: "Test 11 Elementary",
-        imageUrl: "/images/testImage5.jpg",
-        section: "past",
-        status: "attended",
-      },
-    ],
-    [],
-  );
+  const events = MOCK_EVENTS;
 
   const curYear = new Date().getFullYear();
   const [upStart, setUpStart] = useState(new Date(curYear, 0, 1));
