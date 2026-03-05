@@ -1,26 +1,31 @@
 "use client";
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties, useState, useRef } from "react";
 import Image from "next/image";
 import editIcon from "../icons/editIcon.svg";
+import styles from "../styles/EventDetails.module.css";
 
 interface EventDetailsProps {
   eventData?: EventData;
 }
 
 interface EventData {
+  name: string;
   description: string;
   location: string;
   startDateTime: Date;
   endDateTime: Date;
+  imageUrl?: string;
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
   const defaultData: EventData = {
+    name: "Garden Workday",
     description:
       "We have ongoing garden workday opportunities that happen all over the county throughout the year. These workdays typically occur after school or on Saturdays and include tasks such as spreading wood chips, building beds, planting, weeding, spreading mulch, etc.",
     location: "Baywood Elementary",
     startDateTime: new Date("2025-03-11T15:00:00"),
     endDateTime: new Date("2025-03-11T17:00:00"),
+    imageUrl: undefined,
   };
 
   const [data, setData] = useState<EventData>(eventData || defaultData);
@@ -64,90 +69,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
     return `${hours}:${minutes}`;
   };
 
-  const styles: { [key: string]: CSSProperties } = {
-    container: {
-      background: "#F9FBFF",
-      border: "1px solid #527ABE",
-      borderRadius: "5px",
-      padding: "10px 15px 10px 15px",
-      width: "100%",
-      maxWidth: "none",
-      maxHeight: "none",
-
-      display: "flex",
-      flexDirection: "column",
-      gap: "25px",
-      fontFamily: "Lora, serif",
-    },
-    headerTitle: {
-      margin: 0,
-      fontSize: "22px",
-      fontWeight: 700,
-      fontFamily: "Lora, serif",
-    },
-    detailLabel: {
-      fontWeight: 700,
-      fontSize: "20px",
-      fontFamily: "Lora, serif",
-    },
-    detailValue: {
-      fontWeight: 400,
-      fontSize: "20px",
-      fontFamily: "Lora, serif",
-    },
-    headerRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      width: "100%",
-    },
-    input: {
-      width: "100%",
-      fontWeight: 400,
-      fontSize: "20px",
-      fontFamily: "Lora, serif",
-      padding: "8px 12px",
-      borderRadius: "5px",
-      border: "1px solid #527ABE",
-      background: "white",
-      boxSizing: "border-box",
-    },
-    textarea: {
-      width: "100%",
-      minHeight: "110px",
-      fontWeight: 400,
-      fontSize: "20px",
-      fontFamily: "Lora, serif",
-      padding: "8px 12px",
-      borderRadius: "5px",
-      border: "1px solid #527ABE",
-      background: "white",
-      boxSizing: "border-box",
-      resize: "vertical",
-    },
-    timeInputRow: {
-      display: "flex",
-      gap: "10px",
-      alignItems: "center",
-      marginTop: "8px",
-    },
-    footerRow: {
-      display: "flex",
-      justifyContent: "flex-end",
-      width: "100%",
-    },
-    saveButton: {
-      border: "1px solid #568264",
-      background: "#DCF9C9",
-      color: "#568264",
-      borderRadius: "2px",
-      padding: "5px 12px",
-      fontFamily: "Lora, serif",
-      fontWeight: 700,
-      fontSize: "25px",
-      cursor: "pointer",
-    },
-  };
 
   const startEditing = () => {
     setDraft(data);
@@ -201,10 +122,26 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
     });
   };
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImageChange = (file: File | null) => {
+    if (draft.imageUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(draft.imageUrl);
+    }
+
+    if (!file) {
+      setDraft({ ...draft, imageUrl: undefined });
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setDraft({ ...draft, imageUrl: url });
+  };
+
   return (
-    <div style={styles.container}>
-      <div style={styles.headerRow}>
-        <h3 style={styles.headerTitle}>Event Details</h3>
+    <div className={styles.container}>
+      <div className={styles.headerRow}>
+        <h3 className={styles.headerTitle}>Event Details</h3>
 
         {!isEditing && (
           <Image
@@ -223,13 +160,28 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       </div>
 
       <div>
-        <span style={styles.detailLabel}>Description: </span>
+        <span className={styles.detailLabel}>Title: </span>
         {!isEditing ? (
-          <span style={styles.detailValue}>{data.description}</span>
+          <span className={styles.detailValue}>{data.name}</span>
+        ) : (
+          <div style={{ marginTop: "8px" }}>
+            <input
+              className={styles.input}
+              value={draft.name}
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+            />
+          </div>
+        )}
+      </div>
+
+      <div>
+        <span className={styles.detailLabel}>Description: </span>
+        {!isEditing ? (
+          <span className={styles.detailValue}>{data.description}</span>
         ) : (
           <div style={{ marginTop: "8px" }}>
             <textarea
-              style={styles.textarea}
+              className={styles.textarea}
               value={draft.description}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })}
             />
@@ -238,13 +190,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       </div>
 
       <div>
-        <span style={styles.detailLabel}>Location: </span>
+        <span className={styles.detailLabel}>Location: </span>
         {!isEditing ? (
-          <span style={styles.detailValue}>{data.location}</span>
+          <span className={styles.detailValue}>{data.location}</span>
         ) : (
           <div style={{ marginTop: "8px" }}>
             <input
-              style={styles.input}
+              className={styles.input}
               value={draft.location}
               onChange={(e) => setDraft({ ...draft, location: e.target.value })}
             />
@@ -253,14 +205,14 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       </div>
 
       <div>
-        <span style={styles.detailLabel}>Date: </span>
+        <span className={styles.detailLabel}>Date: </span>
         {!isEditing ? (
-          <span style={styles.detailValue}>{formatDate(data.startDateTime)}</span>
+          <span className={styles.detailValue}>{formatDate(data.startDateTime)}</span>
         ) : (
           <div style={{ marginTop: "8px" }}>
             <input
               type="date"
-              style={styles.input}
+              className={styles.input}
               value={toDateInputValue(draft.startDateTime)}
               onChange={(e) => handleDateChange(e.target.value)}
             />
@@ -269,21 +221,23 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       </div>
 
       <div>
-        <span style={styles.detailLabel}>Time: </span>
+        <span className={styles.detailLabel}>Time: </span>
         {!isEditing ? (
-          <span style={styles.detailValue}>{formatTime(data.startDateTime, data.endDateTime)}</span>
+          <span className={styles.detailValue}>{formatTime(data.startDateTime, data.endDateTime)}</span>
         ) : (
-          <div style={styles.timeInputRow}>
+          <div className={styles.timeInputRow}>
             <input
               type="time"
-              style={{ ...styles.input, width: "auto", flex: 1 }}
+              className={styles.input}
+              style={{ width: "auto", flex: 1 }}
               value={toTimeInputValue(draft.startDateTime)}
               onChange={(e) => handleStartTimeChange(e.target.value)}
             />
-            <span style={{ fontFamily: "Lora, serif" }}>-</span>
+            <span>-</span>
             <input
               type="time"
-              style={{ ...styles.input, width: "auto", flex: 1 }}
+              className={styles.input}
+              style={{ width: "auto", flex: 1 }}
               value={toTimeInputValue(draft.endDateTime)}
               onChange={(e) => handleEndTimeChange(e.target.value)}
             />
@@ -291,10 +245,73 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
         )}
       </div>
 
+      <div>
+        <span className={styles.detailLabel}>Image: </span>
+
+        {!isEditing ? (
+          data.imageUrl ? (
+            <div style={{ marginTop: "10px" }}>
+              <Image
+                src={data.imageUrl}
+                alt="event upload"
+                width={320}
+                height={200}
+                className={styles.imagePreview}
+                unoptimized
+              />
+            </div>
+          ) : (
+            <span className={styles.detailValue}>None</span>
+          )
+        ) : (
+          <div style={{ marginTop: "8px", maxWidth: "320px" }}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={(e) => handleImageChange(e.target.files?.[0] ?? null)}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
+              {/* change/upload image */}
+              <button type="button" className={styles.imageButton} onClick={() => fileInputRef.current?.click()}>
+                {draft.imageUrl ? "Change Image" : "Upload Image"}
+              </button>
+
+              {/* remove image */}
+              {draft.imageUrl && (
+                <button
+                  type="button"
+                  className={styles.imageButton}
+                  onClick={() => {
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                    handleImageChange(null);
+                  }}
+                >
+                  Remove Image
+                </button>
+              )}
+            </div>
+            {draft.imageUrl && (
+              <div style={{ marginTop: "10px" }}>
+                <Image
+                  src={draft.imageUrl}
+                  alt="event upload preview"
+                  width={320}
+                  height={200}
+                  className={styles.imagePreview}
+                  unoptimized
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {isEditing && (
-        <div style={styles.footerRow}>
-          <button type="button" style={styles.saveButton} onClick={saveEditing}>
-            save
+        <div className={styles.footerRow}>
+          <button type="button" className={styles.saveButton} onClick={saveEditing}>
+            Save
           </button>
         </div>
       )}
