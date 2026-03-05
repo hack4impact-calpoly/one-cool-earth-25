@@ -1,5 +1,5 @@
 "use client";
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties, useState, useRef } from "react";
 import Image from "next/image";
 import editIcon from "../icons/editIcon.svg";
 
@@ -8,19 +8,23 @@ interface EventDetailsProps {
 }
 
 interface EventData {
+  name: string;
   description: string;
   location: string;
   startDateTime: Date;
   endDateTime: Date;
+  imageUrl?: string;
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
   const defaultData: EventData = {
+    name: "Garden Workday",
     description:
       "We have ongoing garden workday opportunities that happen all over the county throughout the year. These workdays typically occur after school or on Saturdays and include tasks such as spreading wood chips, building beds, planting, weeding, spreading mulch, etc.",
     location: "Baywood Elementary",
     startDateTime: new Date("2025-03-11T15:00:00"),
     endDateTime: new Date("2025-03-11T17:00:00"),
+    imageUrl: undefined,
   };
 
   const [data, setData] = useState<EventData>(eventData || defaultData);
@@ -145,6 +149,27 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       fontSize: "25px",
       cursor: "pointer",
     },
+    imagePreview: {
+      marginTop: "10px",
+      borderRadius: "6px",
+      border: "1px solid #527ABE",
+      width: "100%",
+      maxWidth: "320px",
+      height: "auto",
+      display: "block",
+    },
+    imageButton: {
+      border: "1px solid #568264",
+      background: "#DCF9C9",
+      color: "#568264",
+      borderRadius: "2px",
+      padding: "6px 10px",
+      fontFamily: "Lora, serif",
+      fontWeight: 700,
+      fontSize: "19px",
+      cursor: "pointer",
+      marginTop: "8px",
+    },
   };
 
   const startEditing = () => {
@@ -199,6 +224,22 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
     });
   };
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImageChange = (file: File | null) => {
+    if (draft.imageUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(draft.imageUrl);
+    }
+
+    if (!file) {
+      setDraft({ ...draft, imageUrl: undefined });
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setDraft({ ...draft, imageUrl: url });
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.headerRow}>
@@ -217,6 +258,21 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
               opacity: 0.85,
             }}
           />
+        )}
+      </div>
+
+      <div>
+        <span style={styles.detailLabel}>Title: </span>
+        {!isEditing ? (
+          <span style={styles.detailValue}>{data.name}</span>
+        ) : (
+          <div style={{ marginTop: "8px" }}>
+            <input
+              style={styles.input}
+              value={draft.name}
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+            />
+          </div>
         )}
       </div>
 
@@ -289,10 +345,73 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
         )}
       </div>
 
+      <div>
+        <span style={styles.detailLabel}>Image: </span>
+
+        {!isEditing ? (
+          data.imageUrl ? (
+            <div style={{ marginTop: "10px" }}>
+              <Image
+                src={data.imageUrl}
+                alt="event upload"
+                width={320}
+                height={200}
+                style={styles.imagePreview}
+                unoptimized
+              />
+            </div>
+          ) : (
+            <span style={styles.detailValue}>None</span>
+          )
+        ) : (
+          <div style={{ marginTop: "8px", maxWidth: "320px" }}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={(e) => handleImageChange(e.target.files?.[0] ?? null)}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
+              {/* change/upload image */}
+              <button type="button" style={styles.imageButton} onClick={() => fileInputRef.current?.click()}>
+                {draft.imageUrl ? "Change Image" : "Upload Image"}
+              </button>
+
+              {/* remove image */}
+              {draft.imageUrl && (
+                <button
+                  type="button"
+                  style={styles.imageButton}
+                  onClick={() => {
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                    handleImageChange(null);
+                  }}
+                >
+                  Remove Image
+                </button>
+              )}
+            </div>
+            {draft.imageUrl && (
+              <div style={{ marginTop: "10px" }}>
+                <Image
+                  src={draft.imageUrl}
+                  alt="event upload preview"
+                  width={320}
+                  height={200}
+                  style={styles.imagePreview}
+                  unoptimized
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {isEditing && (
         <div style={styles.footerRow}>
           <button type="button" style={styles.saveButton} onClick={saveEditing}>
-            save
+            Save
           </button>
         </div>
       )}
