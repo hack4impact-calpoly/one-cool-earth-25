@@ -1,0 +1,122 @@
+/* EventDetails.module.css */
+
+.container {
+  background: #f9fbff;
+  border: 1px solid #527abe;
+  border-radius: 5px;
+  padding: 10px 15px;
+  max-width: 45%;
+  max-height: 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  font-family: "Lora", serif;
+  font-size: 20px;
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.detailLabel {
+  font-weight: 700;
+}
+
+.detailValue {
+  font-weight: 400;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  font-weight: 400;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #527abe;
+  background: white;
+  box-sizing: border-box;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 110px;
+  font-weight: 400;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #527abe;
+  background: white;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.timeInputRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.footerRow {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.saveButton {
+  border: 1px solid #568264;
+  background: #dcf9c9;
+  color: #568264;
+  border-radius: 2px;
+  padding: 5px 12px;
+  font-weight: 700;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.imagePreview {
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #527abe;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+}
+
+.imageButton {
+  border: 1px solid #568264;
+  background: #dcf9c9;
+  color: #568264;
+  border-radius: 2px;
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 19px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.imageButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.imageButton:active {
+  opacity: 0.8;
+}
+
+.saveButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.saveButton:active {
+  opacity: 0.8;
+}
