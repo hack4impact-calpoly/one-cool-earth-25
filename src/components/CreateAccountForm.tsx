@@ -72,7 +72,8 @@ export default function CreateAccountForm() {
           clerkId: result.createdUserId,
           email,
           firstName: fullName.split(" ")[0],
-          lastName: fullName.split(" ")[1] || "",
+          lastName: fullName.split(" ").slice(1).join(" ") || "",
+          dob,
         }),
       });
 
@@ -84,9 +85,7 @@ export default function CreateAccountForm() {
       }
 
       if (result.status === "missing_requirements") {
-        await signUp.prepareEmailAddressVerification({
-          strategy: "email_code",
-        });
+        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
         setStep("confirm");
       }
     } catch (err: any) {
@@ -211,7 +210,7 @@ export default function CreateAccountForm() {
           </div>
         </div>
       ) : (
-        <ConfirmAccountPage />
+        <ConfirmAccountPage email={email} fullName={fullName} dob={dob} />
       )}
     </div>
   );
