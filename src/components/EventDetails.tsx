@@ -69,7 +69,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
     return `${hours}:${minutes}`;
   };
 
-
   const startEditing = () => {
     setDraft(data);
     setIsEditing(true);
