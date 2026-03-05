@@ -65,6 +65,18 @@ export default function CreateAccountForm() {
         lastName: fullName.split(" ")[1] || "",
       });
 
+      await fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clerkId: result.createdUserId,
+          email,
+          firstName: fullName.split(" ")[0],
+          lastName: fullName.split(" ").slice(1).join(" ") || "",
+          dob,
+        }),
+      });
+
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         router.push("/");
@@ -72,9 +84,7 @@ export default function CreateAccountForm() {
       }
 
       if (result.status === "missing_requirements") {
-        await signUp.prepareEmailAddressVerification({
-          strategy: "email_code",
-        });
+        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
         setStep("confirm");
       }
     } catch (err: any) {
@@ -199,7 +209,7 @@ export default function CreateAccountForm() {
           </div>
         </div>
       ) : (
-        <ConfirmAccountPage />
+        <ConfirmAccountPage email={email} fullName={fullName} dob={dob} />
       )}
     </div>
   );

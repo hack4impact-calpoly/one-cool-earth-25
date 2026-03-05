@@ -73,6 +73,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
       width: "100%",
       maxWidth: "none",
       maxHeight: "none",
+
       display: "flex",
       flexDirection: "column",
       gap: "25px",

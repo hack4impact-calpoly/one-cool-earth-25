@@ -1,0 +1,277 @@
+.page {
+  width: 100%;
+  max-width: 1200px;
+  padding: 28px 18px 60px;
+}
+
+.section {
+  margin-top: 22px;
+}
+
+.sectionTitle {
+  font-size: 34px;
+  font-weight: 800;
+  margin: 0 0 18px;
+}
+
+/* Date range control */
+.dateRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 18px;
+}
+
+.dateInput {
+  width: 135px;
+  height: 38px;
+  border: 2px solid #8aa9d6;
+  padding: 0 10px;
+  font-size: 14px;
+  border-radius: 6px 0 0 6px;
+  outline: none;
+}
+
+.dateInput:last-of-type {
+  border-radius: 0;
+}
+
+.toBox {
+  height: 38px;
+  padding: 0 10px;
+  border-top: 2px solid #8aa9d6;
+  border-bottom: 2px solid #8aa9d6;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  background: white;
+}
+
+.goButton {
+  height: 38px;
+  width: 44px;
+  border: 2px solid #8aa9d6;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  background: #cfecc2;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* Row carousel */
+.row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 220px;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+}
+
+.row::-webkit-scrollbar {
+  height: 10px;
+}
+.row::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
+  border-radius: 999px;
+}
+.row::-webkit-scrollbar-track {
+  background: #efefef;
+  border-radius: 999px;
+}
+
+/* Card */
+.card {
+  position: relative;
+  height: 260px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  background: #ddd;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  scroll-snap-align: start;
+}
+
+.cardBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.cardContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  color: white;
+}
+
+.cardDate {
+  text-align: center;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.cardMonth {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.cardDay {
+  font-size: 44px;
+  font-weight: 800;
+  margin-top: 6px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.cardLocation {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  opacity: 0.95;
+}
+
+.pin {
+  font-size: 14px;
+}
+
+.school {
+  text-align: center;
+  max-width: 190px;
+}
+
+.statusWrap {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: right;
+  padding-right: 10px;
+  z-index: 2;
+  transition: opacity 100ms ease;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #fff;
+  border: 2px solid transparent;
+  color: #1a1a1a;
+}
+
+.statusIcon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.statusMissing {
+  border-color: #ffd400;
+}
+
+.statusAttended {
+  border-color: #2fb34a;
+}
+
+.statusMissed {
+  border-color: #e24b4b;
+}
+
+/* Hover panel container */
+.hoverPanel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 18px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+/* ONLY upcoming cards show hover */
+.cardHoverEnabled:hover .hoverPanel {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cardHoverEnabled:hover .statusWrap {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* White card inside the hover panel */
+.hoverPanelInner {
+  width: 190px;
+  border-radius: 10px;
+  background: white;
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Text styling */
+.hoverTitle {
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.hoverText {
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+/* Buttons */
+.hoverButtons {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.hoverBtnLight,
+.hoverBtnDark {
+  height: 30px;
+  border-radius: 7px;
+  cursor: pointer;
+  border: 1px solid #1d2b32;
+  font-weight: 700;
+}
+
+.hoverBtnLight {
+  background: #b9d6d6;
+}
+
+.hoverBtnDark {
+  background: #1f6f9b;
+  color: white;
+  border-color: #0f2b3a;
+}
