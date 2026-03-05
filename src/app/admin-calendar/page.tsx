@@ -8,7 +8,7 @@ import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
 import "@/app/globals.css";
 import Navbar from "../../components/Navbar";
-import { CALENDAR_CARD_EVENTS } from "@/data/events";
+import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
@@ -52,6 +52,11 @@ export default function CalendarPage() {
   };
 
   const events = CALENDAR_CARD_EVENTS;
+  const calendarEvents = MOCK_EVENTS.map((event) => ({
+    id: event.id,
+    title: event.title,
+    date: event.date,
+  }));
   return (
     <div>
       <Navbar mode={"Admin"} />
@@ -59,7 +64,15 @@ export default function CalendarPage() {
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
           {events.map((event) => {
-            return <EventCard key={event.id} eventId={event.id} eventTitle={event.eventTitle} date={event.date} />;
+            return (
+              <EventCard
+                key={event.id}
+                eventId={event.id}
+                eventTitle={event.eventTitle}
+                date={event.date}
+                detailsRouteBase="/admin-events"
+              />
+            );
           })}
         </div>
         <div className="flex justify-between items-center mb-6">
@@ -95,6 +108,7 @@ export default function CalendarPage() {
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
+          events={calendarEvents}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"

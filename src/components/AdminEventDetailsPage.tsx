@@ -17,11 +17,11 @@ export default function AdminEventDetailsPage() {
         <section className={styles.grid}>
           {/* Left card: Event Details */}
           <div className={styles.eventCard}>
-            <EventDetailsCard />
+            <EventDetailsCard isEditable={true} />
           </div>
           {/* Right card: Volunteers */}
           <div className={styles.card}>
-            <VolunteerList />
+            <VolunteerList canViewVolunteers={true} />
           </div>
         </section>
       </main>
