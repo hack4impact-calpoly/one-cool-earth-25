@@ -11,10 +11,8 @@ export default function CheckinOverlayPage() {
 
   return (
     <>
-      {/* ✅ Render the QR page in the background */}
       <EventQrPage />
 
-      {/* ✅ Dim overlay */}
       <div
         style={{
           position: "fixed",
@@ -24,7 +22,6 @@ export default function CheckinOverlayPage() {
         }}
       />
 
-      {/* ✅ Modal */}
       <div
         style={{
           position: "fixed",
