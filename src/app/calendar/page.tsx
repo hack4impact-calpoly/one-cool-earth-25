@@ -8,12 +8,15 @@ import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
 import "@/app/globals.css";
 import Navbar from "../../components/Navbar";
-import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
+import { CALENDAR_CARD_EVENTS, MOCK_EVENTS, AppEvent } from "@/data/events";
+import EventPopup from "@/components/EventPopup";
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const today = new Date();
+  const [selectedEvent, setSelectedEvent] = useState<AppEvent | null>(null);
+
   const handleNext = () => {
     if (calendarRef.current) {
       const threeMonthsAhead = new Date(today.getFullYear(), today.getMonth() + 3, 1);
@@ -57,6 +60,11 @@ export default function CalendarPage() {
     title: event.title,
     date: event.date,
   }));
+  const handleEventClick = (clickInfo: { event: { id: string } }) => {
+    const fullEvent = MOCK_EVENTS.find((e) => e.id === clickInfo.event.id);
+    if (fullEvent) setSelectedEvent(fullEvent);
+  };
+
   return (
     <div>
       <Navbar mode={"VolunteerLoggedIn"} />
@@ -104,7 +112,10 @@ export default function CalendarPage() {
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
+          eventClick={handleEventClick}
         />
+
+        {selectedEvent && <EventPopup event={selectedEvent} onClose={() => setSelectedEvent(null)} />}
       </div>
     </div>
   );
