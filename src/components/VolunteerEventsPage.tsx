@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import { AppEvent, MOCK_EVENTS, VolunteerStatus } from "@/data/events";
 
@@ -31,6 +32,8 @@ function EventCard({ event }: { event: AppEvent }) {
   const monthLabel = event.date.toLocaleString("en-US", { month: "long" });
   const dayNumber = event.date.getDate();
   const status = event.volunteerStatus ?? "none";
+  const router = useRouter();
+  const isMissingWaiver = status === "missing_waiver";
 
   return (
     <div className={`${styles.card} ${event.section === "upcoming" ? styles.cardHoverEnabled : ""}`}>
@@ -68,8 +71,15 @@ function EventCard({ event }: { event: AppEvent }) {
           <div className={styles.hoverText}>{event.school}</div>
 
           <div className={styles.hoverButtons}>
-            <button type="button" className={styles.hoverBtnLight}>
-              {status === "missing_waiver" ? "Sign Waiver" : "Event Info"}
+            <button
+              type="button"
+              className={styles.hoverBtnLight}
+              onClick={() => {
+                if (isMissingWaiver) return;
+                router.push(`/events/${event.id}`);
+              }}
+            >
+              {isMissingWaiver ? "Sign Waiver" : "Event Info"}
             </button>
 
             <button type="button" className={styles.hoverBtnDark}>
