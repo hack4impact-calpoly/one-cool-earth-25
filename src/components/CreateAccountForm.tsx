@@ -5,6 +5,7 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import ConfirmAccountPage from "./ConfirmAccountForm";
 import { BeatLoader } from "react-spinners";
+import { StepCircle, StepLine } from "./ui/Stepper";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -284,36 +285,5 @@ function PasswordInput({
         {visible ? "Hide" : "Show"}
       </button>
     </div>
-  );
-}
-
-function StepCircle({
-  label,
-  number,
-  done,
-  active,
-}: {
-  label: string;
-  number: 1 | 2 | 3 | 4;
-  done: boolean;
-  active: boolean;
-}) {
-  const baseCircle = "h-8 w-8 rounded-full flex items-center justify-center font-semibold";
-  const baseLabel = "mt-2 text-xs font-semibold text-center w-[150px]";
-
-  const circleClass = done ? "bg-[#1f7a5a] text-white" : "bg-[#4e78b7] text-white";
-
-  const labelClass = done ? "text-[#1f7a5a]" : active ? "text-[#4e78b7]" : "text-[#8aa0ba]";
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className={`${baseCircle} ${circleClass}`}>{done ? "✓" : number}</div>
-      <div className={`${baseLabel} ${labelClass}`}>{label}</div>
-    </div>
-  );
-}
-function StepLine({ active }: { active: boolean }) {
-  return (
-    <div className={`h-[4px] min-w-[100px] rounded-full ${active ? "bg-[#1f7a5a]" : "bg-[#d3dbe3]"}`} aria-hidden />
   );
 }

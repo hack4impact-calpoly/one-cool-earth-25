@@ -71,6 +71,7 @@ export default function CalendarPage() {
                 eventTitle={event.eventTitle}
                 date={event.date}
                 detailsRouteBase="/admin-events"
+                showRegister={false}
               />
             );
           })}
