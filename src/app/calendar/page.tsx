@@ -6,9 +6,10 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
-import "@/app/globals.css";
+//import "@/app/globals.css";
 import Navbar from "../../components/Navbar";
-import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
+
+//import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events"; used for demo
 
 interface CalendarEvent {
   id: string;
@@ -23,7 +24,7 @@ export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(new Date());
   const today = new Date();
   const [events, setEvents] = useState<CalendarEvent[]>([]); // New state for live data
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -32,6 +33,8 @@ export default function CalendarPage() {
         setEvents(data);
       } catch (error) {
         console.error("Failed to fetch events:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchEvents();
@@ -74,12 +77,12 @@ export default function CalendarPage() {
     }
   };
 
-  const events = CALENDAR_CARD_EVENTS;
-  const calendarEvents = MOCK_EVENTS.map((event) => ({
+  //const events = CALENDAR_CARD_EVENTS;
+  /*const calendarEvents = MOCK_EVENTS.map((event) => ({
     id: event.id,
     title: event.title,
     date: event.date,
-  }));
+  }));*/
   return (
     <div>
       <Navbar mode={"VolunteerLoggedIn"} />
@@ -87,7 +90,9 @@ export default function CalendarPage() {
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
           {events.map((event) => {
-            return <EventCard key={event.id} eventId={event.id} eventTitle={event.title} date={event.start} />;
+            return (
+              <EventCard key={event.id} eventId={event.id} eventTitle={event.title} date={new Date(event.start)} />
+            );
           })}
         </div>
         <div className="flex justify-between items-center mb-6">
@@ -123,7 +128,7 @@ export default function CalendarPage() {
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
-          events={calendarEvents}
+          events={events}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
