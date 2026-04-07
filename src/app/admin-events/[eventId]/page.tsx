@@ -1,10 +1,9 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import NavBar from "@/components/Navbar";
 import EventDetails from "@/components/EventDetails";
 import VolunteerList from "@/components/VolunteerList";
-
-import NavBar from "@/components/Navbar";
 import styles from "@/styles/events.module.css";
 import { MOCK_EVENTS } from "@/data/events";
 
@@ -24,8 +23,8 @@ function toDateTime(date: Date, time: string) {
   return value;
 }
 
-export default function EventPage() {
-  const isAdminView = false;
+export default function AdminEventPage() {
+  const isAdminView = true;
   const router = useRouter();
   const params = useParams();
   const eventId = params?.eventId as string;
@@ -33,7 +32,7 @@ export default function EventPage() {
   const eventDetailsData = event
     ? {
         name: event.title,
-        description: `Join us at ${event.school} for hands-on garden support and community impact.`,
+        description: `Admin view for ${event.school}. Manage details, attendance, and follow-ups.`,
         location: event.school,
         startDateTime: toDateTime(event.date, event.startTime),
         endDateTime: toDateTime(event.date, event.endTime),
@@ -41,18 +40,16 @@ export default function EventPage() {
       }
     : undefined;
 
-  // Later: fetch event by eventId from Mongo.
-  // For now, your EventDetails already has defaultData.
   return (
     <div className={styles.page}>
-      <NavBar mode="VolunteerLoggedIn" />
+      <NavBar mode="Admin" />
       <main className={styles.main}>
         {isAdminView && (
           <div className="mb-3 flex justify-end">
             <button
               type="button"
               className={styles.iconBtn}
-              onClick={() => router.push(`/events/${eventId}/qr`)}
+              onClick={() => router.push(`/admin-events/${eventId}/qr`)}
               aria-label="Go to QR code"
               title="Go to QR code"
             >
@@ -72,7 +69,9 @@ export default function EventPage() {
           <div className={styles.eventCard}>
             <EventDetails eventData={eventDetailsData} isEditable={isAdminView} />
           </div>
-          <VolunteerList canViewVolunteers={isAdminView} />
+          <div className={styles.card}>
+            <VolunteerList canViewVolunteers={isAdminView} />
+          </div>
         </section>
       </main>
     </div>

@@ -13,12 +13,13 @@ type NavItem = {
 };
 
 const NAV_LINKS: Record<NavMode, NavItem[]> = {
+  // will need to use status in the future for admin vs volunteer
   Admin: [
     { label: "Calendar", href: "/admin-calendar" },
     { label: "Events", href: "/admin-events" },
     { label: "Inbox", href: "/inbox" },
     { label: "Report", href: "/report" },
-    { label: "Account", href: "/account" },
+    { label: "Account", href: "/admin-account" },
   ],
   VolunteerNotLoggedIn: [
     { label: "Calendar", href: "/calendar" },

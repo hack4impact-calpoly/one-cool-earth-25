@@ -8,6 +8,7 @@ import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
 import "@/app/globals.css";
 import Navbar from "../../components/Navbar";
+import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
@@ -50,18 +51,20 @@ export default function CalendarPage() {
     }
   };
 
-  const events = [];
-  for (let i = 0; i < 10; i++) {
-    events[i] = { eventTitle: "Gardening", date: new Date() };
-  }
+  const events = CALENDAR_CARD_EVENTS;
+  const calendarEvents = MOCK_EVENTS.map((event) => ({
+    id: event.id,
+    title: event.title,
+    date: event.date,
+  }));
   return (
     <div>
       <Navbar mode={"VolunteerLoggedIn"} />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
-          {events.map((event, idx) => {
-            return <EventCard key={idx} eventTitle={event.eventTitle} date={event.date} />;
+          {events.map((event) => {
+            return <EventCard key={event.id} eventId={event.id} eventTitle={event.eventTitle} date={event.date} />;
           })}
         </div>
         <div className="flex justify-between items-center mb-6">
@@ -97,6 +100,7 @@ export default function CalendarPage() {
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
+          events={calendarEvents}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
