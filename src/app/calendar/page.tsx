@@ -8,11 +8,20 @@ import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
 import "@/app/globals.css";
 import Navbar from "../../components/Navbar";
+import SearchResultList from "@/components/SearchResultList";
 import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
+
+export type CalendarEvent = {
+  id: string;
+  title: string;
+  date: Date;
+};
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
+  const [searchInput, setSearchInput] = useState("");
+  const [searchResults, setSearchResults] = useState<CalendarEvent[]>([]);
   const today = new Date();
   const handleNext = () => {
     if (calendarRef.current) {
@@ -52,11 +61,23 @@ export default function CalendarPage() {
   };
 
   const events = CALENDAR_CARD_EVENTS;
-  const calendarEvents = MOCK_EVENTS.map((event) => ({
+  const calendarEvents: CalendarEvent[] = MOCK_EVENTS.map((event) => ({
     id: event.id,
     title: event.title,
     date: event.date,
   }));
+
+  const handleSearch = (value: string) => {
+    setSearchInput(value);
+    if (value == "") {
+      setSearchResults([]);
+      return;
+    }
+    const results = calendarEvents.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
+
+    setSearchResults(results);
+  };
+
   return (
     <div>
       <Navbar mode={"VolunteerLoggedIn"} />
@@ -88,12 +109,21 @@ export default function CalendarPage() {
               Today
             </Button>
           </div>
-          <div className="w-[291px] h-[50px] flex-shrink-0">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
-            />
+          <div className="relative w-[291px] flex-col">
+            <div className="h-[50px] flex-shrink-0">
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
+                value={searchInput}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
+            {searchResults.length > 0 && (
+              <div className="absolute top-full left-0 w-full bg-white rounded-lg shadow-lg mt-2 z-50 max-h-60 overflow-y-auto">
+                <SearchResultList results={searchResults} />
+              </div>
+            )}
           </div>
         </div>
 
