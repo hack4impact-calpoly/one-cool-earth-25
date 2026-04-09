@@ -6,6 +6,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
+
+import NavBarWrapper from "../../components/NavbarWrapper";
+
 //import "@/app/globals.css";
 import Navbar from "../../components/Navbar";
 
@@ -93,7 +96,7 @@ export default function CalendarPage() {
   }));*/
   return (
     <div>
-      <Navbar mode={"VolunteerLoggedIn"} />
+      <NavBarWrapper />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">

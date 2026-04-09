@@ -1,10 +1,10 @@
 import AdminEventsPage from "@/components/AdminEventsPage";
-import Navbar from "../../components/Navbar";
+import NavBarWrapper from "../../components/NavbarWrapper";
 
 export default function CreateAdminEventsPage() {
   return (
     <div>
-      <Navbar mode={"Admin"} />
+      <NavBarWrapper />
       <AdminEventsPage />
     </div>
   );
