@@ -25,18 +25,26 @@ export default function CalendarPage() {
   const today = new Date();
   const [events, setEvents] = useState<CalendarEvent[]>([]); // New state for live data
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await fetch("/api/events");
         const data = await response.json();
-        setEvents(data);
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to fetch events");
+        }
+
+        setEvents(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch events:", error);
+        setEvents([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchEvents();
   }, []); // Empty array ensures this only runs once on mount
 
@@ -89,6 +97,7 @@ export default function CalendarPage() {
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
+          {loading ? <div className="py-4 text-lg">Loading events...</div> : null}
           {events.map((event) => {
             return (
               <EventCard key={event.id} eventId={event.id} eventTitle={event.title} date={new Date(event.start)} />
