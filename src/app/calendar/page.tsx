@@ -1,19 +1,56 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Import the icons
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
-import "@/app/globals.css";
+
 import NavBarWrapper from "../../components/NavbarWrapper";
-import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
+
+//import "@/app/globals.css";
+import Navbar from "../../components/Navbar";
+
+//import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events"; used for demo
+
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  description?: string;
+  location?: string;
+}
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const today = new Date();
+  const [events, setEvents] = useState<CalendarEvent[]>([]); // New state for live data
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/events");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to fetch events");
+        }
+
+        setEvents(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []); // Empty array ensures this only runs once on mount
+
   const handleNext = () => {
     if (calendarRef.current) {
       const threeMonthsAhead = new Date(today.getFullYear(), today.getMonth() + 3, 1);
@@ -51,20 +88,23 @@ export default function CalendarPage() {
     }
   };
 
-  const events = CALENDAR_CARD_EVENTS;
-  const calendarEvents = MOCK_EVENTS.map((event) => ({
+  //const events = CALENDAR_CARD_EVENTS;
+  /*const calendarEvents = MOCK_EVENTS.map((event) => ({
     id: event.id,
     title: event.title,
     date: event.date,
-  }));
+  }));*/
   return (
     <div>
       <NavBarWrapper />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
+          {loading ? <div className="py-4 text-lg">Loading events...</div> : null}
           {events.map((event) => {
-            return <EventCard key={event.id} eventId={event.id} eventTitle={event.eventTitle} date={event.date} />;
+            return (
+              <EventCard key={event.id} eventId={event.id} eventTitle={event.title} date={new Date(event.start)} />
+            );
           })}
         </div>
         <div className="flex justify-between items-center mb-6">
@@ -100,7 +140,7 @@ export default function CalendarPage() {
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
-          events={calendarEvents}
+          events={events}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
