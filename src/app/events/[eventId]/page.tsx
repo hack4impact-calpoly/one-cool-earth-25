@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import EventDetails from "@/components/EventDetails";
 import VolunteerList from "@/components/VolunteerList";
-import NavBar from "@/components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/events.module.css";
 import { MOCK_EVENTS } from "@/data/events";
 
@@ -45,7 +45,7 @@ export default function EventPage() {
   // For now, your EventDetails already has defaultData.
   return (
     <div className={styles.page}>
-      <NavBar mode="VolunteerLoggedIn" />
+      <NavBarWrapper />
       <main className={styles.main}>
         {isAdminView && (
           <div className="mb-3 flex justify-end">

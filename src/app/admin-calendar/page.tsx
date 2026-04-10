@@ -7,7 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
 import "@/app/globals.css";
-import Navbar from "../../components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
 
 export default function CalendarPage() {
@@ -59,7 +59,7 @@ export default function CalendarPage() {
   }));
   return (
     <div>
-      <Navbar mode={"Admin"} />
+      <NavBarWrapper />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
@@ -71,6 +71,7 @@ export default function CalendarPage() {
                 eventTitle={event.eventTitle}
                 date={event.date}
                 detailsRouteBase="/admin-events"
+                showRegister={false}
               />
             );
           })}

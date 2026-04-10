@@ -6,9 +6,16 @@ interface EventProps {
   eventTitle: string;
   date: Date;
   detailsRouteBase?: string;
+  showRegister?: boolean;
 }
 
-export default function EventCard({ eventId, eventTitle, date, detailsRouteBase = "/events" }: EventProps) {
+export default function EventCard({
+  eventId,
+  eventTitle,
+  date,
+  detailsRouteBase = "/events",
+  showRegister = true,
+}: EventProps) {
   const datePart = date.toLocaleDateString("en-US", { month: "long", day: "numeric" });
   const timePart = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
   const router = useRouter();
@@ -25,7 +32,11 @@ export default function EventCard({ eventId, eventTitle, date, detailsRouteBase 
       >
         Learn More
       </button>
-      <button className="bg-[#226999] m-1 p-2 text-white">Register!</button>
+      {showRegister ? (
+        <button onClick={() => router.push(`/events/${eventId}/register`)} className="bg-[#226999] m-1 p-2 text-white">
+          Register!
+        </button>
+      ) : null}
     </div>
   );
 }

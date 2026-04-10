@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import NavBar from "@/components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 import EventDetails from "@/components/EventDetails";
 import VolunteerList from "@/components/VolunteerList";
 import styles from "@/styles/events.module.css";
@@ -42,7 +42,7 @@ export default function AdminEventPage() {
 
   return (
     <div className={styles.page}>
-      <NavBar mode="Admin" />
+      <NavBarWrapper />
       <main className={styles.main}>
         {isAdminView && (
           <div className="mb-3 flex justify-end">
