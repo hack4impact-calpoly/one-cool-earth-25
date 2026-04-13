@@ -1,10 +1,10 @@
 import VolunteerEventsPage from "@/components/VolunteerEventsPage";
-import Navbar from "../../components/Navbar";
+import NavBarWrapper from "../../components/NavbarWrapper";
 
 export default function CreateEventsPage() {
   return (
     <div>
-      <Navbar mode={"VolunteerLoggedIn"} />
+      <NavBarWrapper />
       <VolunteerEventsPage />
     </div>
   );

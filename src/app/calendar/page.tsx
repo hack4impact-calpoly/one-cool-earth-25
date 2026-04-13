@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -7,14 +7,45 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import styles from "@/styles/VolunteerEventsPage.module.css";
-import "@/app/globals.css";
-import Navbar from "../../components/Navbar";
 import { MOCK_EVENTS } from "@/data/events";
+import NavBarWrapper from "../../components/NavbarWrapper";
+
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  description?: string;
+  location?: string;
+}
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
   const today = new Date();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/events");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to fetch events");
+        }
+
+        setEvents(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   const handleNext = () => {
     if (calendarRef.current) {
@@ -52,21 +83,16 @@ export default function CalendarPage() {
     }
   };
 
-  const events = MOCK_EVENTS.filter((event) => event.section === "upcoming");
-  const calendarEvents = MOCK_EVENTS.map((event) => ({
-    id: event.id,
-    title: event.title,
-    date: event.date,
-  }));
+  const upcomingCardEvents = MOCK_EVENTS.filter((event) => event.section === "upcoming");
 
   return (
     <div>
-      <Navbar mode={"VolunteerLoggedIn"} />
+      <NavBarWrapper />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
 
         <div className={styles.row}>
-          {events.map((event) => (
+          {upcomingCardEvents.map((event) => (
             <VolunteerEventCard key={event.id} event={event} />
           ))}
         </div>
@@ -102,10 +128,12 @@ export default function CalendarPage() {
           </div>
         </div>
 
+        {loading ? <div className="py-4 text-lg">Loading events...</div> : null}
+
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
-          events={calendarEvents}
+          events={events}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"

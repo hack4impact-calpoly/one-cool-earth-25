@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styles from "../../styles/WorkdayReport.module.css";
 import WorkdayReportCard from "../../components/WorkdayReportCard";
-import NavBar from "@/components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 
 type Table = {
   name: string;
@@ -34,7 +34,7 @@ export default function WorkdayReport() {
 
   return (
     <div>
-      <NavBar mode="Admin" />
+      <NavBarWrapper />
       <div className={styles.container}>
         <div className={styles.topBar}>
           <div className={styles.headerTitle}>Garden Workday Report</div>

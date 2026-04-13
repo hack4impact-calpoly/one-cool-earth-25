@@ -2,7 +2,7 @@
 
 import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 
 export default function AccountPage() {
   const { signOut } = useClerk();
@@ -15,7 +15,7 @@ export default function AccountPage() {
 
   return (
     <div>
-      <NavBar mode="VolunteerLoggedIn" />
+      <NavBarWrapper />
       <main className="p-8 font-lora">
         <h1 className="text-4xl font-bold">My Account</h1>
         <div className="mt-8">

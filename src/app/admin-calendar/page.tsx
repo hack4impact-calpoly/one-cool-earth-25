@@ -8,7 +8,7 @@ import { Button } from "@mui/material";
 import AdminEventCard from "@/components/AdminEventCard";
 import styles from "@/styles/AdminEventsPage.module.css";
 import "@/app/globals.css";
-import Navbar from "../../components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 import { MOCK_EVENTS } from "@/data/events";
 
 export default function CalendarPage() {
@@ -49,7 +49,6 @@ export default function CalendarPage() {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.today();
-
       setViewDate(new Date());
     }
   };
@@ -63,7 +62,7 @@ export default function CalendarPage() {
 
   return (
     <div>
-      <Navbar mode={"Admin"} />
+      <NavBarWrapper />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
 
