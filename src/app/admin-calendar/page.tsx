@@ -1,19 +1,21 @@
 "use client";
 import React, { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react"; // Import the icons
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
-import EventCard from "../../components/EventCard";
+import AdminEventCard from "@/components/AdminEventCard";
+import styles from "@/styles/AdminEventsPage.module.css";
 import "@/app/globals.css";
 import NavBarWrapper from "@/components/NavbarWrapper";
-import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
+import { MOCK_EVENTS } from "@/data/events";
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const today = new Date();
+
   const handleNext = () => {
     if (calendarRef.current) {
       const threeMonthsAhead = new Date(today.getFullYear(), today.getMonth() + 3, 1);
@@ -27,6 +29,7 @@ export default function CalendarPage() {
       }
     }
   };
+
   const handlePrev = () => {
     if (calendarRef.current) {
       const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, 1);
@@ -46,40 +49,31 @@ export default function CalendarPage() {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.today();
-
       setViewDate(new Date());
     }
   };
 
-  const events = CALENDAR_CARD_EVENTS;
+  const events = MOCK_EVENTS.filter((event) => event.section === "upcoming");
   const calendarEvents = MOCK_EVENTS.map((event) => ({
     id: event.id,
     title: event.title,
     date: event.date,
   }));
+
   return (
     <div>
       <NavBarWrapper />
       <div className="p-8 font-lora">
         <div className="text-4xl font-bold">Upcoming Events</div>
-        <div className="flex justify-start flex-nowrap overflow-x-scroll">
-          {events.map((event) => {
-            return (
-              <EventCard
-                key={event.id}
-                eventId={event.id}
-                eventTitle={event.eventTitle}
-                date={event.date}
-                detailsRouteBase="/admin-events"
-                showRegister={false}
-              />
-            );
-          })}
+
+        <div className={styles.row}>
+          {events.map((event) => (
+            <AdminEventCard key={event.id} event={event} />
+          ))}
         </div>
+
         <div className="flex justify-between items-center mb-6">
-          {" "}
           <div className="flex items-center gap-4">
-            {" "}
             <div className="flex gap-2">
               <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
                 <ChevronLeft size={40} color="#BEBEBE" />
@@ -92,11 +86,13 @@ export default function CalendarPage() {
               {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
             </h2>
           </div>
+
           <div>
             <Button className="hover:opacity-70 transition-opacity" variant="outlined" onClick={handleReset}>
               Today
             </Button>
           </div>
+
           <div className="w-[291px] h-[50px] flex-shrink-0">
             <input
               type="text"

@@ -1,96 +1,8 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import styles from "@/styles/VolunteerEventsPage.module.css";
-import { AppEvent, MOCK_EVENTS, VolunteerStatus } from "@/data/events";
-
-function Status({ status }: { status: VolunteerStatus }) {
-  if (status === "none") return null;
-
-  const label = status === "missing_waiver" ? "Missing Waiver" : status === "attended" ? "Attended" : "Missed";
-
-  const className =
-    status === "missing_waiver"
-      ? styles.statusMissing
-      : status === "attended"
-        ? styles.statusAttended
-        : styles.statusMissed;
-
-  return (
-    <div className={`${styles.status} ${className}`}>
-      {status !== "missing_waiver" ? (
-        <span className={styles.statusIcon}>{status === "attended" ? "✓" : "✕"}</span>
-      ) : (
-        <span className={styles.statusIcon}>✕</span>
-      )}
-      <span>{label}</span>
-    </div>
-  );
-}
-
-function EventCard({ event }: { event: AppEvent }) {
-  const monthLabel = event.date.toLocaleString("en-US", { month: "long" });
-  const dayNumber = event.date.getDate();
-  const status = event.volunteerStatus ?? "none";
-  const router = useRouter();
-  const isMissingWaiver = status === "missing_waiver";
-
-  return (
-    <div className={`${styles.card} ${event.section === "upcoming" ? styles.cardHoverEnabled : ""}`}>
-      <div className={styles.cardBg} style={{ backgroundImage: `url(${event.imageUrl})` }} />
-      <div className={styles.cardOverlay} />
-
-      <div className={styles.statusWrap}>
-        <Status status={status} />
-      </div>
-
-      <div className={styles.cardContent}>
-        <div className={styles.cardDate}>
-          <div className={styles.cardMonth}>{monthLabel}</div>
-          <div className={styles.cardDay}>{dayNumber}</div>
-        </div>
-
-        <div className={styles.cardLocation}>
-          <span className={styles.pin}>📍</span>
-          <span className={styles.school}>{event.school}</span>
-        </div>
-      </div>
-
-      <div className={styles.hoverPanel}>
-        <div className={styles.hoverPanelInner}>
-          <div className={styles.hoverTitle}>
-            {event.date.toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
-          </div>
-          <div className={styles.hoverText}>
-            {event.startTime} - {event.endTime}
-          </div>
-          <div className={styles.hoverText}>{event.school}</div>
-
-          <div className={styles.hoverButtons}>
-            <button
-              type="button"
-              className={styles.hoverBtnLight}
-              onClick={() => {
-                if (isMissingWaiver) return;
-                router.push(`/events/${event.id}`);
-              }}
-            >
-              {isMissingWaiver ? "Sign Waiver" : "Event Info"}
-            </button>
-
-            <button type="button" className={styles.hoverBtnDark}>
-              Edit Registration
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import VolunteerEventCard from "@/components/VolunteerEventCard";
+import { MOCK_EVENTS } from "@/data/events";
 
 function DateRangeControl({
   start,
@@ -108,6 +20,7 @@ function DateRangeControl({
     const [y, m, d] = value.split("-").map(Number);
     return new Date(y, m - 1, d);
   };
+
   return (
     <div className={styles.dateRow}>
       <input
@@ -159,7 +72,7 @@ export default function VolunteerEventsPage() {
 
         <div className={styles.row}>
           {upcomingSorted.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <VolunteerEventCard key={event.id} event={event} />
           ))}
         </div>
       </section>
@@ -171,7 +84,7 @@ export default function VolunteerEventsPage() {
 
         <div className={styles.row}>
           {pastSorted.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <VolunteerEventCard key={event.id} event={event} />
           ))}
         </div>
       </section>
