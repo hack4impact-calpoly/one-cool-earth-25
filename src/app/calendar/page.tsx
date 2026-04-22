@@ -1,19 +1,13 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react"; // Import the icons
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
 import EventCard from "../../components/EventCard";
 import EventPopup from "@/components/EventPopup";
-
 import NavBarWrapper from "../../components/NavbarWrapper";
-
-//import "@/app/globals.css";
-import Navbar from "../../components/Navbar";
-
-//import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events"; used for demo
 
 interface CalendarEvent {
   id: string;
@@ -27,8 +21,19 @@ export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const today = new Date();
-  const [events, setEvents] = useState<CalendarEvent[]>([]); // New state for live data
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+
+  const handleEventClick = (clickInfo: any) => {
+    const clicked = events.find((e) => e.id === clickInfo.event.id);
+    if (clicked) setSelectedEvent(clicked);
+  };
+
+  // Remove deleted event from state without a page refresh
+  const handleDeleteEvent = (id: string) => {
+    setEvents((prev) => prev.filter((e) => e.id !== id));
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -65,13 +70,13 @@ export default function CalendarPage() {
       }
     }
   };
+
   const handlePrev = () => {
     if (calendarRef.current) {
       const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       if (viewDate > oneMonthAgo) {
         const calendarApi = calendarRef.current.getApi();
         calendarApi.prev();
-
         const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
         setViewDate(newDate);
       } else {
@@ -84,17 +89,10 @@ export default function CalendarPage() {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.today();
-
       setViewDate(new Date());
     }
   };
 
-  //const events = CALENDAR_CARD_EVENTS;
-  /*const calendarEvents = MOCK_EVENTS.map((event) => ({
-    id: event.id,
-    title: event.title,
-    date: event.date,
-  }));*/
   return (
     <div>
       <NavBarWrapper />
@@ -102,16 +100,12 @@ export default function CalendarPage() {
         <div className="text-4xl font-bold">Upcoming Events</div>
         <div className="flex justify-start flex-nowrap overflow-x-scroll">
           {loading ? <div className="py-4 text-lg">Loading events...</div> : null}
-          {events.map((event) => {
-            return (
-              <EventCard key={event.id} eventId={event.id} eventTitle={event.title} date={new Date(event.start)} />
-            );
-          })}
+          {events.map((event) => (
+            <EventCard key={event.id} eventId={event.id} eventTitle={event.title} date={new Date(event.start)} />
+          ))}
         </div>
         <div className="flex justify-between items-center mb-6">
-          {" "}
           <div className="flex items-center gap-4">
-            {" "}
             <div className="flex gap-2">
               <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
                 <ChevronLeft size={40} color="#BEBEBE" />
