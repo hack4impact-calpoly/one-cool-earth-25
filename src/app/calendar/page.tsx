@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight, ChevronsUpDown, House, Leaf, Shovel, Sprout } from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import styles from "@/styles/VolunteerEventsPage.module.css";
+import calendarStyles from "@/styles/CalendarPage.module.css";
 import { MOCK_EVENTS } from "@/data/events";
 import NavBarWrapper from "../../components/NavbarWrapper";
 
@@ -23,6 +24,7 @@ export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const today = new Date();
 
   useEffect(() => {
@@ -84,22 +86,68 @@ export default function CalendarPage() {
   };
 
   const upcomingCardEvents = MOCK_EVENTS.filter((event) => event.section === "upcoming");
+  const responsibilities = [
+    { label: "Planting", Icon: Leaf },
+    { label: "Building Plant Beds", Icon: House },
+    { label: "Weeding", Icon: Sprout },
+    { label: "Spreading Mulch & Woodchips", Icon: Shovel },
+    { label: "Creating Garden Art", Icon: BookOpen },
+  ];
 
   return (
     <div>
       <NavBarWrapper />
-      <div className="p-8 font-lora">
-        <div className="text-4xl font-bold">Upcoming Events</div>
+      <div className={calendarStyles.page}>
+        <h1 className={calendarStyles.pageTitle}>Upcoming Events</h1>
 
-        <div className={styles.row}>
+        <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
           {upcomingCardEvents.map((event) => (
             <VolunteerEventCard key={event.id} event={event} />
           ))}
         </div>
 
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <div className="flex gap-2">
+        <section className={calendarStyles.responsibilitiesSection}>
+          <h2 className={calendarStyles.responsibilitiesTitle}>Garden Workday Responsibilities</h2>
+          <div className={calendarStyles.responsibilitiesGrid}>
+            {responsibilities.map(({ label, Icon }) => (
+              <div key={label} className={calendarStyles.responsibilityItem}>
+                <Icon size={44} className={calendarStyles.responsibilityIcon} aria-hidden="true" />
+                <span className={calendarStyles.responsibilityLabel}>{label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={calendarStyles.learnMoreSection}>
+          <button
+            type="button"
+            className={calendarStyles.learnMoreButton}
+            onClick={() => setLearnMoreOpen((open) => !open)}
+            aria-expanded={learnMoreOpen}
+          >
+            <span>LEARN MORE</span>
+            <ChevronsUpDown size={14} className={calendarStyles.learnMoreIcon} aria-hidden="true" />
+          </button>
+
+          {learnMoreOpen ? (
+            <div className={calendarStyles.learnMoreContent}>
+              <p>
+                If you are interested in joining for a Garden Workday, please fill out our Volunteer Waiver which will
+                be sent upon registration. At the day and time of the event, you will enter at the school front office
+                and the staff will direct you to the garden. Please bring a hat, sunscreen, water, and wear closed-toed
+                shoes.
+              </p>
+              <p>
+                Workdays are weather dependent - it&apos;s always a good rule of thumb to call the office ahead of time
+                to ensure that the event is a go.
+              </p>
+            </div>
+          ) : null}
+        </section>
+
+        <div className={calendarStyles.controlsRow}>
+          <div className={calendarStyles.controlsLeft}>
+            <div className={calendarStyles.arrowGroup}>
               <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
                 <ChevronLeft size={40} color="#BEBEBE" />
               </button>
@@ -108,27 +156,23 @@ export default function CalendarPage() {
               </button>
             </div>
 
-            <h2 className="text-2xl font-bold">
+            <h2 className={calendarStyles.monthLabel}>
               {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
             </h2>
           </div>
 
-          <div>
-            <Button className="hover:opacity-70 transition-opacity" variant="outlined" onClick={handleReset}>
+          <div className={calendarStyles.todayWrap}>
+            <Button className={calendarStyles.todayButton} variant="outlined" onClick={handleReset}>
               Today
             </Button>
           </div>
 
-          <div className="w-[291px] h-[50px] flex-shrink-0">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
-            />
+          <div className={calendarStyles.searchBox}>
+            <input type="text" placeholder="Search" className={calendarStyles.searchInput} />
           </div>
         </div>
 
-        {loading ? <div className="py-4 text-lg">Loading events...</div> : null}
+        {loading ? <div className={calendarStyles.loadingText}>Loading events...</div> : null}
 
         <FullCalendar
           ref={calendarRef}
