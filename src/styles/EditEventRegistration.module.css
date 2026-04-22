@@ -1,0 +1,164 @@
+.page {
+  width: 100%;
+  height: fit-content;
+  padding: 5rem 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.title,
+.subTitle,
+.date,
+.participants label,
+.inputField {
+  font-weight: bold;
+}
+
+.title {
+  font-size: 2.2rem;
+}
+
+.subTitle,
+.date {
+  font-size: 1.5rem;
+}
+
+.subTitle {
+  color: #635c5c;
+}
+
+.date {
+  color: #8d8d8d;
+}
+
+.participants,
+.inputField {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.5rem;
+}
+
+.participant {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.participant input,
+.inputField input,
+.inputField textarea {
+  background-color: #f9fbff;
+  border: 2px solid #527abe;
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex-grow: 1;
+}
+
+.participant input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.participant input:disabled {
+  border-color: #b3bed0;
+}
+
+.inputField input,
+.inputField textarea {
+  width: 100%;
+}
+
+.participant div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.popupContainer {
+  position: relative;
+}
+
+.popup {
+  position: absolute;
+  right: 0;
+  border: 1px solid #c2c2c2;
+  color: #616060;
+  border-radius: 5px;
+  background-color: white;
+  width: fit-content;
+  min-width: 6rem;
+  font-size: 0.8rem;
+  padding: 0.2rem;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.add,
+.buttonContainer button {
+  background-color: #dcf9c9;
+  padding: 0.5rem;
+  border: 1.5px solid #568264;
+  border-radius: 5px;
+  margin: 0.5rem;
+}
+
+.add:hover {
+  background-color: #badfa2;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  border: 1px solid rgb(195, 195, 195);
+  border-top: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  padding-top: 10px;
+  transform: translateY(-10px);
+}
+
+.dropdown div {
+  background-color: rgb(255, 255, 255);
+  padding: 0.5rem;
+  width: 100%;
+  display: flex;
+}
+
+.dropdown div:hover {
+  background-color: #ecebeb;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: bold;
+  color: #568264;
+}
+
+.red {
+  border-color: #e14f4f !important;
+  background-color: #fee9e9 !important;
+  color: #e14f4f !important;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 2rem;
+  }
+}
