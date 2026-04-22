@@ -2,7 +2,7 @@
 
 import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 
 // admin only account
 
@@ -17,7 +17,7 @@ export default function AccountPage() {
 
   return (
     <div>
-      <NavBar mode="Admin" />
+      <NavBarWrapper />
       <main className="p-8 font-lora">
         <h1 className="text-4xl font-bold">My Account</h1>
         <div className="mt-8">
