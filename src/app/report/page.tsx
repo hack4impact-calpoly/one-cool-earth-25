@@ -43,7 +43,7 @@ export default function WorkdayReport() {
       <div className={styles.container}>
         <div className={styles.mobileHeader}>
           <div className={styles.mobileHeaderBar}>
-            <div className={styles.mobileBrand}>GARDEN WORKDAY EVENT</div>
+            <div className={styles.mobileBrand}>GARDEN WORKDAY EVENTS</div>
 
             <button type="button" className={styles.mobileMenuButton} aria-label="Open menu">
               <span className={styles.mobileMenuLine} />
