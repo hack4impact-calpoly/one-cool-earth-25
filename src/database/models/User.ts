@@ -6,6 +6,11 @@ const UserSchema = new mongoose.Schema({
   firstName: { type: String },
   lastName: { type: String },
   dob: { type: String },
+  role: {
+    type: String,
+    enum: ["admin", "volunteer"],
+    default: "volunteer",
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

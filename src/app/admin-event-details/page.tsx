@@ -6,13 +6,13 @@ import styles from "@/styles/events.module.css";
 // ✅ Update these imports to your actual component paths
 import EventDetailsCard from "@/components/EventDetails";
 import VolunteerList from "@/components/VolunteerList";
-import NavBar from "@/components/Navbar";
+import NavBarWrapper from "@/components/NavbarWrapper";
 
 export default function AdminEventDetailsPage() {
   // Later you can fetch event by params.id and pass data into the components.
   return (
     <div className={styles.page}>
-      <NavBar mode="Admin" />
+      <NavBarWrapper />
       <main className={styles.main}>
         <h1 className={styles.pageTitle}>Garden Workday</h1>
 

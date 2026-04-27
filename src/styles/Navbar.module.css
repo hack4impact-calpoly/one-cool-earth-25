@@ -74,3 +74,66 @@
   background: #e7f0ff;
   border: 1px solid #000;
 }
+
+/* Hamburger — not shown on desktop */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Mobile dropdown */
+.mobileMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  z-index: 100;
+}
+
+.mobileLink {
+  display: block;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobileLink:last-child {
+  border-bottom: none;
+}
+
+.mobileLink.active {
+  color: green;
+}
+
+.nav {
+  position: relative;
+}
+
+@media (max-width: 640px) {
+  /* Hide desktop links */
+  .container {
+    display: none;
+  }
+
+  /* Show hamburger */
+  .hamburger {
+    display: block;
+  }
+
+  /* Show mobile menu when open */
+  .mobileMenu {
+    display: flex;
+  }
+}

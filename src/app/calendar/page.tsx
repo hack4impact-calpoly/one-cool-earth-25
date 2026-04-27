@@ -1,15 +1,23 @@
 "use client";
-import React, { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react"; // Import the icons
+import React, { useEffect, useRef, useState } from "react";
+import { BookOpen, ChevronLeft, ChevronRight, ChevronsUpDown, House, Leaf, Shovel, Sprout } from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@mui/material";
-import EventCard from "../../components/EventCard";
-import "@/app/globals.css";
-import Navbar from "../../components/Navbar";
-import SearchResultList from "@/components/SearchResultList";
-import { CALENDAR_CARD_EVENTS, MOCK_EVENTS } from "@/data/events";
+import VolunteerEventCard from "@/components/VolunteerEventCard";
+import styles from "@/styles/VolunteerEventsPage.module.css";
+import calendarStyles from "@/styles/CalendarPage.module.css";
+import { MOCK_EVENTS } from "@/data/events";
+import NavBarWrapper from "../../components/NavbarWrapper";
+
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  description?: string;
+  location?: string;
+}
 
 export type CalendarEvent = {
   id: string;
@@ -22,7 +30,33 @@ export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const today = new Date();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/events");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to fetch events");
+        }
+
+        setEvents(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   const handleNext = () => {
     if (calendarRef.current) {
       const threeMonthsAhead = new Date(today.getFullYear(), today.getMonth() + 3, 1);
@@ -36,13 +70,13 @@ export default function CalendarPage() {
       }
     }
   };
+
   const handlePrev = () => {
     if (calendarRef.current) {
       const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       if (viewDate > oneMonthAgo) {
         const calendarApi = calendarRef.current.getApi();
         calendarApi.prev();
-
         const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
         setViewDate(newDate);
       } else {
@@ -55,7 +89,6 @@ export default function CalendarPage() {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.today();
-
       setViewDate(new Date());
     }
   };
@@ -77,22 +110,69 @@ export default function CalendarPage() {
 
     setSearchResults(results);
   };
+  const upcomingCardEvents = MOCK_EVENTS.filter((event) => event.section === "upcoming");
+  const responsibilities = [
+    { label: "Planting", Icon: Leaf },
+    { label: "Building Plant Beds", Icon: House },
+    { label: "Weeding", Icon: Sprout },
+    { label: "Spreading Mulch & Woodchips", Icon: Shovel },
+    { label: "Creating Garden Art", Icon: BookOpen },
+  ];
 
   return (
     <div>
-      <Navbar mode={"VolunteerLoggedIn"} />
-      <div className="p-8 font-lora">
-        <div className="text-4xl font-bold">Upcoming Events</div>
-        <div className="flex justify-start flex-nowrap overflow-x-scroll">
-          {events.map((event) => {
-            return <EventCard key={event.id} eventId={event.id} eventTitle={event.eventTitle} date={event.date} />;
-          })}
+      <NavBarWrapper />
+      <div className={calendarStyles.page}>
+        <h1 className={calendarStyles.pageTitle}>Upcoming Events</h1>
+
+        <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
+          {upcomingCardEvents.map((event) => (
+            <VolunteerEventCard key={event.id} event={event} />
+          ))}
         </div>
-        <div className="flex justify-between items-center mb-6">
-          {" "}
-          <div className="flex items-center gap-4">
-            {" "}
-            <div className="flex gap-2">
+
+        <section className={calendarStyles.responsibilitiesSection}>
+          <h2 className={calendarStyles.responsibilitiesTitle}>Garden Workday Responsibilities</h2>
+          <div className={calendarStyles.responsibilitiesGrid}>
+            {responsibilities.map(({ label, Icon }) => (
+              <div key={label} className={calendarStyles.responsibilityItem}>
+                <Icon size={44} className={calendarStyles.responsibilityIcon} aria-hidden="true" />
+                <span className={calendarStyles.responsibilityLabel}>{label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={calendarStyles.learnMoreSection}>
+          <button
+            type="button"
+            className={calendarStyles.learnMoreButton}
+            onClick={() => setLearnMoreOpen((open) => !open)}
+            aria-expanded={learnMoreOpen}
+          >
+            <span>LEARN MORE</span>
+            <ChevronsUpDown size={14} className={calendarStyles.learnMoreIcon} aria-hidden="true" />
+          </button>
+
+          {learnMoreOpen ? (
+            <div className={calendarStyles.learnMoreContent}>
+              <p>
+                If you are interested in joining for a Garden Workday, please fill out our Volunteer Waiver which will
+                be sent upon registration. At the day and time of the event, you will enter at the school front office
+                and the staff will direct you to the garden. Please bring a hat, sunscreen, water, and wear closed-toed
+                shoes.
+              </p>
+              <p>
+                Workdays are weather dependent - it&apos;s always a good rule of thumb to call the office ahead of time
+                to ensure that the event is a go.
+              </p>
+            </div>
+          ) : null}
+        </section>
+
+        <div className={calendarStyles.controlsRow}>
+          <div className={calendarStyles.controlsLeft}>
+            <div className={calendarStyles.arrowGroup}>
               <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
                 <ChevronLeft size={40} color="#BEBEBE" />
               </button>
@@ -100,12 +180,14 @@ export default function CalendarPage() {
                 <ChevronRight size={40} color="#BEBEBE" />
               </button>
             </div>
-            <h2 className="text-2xl font-bold">
+
+            <h2 className={calendarStyles.monthLabel}>
               {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
             </h2>
           </div>
-          <div>
-            <Button className="hover:opacity-70 transition-opacity" variant="outlined" onClick={handleReset}>
+
+          <div className={calendarStyles.todayWrap}>
+            <Button className={calendarStyles.todayButton} variant="outlined" onClick={handleReset}>
               Today
             </Button>
           </div>
@@ -127,10 +209,12 @@ export default function CalendarPage() {
           </div>
         </div>
 
+        {loading ? <div className={calendarStyles.loadingText}>Loading events...</div> : null}
+
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
-          events={calendarEvents}
+          events={events}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
