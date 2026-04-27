@@ -3,7 +3,7 @@ import User from "@/database/models/User";
 import { clerkClient, auth } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
-  const { clerkId, email, firstName, lastName, dob } = await req.json();
+  const { clerkId, email, firstName, lastName, dob, password } = await req.json();
 
   if (!clerkId) {
     return Response.json({ success: false, error: "Missing clerkId" }, { status: 400 });
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
 
   await client.users.updateUser(clerkId, {
     publicMetadata: { role },
+    ...(password && { password }),
   });
 
   return Response.json({ success: true });
