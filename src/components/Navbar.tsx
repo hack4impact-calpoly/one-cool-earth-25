@@ -89,11 +89,6 @@ export default function NavBar({ mode }: { mode: NavMode }) {
       </div>
 
       {/* mobile */}
-      <button className={styles.hamburger} onClick={() => setMenuOpen((prev) => !prev)} aria-label="Toggle menu">
-        ☰
-      </button>
-
-      {/* mobile */}
       {menuOpen && (
         <div className={styles.mobileMenu}>
           {links.map((item) => {
