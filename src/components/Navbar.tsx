@@ -7,11 +7,7 @@ import { useState } from "react";
 import styles from "@/styles/Navbar.module.css";
 
 type NavMode = "Admin" | "VolunteerNotLoggedIn" | "VolunteerLoggedIn";
-
-type NavItem = {
-  label: string;
-  href: string;
-};
+type NavItem = { label: string; href: string };
 
 const NAV_LINKS: Record<NavMode, NavItem[]> = {
   Admin: [
@@ -91,6 +87,30 @@ export default function NavBar({ mode }: { mode: NavMode }) {
           );
         })}
       </div>
+
+      {/* mobile */}
+      <button className={styles.hamburger} onClick={() => setMenuOpen((prev) => !prev)} aria-label="Toggle menu">
+        ☰
+      </button>
+
+      {/* mobile */}
+      {menuOpen && (
+        <div className={styles.mobileMenu}>
+          {links.map((item) => {
+            const active = isActivePath(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${styles.mobileLink} ${active ? styles.active : ""}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label.toUpperCase()}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </nav>
   );
 }
