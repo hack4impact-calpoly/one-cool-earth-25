@@ -2,9 +2,18 @@
 
 .nav {
   display: flex;
+  flex-direction: column;
   justify-content: space-between; /* changed from flex-end */
   align-items: center;
   padding: 20px 40px;
+  position: relative;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 /* LEFT SIDE */
@@ -75,65 +84,116 @@
   border: 1px solid #000;
 }
 
-/* Hamburger — not shown on desktop */
-.hamburger {
+/* burger button */
+.burger {
   display: none;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
+  width: 33px;
+  height: 33px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background: #fff;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
 }
 
-/* Mobile dropdown */
+.burgerLine {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #000;
+  border-radius: 999px;
+}
+
+/* mobile dropdown */
 .mobileMenu {
   display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border-top: 1px solid #eee;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mobileMenuOpen {
+  display: flex;
+  width: 60%;
   flex-direction: column;
-  z-index: 100;
+  align-items: center;
+  margin-top: 41px;
+  padding: 24px;
+  border-width: 1px;
+  border-color: #000;
+  border-radius: 10px;
+  background: #fff;
+  gap: 10px;
+  position: absolute;
+  right: 20px;
+  z-index: 10;
 }
 
 .mobileLink {
-  display: block;
-  padding: 0.85rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  width: 100%;
+  border: 1px solid transparent;
+  font-family: "Patua One", serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 100%;
   text-decoration: none;
-  color: #333;
-  border-bottom: 1px solid #f0f0f0;
+  color: #000;
+  background: transparent;
 }
 
-.mobileLink:last-child {
-  border-bottom: none;
-}
+/* mobile */
+@media (max-width: 768px) {
+  .nav {
+    padding: 16px 20px;
+  }
 
-.mobileLink.active {
-  color: green;
-}
+  .topRow {
+    justify-content: center;
+    position: relative;
+    gap: 14px;
+  }
 
-.nav {
-  position: relative;
-}
+  .burger {
+    display: flex;
+    order: 1;
+    position: absolute;
+    right: 0;
+  }
 
-@media (max-width: 640px) {
-  /* Hide desktop links */
-  .container {
+  .brand {
+    order: 2;
+    min-width: 0;
+  }
+
+  .brandLink {
+    gap: 10px;
+  }
+
+  .brandText {
     display: none;
   }
 
-  /* Show hamburger */
-  .hamburger {
-    display: block;
+  .logo {
+    width: 42px;
+    height: 42px;
   }
 
-  /* Show mobile menu when open */
-  .mobileMenu {
-    display: flex;
+  .container {
+    display: none;
+  }
+}
+
+/* desktop */
+@media (min-width: 769px) {
+  .mobileMenu,
+  .mobileMenuOpen {
+    display: none;
   }
 }

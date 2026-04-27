@@ -38,18 +38,50 @@ export default function NavBar({ mode }: { mode: NavMode }) {
 
   return (
     <nav className={styles.nav}>
-      <div className={styles.brand}>
-        <Link href="/calendar" className={styles.brandLink}>
-          <Image src="/logo.png" alt="Garden Workday Logo" width={55} height={61} className={styles.logo} />
-          <span className={styles.brandText}>GARDEN WORKDAY EVENTS</span>
-        </Link>
+      <div className={styles.topRow}>
+        <button
+          className={styles.burger}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+        >
+          <span className={styles.burgerLine}></span>
+          <span className={styles.burgerLine}></span>
+          <span className={styles.burgerLine}></span>
+        </button>
+
+        {/* LEFT SIDE */}
+        <div className={styles.brand}>
+          <Link href="/calendar" className={styles.brandLink}>
+            <Image src="/logo.png" alt="Garden Workday Logo" width={55} height={61} className={styles.logo} />
+            <span className={styles.brandText}>GARDEN WORKDAY EVENTS</span>
+          </Link>
+        </div>
+
+        {/* RIGHT SIDE (your existing pill nav unchanged) */}
+        <div className={styles.container}>
+          {links.map((item) => {
+            const active = isActivePath(pathname, item.href);
+            return (
+              <Link key={item.href} href={item.href} className={`${styles.link} ${active ? styles.active : ""}`}>
+                {item.label.toUpperCase()}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
-      <div className={styles.container}>
+      {/* mobile dropdown burger */}
+      <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}>
         {links.map((item) => {
           const active = isActivePath(pathname, item.href);
           return (
-            <Link key={item.href} href={item.href} className={`${styles.link} ${active ? styles.active : ""}`}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${styles.mobileLink} ${active ? styles.active : ""}`}
+              onClick={() => setMenuOpen(false)}
+            >
               {item.label.toUpperCase()}
             </Link>
           );
