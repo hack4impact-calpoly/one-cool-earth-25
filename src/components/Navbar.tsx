@@ -3,14 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import styles from "@/styles/Navbar.module.css";
 
 type NavMode = "Admin" | "VolunteerNotLoggedIn" | "VolunteerLoggedIn";
-
-type NavItem = {
-  label: string;
-  href: string;
-};
+type NavItem = { label: string; href: string };
 
 const NAV_LINKS: Record<NavMode, NavItem[]> = {
   Admin: [
@@ -37,28 +34,83 @@ const isActivePath = (pathname: string, href: string) => pathname === href || pa
 export default function NavBar({ mode }: { mode: NavMode }) {
   const pathname = usePathname();
   const links = NAV_LINKS[mode] ?? [];
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className={styles.nav}>
-      {/* LEFT SIDE */}
-      <div className={styles.brand}>
-        <Link href="/calendar" className={styles.brandLink}>
-          <Image src="/logo.png" alt="Garden Workday Logo" width={55} height={61} className={styles.logo} />
-          <span className={styles.brandText}>GARDEN WORKDAY EVENTS</span>
-        </Link>
+      <div className={styles.topRow}>
+        <button
+          className={styles.burger}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+        >
+          <span className={styles.burgerLine}></span>
+          <span className={styles.burgerLine}></span>
+          <span className={styles.burgerLine}></span>
+        </button>
+
+        {/* LEFT SIDE */}
+        <div className={styles.brand}>
+          <Link href="/calendar" className={styles.brandLink}>
+            <Image src="/logo.png" alt="Garden Workday Logo" width={55} height={61} className={styles.logo} />
+            <span className={styles.brandText}>GARDEN WORKDAY EVENTS</span>
+          </Link>
+        </div>
+
+        {/* RIGHT SIDE (your existing pill nav unchanged) */}
+        <div className={styles.container}>
+          {links.map((item) => {
+            const active = isActivePath(pathname, item.href);
+            return (
+              <Link key={item.href} href={item.href} className={`${styles.link} ${active ? styles.active : ""}`}>
+                {item.label.toUpperCase()}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
-      {/* RIGHT SIDE (your existing pill nav unchanged) */}
-      <div className={styles.container}>
+      {/* mobile dropdown burger */}
+      <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}>
         {links.map((item) => {
           const active = isActivePath(pathname, item.href);
           return (
-            <Link key={item.href} href={item.href} className={`${styles.link} ${active ? styles.active : ""}`}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${styles.mobileLink} ${active ? styles.active : ""}`}
+              onClick={() => setMenuOpen(false)}
+            >
               {item.label.toUpperCase()}
             </Link>
           );
         })}
       </div>
+
+      {/* mobile */}
+      <button className={styles.hamburger} onClick={() => setMenuOpen((prev) => !prev)} aria-label="Toggle menu">
+        ☰
+      </button>
+
+      {/* mobile */}
+      {menuOpen && (
+        <div className={styles.mobileMenu}>
+          {links.map((item) => {
+            const active = isActivePath(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${styles.mobileLink} ${active ? styles.active : ""}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label.toUpperCase()}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </nav>
   );
 }

@@ -1,0 +1,99 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 20;
+}
+
+.centered {
+  position: fixed;
+  inset: 0;
+  z-index: 21;
+  display: grid;
+  place-items: center;
+}
+
+.modal {
+  position: relative;
+  width: 560px;
+  max-width: 90%;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  padding: 26px 26px 22px;
+  text-align: center;
+  font-family: "Lora", serif;
+}
+
+.closeButton {
+  position: absolute;
+  right: 24px;
+  top: 18px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.successIcon {
+  font-size: 34px;
+  color: green;
+  margin-bottom: 8px;
+}
+
+.errorIcon {
+  font-size: 34px;
+  color: crimson;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.divider {
+  height: 1px;
+  background: #d1d5db;
+  margin: 0 auto 16px;
+  width: 86%;
+}
+
+.description {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.buttonGroup {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+}
+
+.primaryButton {
+  border: 1px solid #86efac;
+  background: #dcfce7;
+  border-radius: 3px;
+  padding: 8px 14px;
+  font-weight: 700;
+  color: #166534;
+  cursor: pointer;
+}
+
+.secondaryButton {
+  border: 1px solid #568264;
+  background: transparent;
+  border-radius: 3px;
+  padding: 8px 14px;
+  font-weight: 700;
+  color: #568264;
+  cursor: pointer;
+}

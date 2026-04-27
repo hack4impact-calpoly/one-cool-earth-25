@@ -120,3 +120,14 @@
 .saveButton:active {
   opacity: 0.8;
 }
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.footerRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}

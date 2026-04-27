@@ -26,7 +26,9 @@ export default function WorkdayReportCard({ tableData }: Props) {
 
               <td className={styles.infoCell}>
                 <div className={styles.infoGroup}>
-                  <span>{data.events} events</span>
+                  <span>
+                    {data.events} {data.events === 1 ? "event" : "events"}
+                  </span>
                   <span>{data.volunteers} volunteers</span>
                   <span>{data.hours} hrs</span>
                 </div>
