@@ -4,33 +4,30 @@ import { BookOpen, ChevronLeft, ChevronRight, ChevronsUpDown, House, Leaf, Shove
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import SearchResultList from "@/components/SearchResultList";
 import { Button } from "@mui/material";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import calendarStyles from "@/styles/CalendarPage.module.css";
 import { MOCK_EVENTS } from "@/data/events";
 import NavBarWrapper from "../../components/NavbarWrapper";
+import { AppEvent } from "@/data/events";
 
-interface CalendarEvent {
+export interface CalendarEvent {
   id: string;
   title: string;
   start: string;
   description?: string;
   location?: string;
-}
-
-export type CalendarEvent = {
-  id: string;
-  title: string;
   date: Date;
-};
+}
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
-  const [searchResults, setSearchResults] = useState<CalendarEvent[]>([]);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [searchResults, setSearchResults] = useState<AppEvent[]>([]);
+  const [events, setEvents] = useState<AppEvent[]>(MOCK_EVENTS);
   const [loading, setLoading] = useState(true);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const today = new Date();
@@ -93,20 +90,13 @@ export default function CalendarPage() {
     }
   };
 
-  const events = CALENDAR_CARD_EVENTS;
-  const calendarEvents: CalendarEvent[] = MOCK_EVENTS.map((event) => ({
-    id: event.id,
-    title: event.title,
-    date: event.date,
-  }));
-
   const handleSearch = (value: string) => {
     setSearchInput(value);
     if (value == "") {
       setSearchResults([]);
       return;
     }
-    const results = calendarEvents.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
+    const results = MOCK_EVENTS.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
 
     setSearchResults(results);
   };

@@ -1,8 +1,8 @@
 import React from "react";
-import { CalendarEvent } from "@/app/calendar/page";
+import { AppEvent } from "@/data/events";
 
 interface SearchResultProps {
-  results: CalendarEvent[];
+  results: AppEvent[];
 }
 
 export default function SearchResultList({ results }: SearchResultProps) {
@@ -24,7 +24,7 @@ export default function SearchResultList({ results }: SearchResultProps) {
                   <strong>{event.title}</strong>
                 </div>
                 <div className="text-md">
-                  {event.date.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+                  {event.date?.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
                 </div>
               </div>
             </a>
