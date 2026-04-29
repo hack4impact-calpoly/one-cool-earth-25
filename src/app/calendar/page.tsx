@@ -100,7 +100,10 @@ export default function CalendarPage() {
 
     setSearchResults(results);
   };
-  const upcomingCardEvents = MOCK_EVENTS.filter((event) => event.section === "upcoming");
+  const upcomingCardEvents = MOCK_EVENTS.filter((event) => {
+    const now = new Date();
+    return now < event.date;
+  });
   const responsibilities = [
     { label: "Planting", Icon: Leaf },
     { label: "Building Plant Beds", Icon: House },
@@ -114,12 +117,15 @@ export default function CalendarPage() {
       <NavBarWrapper />
       <div className={calendarStyles.page}>
         <h1 className={calendarStyles.pageTitle}>Upcoming Events</h1>
-
-        <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
-          {upcomingCardEvents.map((event) => (
-            <VolunteerEventCard key={event.id} event={event} />
-          ))}
-        </div>
+        {upcomingCardEvents.length != 0 ? (
+          <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
+            {upcomingCardEvents.map((event) => (
+              <VolunteerEventCard key={event.id} event={event} />
+            ))}
+          </div>
+        ) : (
+          <div className="m-3 mx-10 text-3xl">Nothing for now... check back soon!</div>
+        )}
 
         <section className={calendarStyles.responsibilitiesSection}>
           <h2 className={calendarStyles.responsibilitiesTitle}>Garden Workday Responsibilities</h2>

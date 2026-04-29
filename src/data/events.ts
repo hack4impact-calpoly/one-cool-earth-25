@@ -291,6 +291,32 @@ export const MOCK_EVENTS: AppEvent[] = [
     attendanceCount: 13,
     volunteerStatus: "attended",
   },
+  {
+    id: "p12",
+    title: "Rain Garden Maintenance",
+    date: new Date(2026, 6, 18),
+    startTime: "8:30 am",
+    endTime: "11:30 am",
+    school: "Judkins Middle School",
+    imageUrl: "/images/testImage5.jpg",
+    section: "upcoming",
+    registeredCount: 17,
+    attendanceCount: 13,
+    volunteerStatus: "none",
+  },
+  {
+    id: "p13",
+    title: "Garden Tool Repair Night",
+    date: new Date(2026, 5, 13),
+    startTime: "9:30 am",
+    endTime: "11:30 am",
+    school: "San Luis Obispo High School",
+    imageUrl: "/images/testImage5.jpg",
+    section: "upcoming",
+    registeredCount: 17,
+    attendanceCount: 13,
+    volunteerStatus: "none",
+  },
 ];
 
 export const CALENDAR_CARD_EVENTS = MOCK_EVENTS.filter((event) => event.section === "upcoming").map((event) => ({
