@@ -146,38 +146,6 @@ export default function AccountPage() {
               />
             </div>
 
-            <h2 className={styles.sectionHeading}>Notification Preference</h2>
-
-            <div className={styles.preferenceGrid}>
-              <label className={styles.preferenceLabel}>Shift Updates</label>
-              <select
-                className={styles.preferenceSelect}
-                name="shiftUpdates"
-                value={formData.shiftUpdates}
-                onChange={handleChange}
-                disabled={!isEditing}
-              >
-                <option value="Text">Text</option>
-                <option value="Email">Email</option>
-                <option value="Both">Both</option>
-                <option value="None">None</option>
-              </select>
-
-              <label className={styles.preferenceLabel}>Direct Messages</label>
-              <select
-                className={styles.preferenceSelect}
-                name="directMessages"
-                value={formData.directMessages}
-                onChange={handleChange}
-                disabled={!isEditing}
-              >
-                <option value="Text">Text</option>
-                <option value="Email">Email</option>
-                <option value="Both">Both</option>
-                <option value="None">None</option>
-              </select>
-            </div>
-
             {!isEditing ? (
               <div className={styles.actionsSingle}>
                 <button type="button" className={styles.editButton} onClick={() => setIsEditing(true)}>
@@ -210,6 +178,13 @@ export default function AccountPage() {
               </Link>
             </div>
           </section>
+          <button // NOTE TO FIX UI
+            type="button"
+            onClick={handleLogout}
+            className={styles.deleteButton}
+          >
+            Log Out
+          </button>
         </div>
       </main>
     </div>
