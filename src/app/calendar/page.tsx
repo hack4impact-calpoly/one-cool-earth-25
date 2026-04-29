@@ -4,25 +4,30 @@ import { BookOpen, ChevronLeft, ChevronRight, ChevronsUpDown, House, Leaf, Shove
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import SearchResultList from "@/components/SearchResultList";
 import { Button } from "@mui/material";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import calendarStyles from "@/styles/CalendarPage.module.css";
 import { MOCK_EVENTS } from "@/data/events";
 import NavBarWrapper from "../../components/NavbarWrapper";
+import { AppEvent } from "@/data/events";
 
-interface CalendarEvent {
+export interface CalendarEvent {
   id: string;
   title: string;
   start: string;
   description?: string;
   location?: string;
+  date: Date;
 }
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchResults, setSearchResults] = useState<AppEvent[]>([]);
+  const [events, setEvents] = useState<AppEvent[]>(MOCK_EVENTS);
   const [loading, setLoading] = useState(true);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const today = new Date();
@@ -85,6 +90,16 @@ export default function CalendarPage() {
     }
   };
 
+  const handleSearch = (value: string) => {
+    setSearchInput(value);
+    if (value == "") {
+      setSearchResults([]);
+      return;
+    }
+    const results = MOCK_EVENTS.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
+
+    setSearchResults(results);
+  };
   const upcomingCardEvents = MOCK_EVENTS.filter((event) => event.section === "upcoming");
   const responsibilities = [
     { label: "Planting", Icon: Leaf },
@@ -166,9 +181,21 @@ export default function CalendarPage() {
               Today
             </Button>
           </div>
-
-          <div className={calendarStyles.searchBox}>
-            <input type="text" placeholder="Search" className={calendarStyles.searchInput} />
+          <div className="relative w-[291px] flex-col">
+            <div className="h-[50px] flex-shrink-0">
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
+                value={searchInput}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
+            {searchResults.length > 0 && (
+              <div className="absolute top-full left-0 w-full bg-white rounded-lg shadow-lg mt-2 z-50 max-h-60 overflow-y-auto">
+                <SearchResultList results={searchResults} />
+              </div>
+            )}
           </div>
         </div>
 
