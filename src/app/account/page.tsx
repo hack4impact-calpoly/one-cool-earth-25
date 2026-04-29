@@ -1,31 +1,215 @@
 "use client";
 
+import { ChangeEvent, FormEvent, useState } from "react";
+import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import NavBarWrapper from "@/components/NavbarWrapper";
+import styles from "@/styles/Account.module.css";
+
+type NotificationOption = "Text" | "Email" | "Both" | "None";
+
+interface AccountFormData {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  dob: string;
+  email: string;
+  password: string;
+  shiftUpdates: NotificationOption;
+  directMessages: NotificationOption;
+}
 
 export default function AccountPage() {
   const { signOut } = useClerk();
   const router = useRouter();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [formData, setFormData] = useState<AccountFormData>({
+    firstName: "",
+    lastName: "",
+    phone: "(XXX) XXX-XXXX",
+    dob: "XX/XX/XXXX",
+    email: "example@email.com",
+    password: "****************",
+    shiftUpdates: "Text",
+    directMessages: "Both",
+  });
 
   async function handleLogout() {
     await signOut();
     router.push("/login");
   }
 
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
   return (
     <div>
       <NavBarWrapper />
-      <main className="p-8 font-lora">
-        <h1 className="text-4xl font-bold">My Account</h1>
-        <div className="mt-8">
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rounded-full border border-[#d9a7a7] bg-[#f8d7d7] px-6 py-2 font-semibold text-black transition hover:brightness-95 active:brightness-90"
-          >
-            Log Out
-          </button>
+
+      <main className={styles.page}>
+        <div className={styles.inner}>
+          <h1 className={styles.title}>My Account</h1>
+
+          <form className={styles.form} onSubmit={handleSave}>
+            <div className={styles.row}>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>First Name</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                  placeholder="First Name"
+                />
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>Last Name</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                  placeholder="Last Name"
+                />
+              </div>
+            </div>
+
+            <div className={styles.shortRow}>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>Phone Number</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                />
+              </div>
+
+              <div className={styles.compactFieldGroup}>
+                <label className={styles.label}>Date of Birth</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                />
+              </div>
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Email Address</label>
+              <input
+                className={styles.input}
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Create New Password</label>
+              <input
+                className={styles.input}
+                type="text"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+            </div>
+
+            <h2 className={styles.sectionHeading}>Notification Preference</h2>
+
+            <div className={styles.preferenceGrid}>
+              <label className={styles.preferenceLabel}>Shift Updates</label>
+              <select
+                className={styles.preferenceSelect}
+                name="shiftUpdates"
+                value={formData.shiftUpdates}
+                onChange={handleChange}
+                disabled={!isEditing}
+              >
+                <option value="Text">Text</option>
+                <option value="Email">Email</option>
+                <option value="Both">Both</option>
+                <option value="None">None</option>
+              </select>
+
+              <label className={styles.preferenceLabel}>Direct Messages</label>
+              <select
+                className={styles.preferenceSelect}
+                name="directMessages"
+                value={formData.directMessages}
+                onChange={handleChange}
+                disabled={!isEditing}
+              >
+                <option value="Text">Text</option>
+                <option value="Email">Email</option>
+                <option value="Both">Both</option>
+                <option value="None">None</option>
+              </select>
+            </div>
+
+            {!isEditing ? (
+              <div className={styles.actionsSingle}>
+                <button type="button" className={styles.editButton} onClick={() => setIsEditing(true)}>
+                  Edit Information
+                </button>
+              </div>
+            ) : (
+              <div className={styles.actionsDual}>
+                <button type="button" className={styles.cancelButton} onClick={handleCancel}>
+                  Cancel
+                </button>
+                <button type="submit" className={styles.saveButton}>
+                  Save
+                </button>
+              </div>
+            )}
+          </form>
+
+          <section className={styles.deleteSection}>
+            <h2 className={styles.deleteTitle}>Delete Account</h2>
+            <p className={styles.deleteText}>
+              Permanently delete your account and associated data. This action cannot be undone.
+            </p>
+
+            <div className={styles.deleteButtonWrap}>
+              <Link href="/account/delete">
+                <button type="button" className={styles.deleteButton}>
+                  Delete my account
+                </button>
+              </Link>
+            </div>
+          </section>
         </div>
       </main>
     </div>
