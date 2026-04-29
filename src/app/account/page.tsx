@@ -1,8 +1,8 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import Link from "next/link";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/Account.module.css";
@@ -24,6 +24,7 @@ export default function AccountPage() {
   const { signOut } = useClerk();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const { user } = useUser();
 
   const [formData, setFormData] = useState<AccountFormData>({
     firstName: "",
@@ -50,8 +51,37 @@ export default function AccountPage() {
     }));
   };
 
-  const handleSave = (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    async function loadUser() {
+      const res = await fetch("/api/user");
+      const data = await res.json();
+      setFormData((prev) => ({
+        ...prev,
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+        dob: data.dob || "",
+        email: data.email || "",
+      }));
+    }
+    loadUser();
+  }, []);
+
+  const handleSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    await fetch("/api/user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clerkId: user?.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dob: formData.dob,
+        email: formData.email,
+        password: formData.password || undefined,
+      }),
+    });
+
     setIsEditing(false);
   };
 
