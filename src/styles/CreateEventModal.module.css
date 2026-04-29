@@ -17,7 +17,7 @@
 }
 
 .container {
-  width: min(600px, calc(100vw - 32px));
+  width: min(650px, calc(100vw - 32px));
   background: #f9fbff;
   border: 1px solid #527abe;
   border-radius: 5px;
@@ -87,7 +87,8 @@
 
 .timeRow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  /* grid-template-columns: minmax(140px, 1fr) auto minmax(140px, 1fr); */
+  grid-template-columns: 1fr auto 1fr;
   gap: 8px;
   align-items: center;
   width: 100%;

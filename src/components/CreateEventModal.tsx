@@ -59,7 +59,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
       !draft.startDateTime ||
       !draft.endDateTime
     ) {
-      setError("Please fill out all fields");
+      setError("Please fill out all fields.");
       return;
     }
     if (draft.endDateTime <= draft.startDateTime) {
