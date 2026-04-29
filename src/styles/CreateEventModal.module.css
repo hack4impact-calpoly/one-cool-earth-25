@@ -1,36 +1,69 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.modalWrap {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
 .container {
-  width: 100%;
-  max-width: 600px;
+  width: min(600px, calc(100vw - 32px));
   background: #f9fbff;
   border: 1px solid #527abe;
   border-radius: 5px;
-  padding: 32px;
+  padding: 24px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   font-family: "Lora", serif;
-  overflow-y: auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.headerRow {
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .headerTitle {
   margin: 0;
   font-size: 35px;
   font-weight: 700;
+  line-height: 1.1;
 }
 
 .detailLabel {
+  display: block;
+  margin-bottom: 8px;
   font-size: 18px;
   font-weight: 700;
   color: #6b5b5b;
 }
 
-.headerRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.field {
   width: 100%;
+  min-width: 0;
+  margin-bottom: 16px;
 }
 
 .input {
   width: 100%;
+  min-width: 0;
   font-weight: 400;
   padding: 8px 12px;
   border-radius: 5px;
@@ -41,6 +74,7 @@
 
 .textarea {
   width: 100%;
+  min-width: 0;
   min-height: 110px;
   font-weight: 400;
   padding: 8px 12px;
@@ -51,25 +85,33 @@
   resize: vertical;
 }
 
-.createButton {
-  border: 1px solid #307433;
-  background: #dcf9c9;
-  color: #568264;
-  border-radius: 2px;
-  padding: 5px 12px;
-  font-weight: 700;
-  font-size: 25px;
-  cursor: pointer;
+.timeRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  width: 100%;
 }
 
-.imagePreview {
-  margin-top: 10px;
-  border-radius: 6px;
-  border: 1px solid #527abe;
+.toText {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.imageSection {
   width: 100%;
-  max-width: 320px;
-  height: auto;
-  display: block;
+  margin-top: 8px;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.imageButtonRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .imageButton {
@@ -77,11 +119,11 @@
   background: #dcf9c9;
   color: #568264;
   border-radius: 2px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   font-weight: 700;
   font-size: 19px;
   cursor: pointer;
-  margin-top: 8px;
+  box-sizing: border-box;
 }
 
 .imageButton:hover {
@@ -93,27 +135,16 @@
   opacity: 0.8;
 }
 
-.createButton:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.createButton:active {
-  opacity: 0.8;
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  background: rgba(0, 0, 0, 0.3);
-
-  overflow-y: auto;
+.imagePreview {
+  margin-top: 12px;
+  border-radius: 6px;
+  border: 1px solid #527abe;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  box-sizing: border-box;
 }
 
 .buttonRow {
@@ -121,4 +152,87 @@
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  border: 1px solid #307433;
+  background: #dcf9c9;
+  color: #568264;
+  border-radius: 2px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 25px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.actionButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.actionButton:active {
+  opacity: 0.8;
+}
+
+.actionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.errorText {
+  color: #b00020;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  .modalWrap {
+    padding: 12px;
+  }
+
+  .container {
+    width: calc(100vw - 24px);
+    padding: 18px;
+  }
+
+  .headerTitle {
+    font-size: 28px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .imageButtonRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .imageButton {
+    width: 100%;
+    font-size: 18px;
+  }
+
+  .buttonRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actionButton {
+    width: 100%;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .timeRow {
+    grid-template-columns: 1fr;
+  }
+
+  .toText {
+    padding: 2px 0;
+  }
 }

@@ -28,6 +28,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   if (!isOpen) return null;
@@ -51,6 +52,22 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
     }
   };
   const handleSave = async () => {
+    if (
+      !draft.name.trim() ||
+      !draft.location.trim() ||
+      !draft.description.trim() ||
+      !draft.startDateTime ||
+      !draft.endDateTime
+    ) {
+      setError("Please fill out all fields");
+      return;
+    }
+    if (draft.endDateTime <= draft.startDateTime) {
+      setError("End time must be after start time");
+      return;
+    }
+    setError(null);
+
     try {
       setSubmitting(true);
 
@@ -76,6 +93,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
       onSuccess();
     } catch (error) {
       console.error("Failed to create event:", error);
+      setError("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -118,91 +136,85 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
   };
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.container} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.headerRow}>
-          <h3 className={styles.headerTitle}>Create New Event</h3>
-        </div>
-
-        <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-          <div>
-            <span className={styles.detailLabel}>Date:</span>
-            <input type="date" className={styles.input} />
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.modalWrap}>
+        <div className={styles.container} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.headerRow}>
+            <h3 className={styles.headerTitle}>Create New Event</h3>
           </div>
 
-          <div>
-            <span className={styles.detailLabel}>Time:</span>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <input type="time" className={styles.input} onChange={(e) => handleStartTimeChange(e.target.value)} />
-              <span style={{ margin: "0 8px" }}>to</span>
-              <input type="time" className={styles.input} onChange={(e) => handleEndTimeChange(e.target.value)} />
+          <div className={styles.formRow}>
+            <div className={styles.field}>
+              <span className={styles.detailLabel}>Date:</span>
+              <input type="date" className={styles.input} />
+            </div>
+
+            <div className={styles.field}>
+              <span className={styles.detailLabel}>Time:</span>
+              <div className={styles.timeRow}>
+                <input type="time" className={styles.input} onChange={(e) => handleStartTimeChange(e.target.value)} />
+                <span className={styles.toText}>to</span>
+                <input type="time" className={styles.input} onChange={(e) => handleEndTimeChange(e.target.value)} />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div>
-          <span className={styles.detailLabel}>Title: </span>
-          <div style={{ marginTop: "8px" }}>
+          <div className={styles.field}>
+            <span className={styles.detailLabel}>Title:</span>
             <input
               className={styles.input}
               value={draft.name}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })}
             />
           </div>
-        </div>
 
-        <div>
-          <span className={styles.detailLabel}>Description: </span>
-          <div style={{ marginTop: "8px" }}>
+          <div className={styles.field}>
+            <span className={styles.detailLabel}>Description:</span>
             <textarea
               className={styles.textarea}
               value={draft.description}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })}
             />
           </div>
-        </div>
 
-        <div>
-          <span className={styles.detailLabel}>Location: </span>
-          <div style={{ marginTop: "8px" }}>
+          <div className={styles.field}>
+            <span className={styles.detailLabel}>Location:</span>
             <input
               className={styles.input}
               value={draft.location}
               onChange={(e) => setDraft({ ...draft, location: e.target.value })}
             />
           </div>
-        </div>
 
-        <div style={{ marginTop: "8px", maxWidth: "320px" }}>
-          <input
-            type="file"
-            ref={fileInputRef}
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={(e) => handleImageChange(e.target.files?.[0] ?? null)}
-          />
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
-            {/* change/upload image */}
-            <button type="button" className={styles.imageButton} onClick={() => fileInputRef.current?.click()}>
-              {draft.imageUrl ? "Change Image" : "Upload Image"}
-            </button>
+          <div className={styles.imageSection}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              className={styles.hiddenInput}
+              onChange={(e) => handleImageChange(e.target.files?.[0] ?? null)}
+            />
 
-            {/* remove image */}
-            {draft.imageUrl && (
-              <button
-                type="button"
-                className={styles.imageButton}
-                onClick={() => {
-                  if (fileInputRef.current) fileInputRef.current.value = "";
-                  handleImageChange(null);
-                }}
-              >
-                Remove Image
+            <div className={styles.imageButtonRow}>
+              <button type="button" className={styles.imageButton} onClick={() => fileInputRef.current?.click()}>
+                {draft.imageUrl ? "Change Image" : "Upload Image"}
               </button>
-            )}
-          </div>
-          {draft.imageUrl && (
-            <div style={{ marginTop: "10px" }}>
+
+              {draft.imageUrl && (
+                <button
+                  type="button"
+                  className={styles.imageButton}
+                  onClick={() => {
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                    handleImageChange(null);
+                  }}
+                >
+                  Remove Image
+                </button>
+              )}
+            </div>
+
+            {draft.imageUrl && (
               <Image
                 src={draft.imageUrl}
                 alt="event upload preview"
@@ -211,17 +223,20 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
                 className={styles.imagePreview}
                 unoptimized
               />
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        <div className={styles.buttonRow}>
-          <button type="button" className={styles.createButton} onClick={handleSave} disabled={submitting}>
-            Create
-          </button>
-          <button type="button" className={styles.createButton} onClick={onClose}>
-            Cancel
-          </button>
+          {error && <div className={styles.errorText}>{error}</div>}
+
+          <div className={styles.buttonRow}>
+            <button type="button" className={styles.actionButton} onClick={handleSave} disabled={submitting}>
+              {submitting ? "Creating..." : "Create"}
+            </button>
+
+            <button type="button" className={styles.actionButton} onClick={onClose}>
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
