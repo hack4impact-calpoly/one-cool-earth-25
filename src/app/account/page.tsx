@@ -32,7 +32,7 @@ export default function AccountPage() {
     phone: "(XXX) XXX-XXXX",
     dob: "XX/XX/XXXX",
     email: "example@email.com",
-    password: "****************",
+    password: "",
     shiftUpdates: "Text",
     directMessages: "Both",
   });
@@ -69,6 +69,8 @@ export default function AccountPage() {
   const handleSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const password = formData.password || undefined;
+
     await fetch("/api/user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -78,7 +80,7 @@ export default function AccountPage() {
         lastName: formData.lastName,
         dob: formData.dob,
         email: formData.email,
-        password: formData.password || undefined,
+        ...(password && { password }),
       }),
     });
 
@@ -168,7 +170,7 @@ export default function AccountPage() {
               <label className={styles.label}>Create New Password</label>
               <input
                 className={styles.input}
-                type="text"
+                type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
