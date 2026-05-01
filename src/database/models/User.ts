@@ -6,6 +6,8 @@ const UserSchema = new mongoose.Schema({
   firstName: { type: String },
   lastName: { type: String },
   dob: { type: String },
+  // https://github.com/hack4impact-calpoly/one-cool-earth-25/issues/87
+  // phoneNumber: { type: String },
   role: {
     type: String,
     enum: ["admin", "volunteer"],

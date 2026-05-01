@@ -1,8 +1,8 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import Link from "next/link";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/Account.module.css";
@@ -24,6 +24,7 @@ export default function AccountPage() {
   const { signOut } = useClerk();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const { user } = useUser();
 
   const [formData, setFormData] = useState<AccountFormData>({
     firstName: "",
@@ -31,7 +32,7 @@ export default function AccountPage() {
     phone: "(XXX) XXX-XXXX",
     dob: "XX/XX/XXXX",
     email: "example@email.com",
-    password: "****************",
+    password: "",
     shiftUpdates: "Text",
     directMessages: "Both",
   });
@@ -50,8 +51,39 @@ export default function AccountPage() {
     }));
   };
 
-  const handleSave = (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    async function loadUser() {
+      const res = await fetch("/api/user");
+      const data = await res.json();
+      setFormData((prev) => ({
+        ...prev,
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+        dob: data.dob || "",
+        email: data.email || "",
+      }));
+    }
+    loadUser();
+  }, []);
+
+  const handleSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const password = formData.password || undefined;
+
+    await fetch("/api/user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clerkId: user?.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dob: formData.dob,
+        email: formData.email,
+        ...(password && { password }),
+      }),
+    });
+
     setIsEditing(false);
   };
 
@@ -138,44 +170,12 @@ export default function AccountPage() {
               <label className={styles.label}>Create New Password</label>
               <input
                 className={styles.input}
-                type="text"
+                type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
-            </div>
-
-            <h2 className={styles.sectionHeading}>Notification Preference</h2>
-
-            <div className={styles.preferenceGrid}>
-              <label className={styles.preferenceLabel}>Shift Updates</label>
-              <select
-                className={styles.preferenceSelect}
-                name="shiftUpdates"
-                value={formData.shiftUpdates}
-                onChange={handleChange}
-                disabled={!isEditing}
-              >
-                <option value="Text">Text</option>
-                <option value="Email">Email</option>
-                <option value="Both">Both</option>
-                <option value="None">None</option>
-              </select>
-
-              <label className={styles.preferenceLabel}>Direct Messages</label>
-              <select
-                className={styles.preferenceSelect}
-                name="directMessages"
-                value={formData.directMessages}
-                onChange={handleChange}
-                disabled={!isEditing}
-              >
-                <option value="Text">Text</option>
-                <option value="Email">Email</option>
-                <option value="Both">Both</option>
-                <option value="None">None</option>
-              </select>
             </div>
 
             {!isEditing ? (
@@ -210,6 +210,13 @@ export default function AccountPage() {
               </Link>
             </div>
           </section>
+          <button // NOTE TO FIX UI
+            type="button"
+            onClick={handleLogout}
+            className={styles.deleteButton}
+          >
+            Log Out
+          </button>
         </div>
       </main>
     </div>
