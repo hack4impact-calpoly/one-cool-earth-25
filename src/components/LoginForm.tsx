@@ -48,6 +48,11 @@ export default function LoginForm() {
       return;
     }
 
+    if (!signIn) {
+      setError("Sign-in is still loading. Please try again.");
+      return;
+    }
+
     const result = await signIn.attemptSecondFactor({
       strategy: "email_code",
       code,
