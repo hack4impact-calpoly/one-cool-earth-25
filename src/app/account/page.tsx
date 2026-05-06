@@ -12,7 +12,7 @@ type NotificationOption = "Text" | "Email" | "Both" | "None";
 interface AccountFormData {
   firstName: string;
   lastName: string;
-  phone: string;
+  phoneNumber: string;
   dob: string;
   email: string;
   password: string;
@@ -29,7 +29,7 @@ export default function AccountPage() {
   const [formData, setFormData] = useState<AccountFormData>({
     firstName: "",
     lastName: "",
-    phone: "(XXX) XXX-XXXX",
+    phoneNumber: "(XXX) XXX-XXXX",
     dob: "XX/XX/XXXX",
     email: "example@email.com",
     password: "",
@@ -61,6 +61,7 @@ export default function AccountPage() {
         lastName: data.lastName || "",
         dob: data.dob || "",
         email: data.email || "",
+        phoneNumber: data.phoneNumber || "",
       }));
     }
     loadUser();
@@ -80,6 +81,7 @@ export default function AccountPage() {
         lastName: formData.lastName,
         dob: formData.dob,
         email: formData.email,
+        phoneNumber: formData.phoneNumber,
         ...(password && { password }),
       }),
     });
@@ -134,8 +136,8 @@ export default function AccountPage() {
                 <input
                   className={styles.input}
                   type="text"
-                  name="phone"
-                  value={formData.phone}
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                   disabled={!isEditing}
                 />

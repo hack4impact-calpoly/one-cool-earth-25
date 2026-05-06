@@ -3,7 +3,7 @@ import User from "@/database/models/User";
 import { clerkClient, auth } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
-  const { clerkId, email, firstName, lastName, dob, password } = await req.json();
+  const { clerkId, email, firstName, lastName, dob, password, phoneNumber } = await req.json();
 
   if (!clerkId) {
     return Response.json({ success: false, error: "Missing clerkId" }, { status: 400 });
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
   await User.findOneAndUpdate(
     { clerkId },
-    { clerkId, email, firstName, lastName, dob, role },
+    { clerkId, email, firstName, lastName, dob, role, phoneNumber },
     { upsert: true, new: true },
   );
 

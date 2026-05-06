@@ -22,17 +22,17 @@ Note all commented code refers to the implementation of adding a phone number
 Refer to this issue to fix phone implemention problems before uncommenting code
 https://github.com/hack4impact-calpoly/one-cool-earth-25/issues/87 
 */
-// function formatPhoneNumber(value: string) {
-//   const digits = value.replace(/\D/g, "").slice(0, 10);
+function formatPhoneNumber(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
 
-//   if (digits.length <= 3) return digits;
-//   if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-//   return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
-// }
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
 
-// function cleanPhoneNumber(value: string) {
-//   return value.replace(/\D/g, "");
-// }
+function cleanPhoneNumber(value: string) {
+  return value.replace(/\D/g, "");
+}
 
 export default function CreateAccountForm() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -44,12 +44,12 @@ export default function CreateAccountForm() {
 
   const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
-  // const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  // const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -67,9 +67,9 @@ export default function CreateAccountForm() {
     return password.length > 0 && confirmPassword.length > 0;
   }, [password, confirmPassword]);
 
-  // const step3Done = useMemo(() => {
-  //   return phoneNumber.replace(/\D/g, "").length === 10;
-  // }, [phoneNumber]);
+  const step3Done = useMemo(() => {
+    return phoneNumber.replace(/\D/g, "").length === 10;
+  }, [phoneNumber]);
 
   const step4Done = useMemo(() => {
     if (!passwordsFilled) return false;
@@ -83,9 +83,9 @@ export default function CreateAccountForm() {
     if (!step2Done) return 1;
     if (!step1Done) return 2;
     if (!step4Done) return 3;
-    // if (!step3Done) return 4
+    if (!step3Done) return 4;
     return 4;
-  }, [step1Done, step2Done, step4Done, step5Done]);
+  }, [step1Done, step2Done, step4Done, step5Done, step3Done]);
 
   const handleSubmit = async () => {
     if (!isLoaded) return;
@@ -95,11 +95,8 @@ export default function CreateAccountForm() {
       setLoading(true);
       setError("");
 
-      // const cleanedPhone = cleanPhoneNumber(phoneNumber);
-
       const result = await signUp.create({
         emailAddress: email,
-        // phoneNumber: `+1${cleanedPhone}`,
         password,
         firstName: fullName.split(" ")[0],
         lastName: fullName.split(" ")[1] || "",
@@ -114,7 +111,7 @@ export default function CreateAccountForm() {
           firstName: fullName.split(" ")[0],
           lastName: fullName.split(" ").slice(1).join(" ") || "",
           dob,
-          // phoneNumber
+          phoneNumber,
         }),
       });
 
@@ -161,8 +158,8 @@ export default function CreateAccountForm() {
           <div className="hidden items-center justify-center gap-6 md:flex">
             <StepCircle label="Basic Information" number={1} done={step2Done} active={currentStep === 1} />
             <StepLine active={step2Done} />
-            <StepCircle label="Enter Email" number={2} done={step1Done} active={currentStep === 2} />
-            <StepLine active={step1Done} />
+            <StepCircle label="Enter Email" number={2} done={step1Done && step3Done} active={currentStep === 2} />
+            <StepLine active={step1Done && step3Done} />
             <StepCircle label="Create Password" number={3} done={step4Done} active={currentStep === 3} />
           </div>
 
@@ -196,7 +193,7 @@ export default function CreateAccountForm() {
                   />
                 </Field>
 
-                {/* <Field label="Phone Number" className="md:order-3 md:col-span-2">
+                <Field label="Phone Number" className="md:order-3 md:col-span-2">
                   <PillInput
                     type="tel"
                     placeholder="(XXX) XXX-XXXX"
@@ -210,8 +207,8 @@ export default function CreateAccountForm() {
                       else setPhoneNumberError("");
                     }}
                   />
-                   {phoneNumberError && <p className="mt-2 text-xs text-red-600">{phoneNumberError}</p>}
-                </Field> */}
+                  {phoneNumberError && <p className="mt-2 text-xs text-red-600">{phoneNumberError}</p>}
+                </Field>
 
                 <Field label="Email Address" className="md:order-3 md:col-span-2">
                   <PillInput
@@ -319,7 +316,7 @@ export default function CreateAccountForm() {
           </div>
         </div>
       ) : (
-        <ConfirmAccountPage email={email} fullName={fullName} dob={dob} />
+        <ConfirmAccountPage email={email} fullName={fullName} dob={dob} phoneNumber={phoneNumber} />
       )}
     </div>
   );
