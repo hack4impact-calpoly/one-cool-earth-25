@@ -44,11 +44,7 @@ export default function AccountPage() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {
@@ -68,9 +64,7 @@ export default function AccountPage() {
 
   const handleSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const password = formData.password || undefined;
-
     await fetch("/api/user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -83,13 +77,10 @@ export default function AccountPage() {
         ...(password && { password }),
       }),
     });
-
     setIsEditing(false);
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
+  const handleCancel = () => setIsEditing(false);
 
   return (
     <div>
@@ -103,79 +94,92 @@ export default function AccountPage() {
             <div className={styles.row}>
               <div className={styles.fieldGroup}>
                 <label className={styles.label}>First Name</label>
-                <input
-                  className={styles.input}
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  placeholder="First Name"
-                />
+                {isEditing ? (
+                  <input
+                    className={styles.input}
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    placeholder="First Name"
+                  />
+                ) : (
+                  <div className={styles.inputReadOnly}>{formData.firstName || "—"}</div>
+                )}
               </div>
 
               <div className={styles.fieldGroup}>
                 <label className={styles.label}>Last Name</label>
-                <input
-                  className={styles.input}
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  placeholder="Last Name"
-                />
+                {isEditing ? (
+                  <input
+                    className={styles.input}
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                  />
+                ) : (
+                  <div className={styles.inputReadOnly}>{formData.lastName || "—"}</div>
+                )}
               </div>
             </div>
 
             <div className={styles.shortRow}>
               <div className={styles.fieldGroup}>
                 <label className={styles.label}>Phone Number</label>
-                <input
-                  className={styles.input}
-                  type="text"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                />
+                {isEditing ? (
+                  <input
+                    className={styles.input}
+                    type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  <div className={styles.inputReadOnly}>{formData.phone || "—"}</div>
+                )}
               </div>
 
               <div className={styles.compactFieldGroup}>
                 <label className={styles.label}>Date of Birth</label>
-                <input
-                  className={styles.input}
-                  type="text"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                />
+                {isEditing ? (
+                  <input className={styles.input} type="text" name="dob" value={formData.dob} onChange={handleChange} />
+                ) : (
+                  <div className={styles.inputReadOnly}>{formData.dob || "—"}</div>
+                )}
               </div>
             </div>
 
             <div className={styles.fieldGroup}>
               <label className={styles.label}>Email Address</label>
-              <input
-                className={styles.input}
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
+              {isEditing ? (
+                <input
+                  className={styles.input}
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              ) : (
+                <div className={styles.inputReadOnly}>{formData.email || "—"}</div>
+              )}
             </div>
 
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Create New Password</label>
-              <input
-                className={styles.input}
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
+              <label className={styles.label}>Password</label>
+              {isEditing ? (
+                <input
+                  className={styles.input}
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter new password"
+                />
+              ) : (
+                <div className={styles.inputReadOnly}>••••••••</div>
+              )}
             </div>
 
             {!isEditing ? (
@@ -201,7 +205,6 @@ export default function AccountPage() {
             <p className={styles.deleteText}>
               Permanently delete your account and associated data. This action cannot be undone.
             </p>
-
             <div className={styles.deleteButtonWrap}>
               <Link href="/account/delete">
                 <button type="button" className={styles.deleteButton}>
@@ -210,13 +213,12 @@ export default function AccountPage() {
               </Link>
             </div>
           </section>
-          <button // NOTE TO FIX UI
-            type="button"
-            onClick={handleLogout}
-            className={styles.deleteButton}
-          >
-            Log Out
-          </button>
+
+          <div className={styles.logoutSection}>
+            <button type="button" onClick={handleLogout} className={styles.logoutButton}>
+              Log Out
+            </button>
+          </div>
         </div>
       </main>
     </div>
