@@ -17,11 +17,6 @@ function hasNumberOrSymbol(password: string) {
   return /(\d|[^a-zA-Z0-9])/.test(password);
 }
 
-/* 
-Note all commented code refers to the implementation of adding a phone number
-Refer to this issue to fix phone implemention problems before uncommenting code
-https://github.com/hack4impact-calpoly/one-cool-earth-25/issues/87 
-*/
 function formatPhoneNumber(value: string) {
   const digits = value.replace(/\D/g, "").slice(0, 10);
 
