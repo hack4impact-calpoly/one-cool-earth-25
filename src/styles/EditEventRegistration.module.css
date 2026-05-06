@@ -59,6 +59,7 @@
   border-radius: 10px;
   padding: 0.5rem;
   flex-grow: 1;
+  font-weight: normal;
 }
 
 .participant input {
