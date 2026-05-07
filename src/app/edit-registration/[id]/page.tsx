@@ -152,6 +152,7 @@ export default function EditRegistration() {
 
       if (response.ok) {
         console.log("Success updating");
+        router.push("/events");
       } else {
         throw Error("Failure to patch");
       }
