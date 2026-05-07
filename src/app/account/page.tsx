@@ -140,6 +140,7 @@ export default function AccountPage() {
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   disabled={!isEditing}
+                  placeholder={"(XXX) XXX-XXXX"}
                 />
               </div>
 

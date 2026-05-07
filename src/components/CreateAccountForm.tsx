@@ -25,10 +25,6 @@ function formatPhoneNumber(value: string) {
   return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
 }
 
-function cleanPhoneNumber(value: string) {
-  return value.replace(/\D/g, "");
-}
-
 export default function CreateAccountForm() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
@@ -44,7 +40,6 @@ export default function CreateAccountForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [phoneNumberError, setPhoneNumberError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -62,10 +57,6 @@ export default function CreateAccountForm() {
     return password.length > 0 && confirmPassword.length > 0;
   }, [password, confirmPassword]);
 
-  const step3Done = useMemo(() => {
-    return phoneNumber.replace(/\D/g, "").length === 10;
-  }, [phoneNumber]);
-
   const step4Done = useMemo(() => {
     if (!passwordsFilled) return false;
     return password === confirmPassword && password.length >= 8 && hasNumberOrSymbol(password);
@@ -78,9 +69,8 @@ export default function CreateAccountForm() {
     if (!step2Done) return 1;
     if (!step1Done) return 2;
     if (!step4Done) return 3;
-    if (!step3Done) return 4;
     return 4;
-  }, [step1Done, step2Done, step4Done, step5Done, step3Done]);
+  }, [step1Done, step2Done, step4Done, step5Done]);
 
   const handleSubmit = async () => {
     if (!isLoaded) return;
@@ -106,7 +96,7 @@ export default function CreateAccountForm() {
           firstName: fullName.split(" ")[0],
           lastName: fullName.split(" ").slice(1).join(" ") || "",
           dob,
-          phoneNumber,
+          phoneNumber: phoneNumber || "",
         }),
       });
 
@@ -153,8 +143,8 @@ export default function CreateAccountForm() {
           <div className="hidden items-center justify-center gap-6 md:flex">
             <StepCircle label="Basic Information" number={1} done={step2Done} active={currentStep === 1} />
             <StepLine active={step2Done} />
-            <StepCircle label="Enter Email" number={2} done={step1Done && step3Done} active={currentStep === 2} />
-            <StepLine active={step1Done && step3Done} />
+            <StepCircle label="Enter Email" number={2} done={step1Done} active={currentStep === 2} />
+            <StepLine active={step1Done} />
             <StepCircle label="Create Password" number={3} done={step4Done} active={currentStep === 3} />
           </div>
 
@@ -197,12 +187,7 @@ export default function CreateAccountForm() {
                       const formatted = formatPhoneNumber(e.target.value);
                       setPhoneNumber(formatted);
                     }}
-                    onBlur={() => {
-                      if (phoneNumber.length === 0) setPhoneNumberError("Phone Number is required.");
-                      else setPhoneNumberError("");
-                    }}
                   />
-                  {phoneNumberError && <p className="mt-2 text-xs text-red-600">{phoneNumberError}</p>}
                 </Field>
 
                 <Field label="Email Address" className="md:order-3 md:col-span-2">
