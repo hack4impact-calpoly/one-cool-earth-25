@@ -60,7 +60,7 @@
   line-height: 1;
   padding: 0;
   clip-path: polygon(0 0, 72% 0, 100% 24%, 100% 100%, 0 100%);
-  cursor: default;
+  cursor: pointer;
   flex-shrink: 0;
 }
 
@@ -321,7 +321,7 @@
     line-height: 1;
     padding: 0;
     clip-path: polygon(0 0, 72% 0, 100% 24%, 100% 100%, 0 100%);
-    cursor: default;
+    cursor: pointer;
     flex-shrink: 0;
   }
 
@@ -530,5 +530,33 @@
     font-weight: 600;
     line-height: 1;
     color: #759982;
+  }
+}
+
+@media print {
+  .desktopNav,
+  .mobileHeader,
+  .mobilePdfButton,
+  .desktopPdfButton,
+  .mobileMenuButton,
+  .arrowButton {
+    display: none !important;
+  }
+
+  .container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .topBar,
+  .summaryRow,
+  .card {
+    width: 100% !important;
+  }
+
+  .card {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

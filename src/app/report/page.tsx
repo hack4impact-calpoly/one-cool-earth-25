@@ -34,6 +34,10 @@ export default function WorkdayReport() {
   const [startDate, setStartDate] = useState("2025-01-01");
   const [endDate, setEndDate] = useState("2025-12-31");
 
+  const handleDownloadPdf = () => {
+    window.print();
+  };
+
   return (
     <div>
       <div className={styles.desktopNav}>
@@ -57,13 +61,13 @@ export default function WorkdayReport() {
           <div className={styles.headerTitleRow}>
             <div className={styles.headerTitle}>Garden Workday Report</div>
 
-            <button type="button" className={styles.mobilePdfButton}>
+            <button type="button" className={styles.mobilePdfButton} onClick={handleDownloadPdf}>
               PDF
             </button>
           </div>
 
           <div className={styles.dateFilter}>
-            <button type="button" className={styles.desktopPdfButton}>
+            <button type="button" className={styles.desktopPdfButton} onClick={handleDownloadPdf}>
               PDF
             </button>
 

@@ -12,6 +12,7 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
     <div className={styles.card}>
       <div className={styles.cardBg} style={{ backgroundImage: `url(${event.imageUrl})` }} />
       <div className={styles.cardOverlay} />
+      <div style={{ color: "red", fontWeight: "bold", fontSize: "24px" }}>ADMIN CARD</div>
 
       <div className={styles.admin}>
         <div className={styles.registered}>Registered: {event.registeredCount}</div>

@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import { AppEvent, VolunteerStatus } from "@/data/events";
 
@@ -27,9 +28,14 @@ function Status({ status }: { status: VolunteerStatus }) {
 }
 
 export default function VolunteerEventCard({ event }: { event: AppEvent }) {
+  const router = useRouter();
+
   const monthLabel = event.date.toLocaleString("en-US", { month: "long" });
   const dayNumber = event.date.getDate();
   const status = event.volunteerStatus ?? "none";
+
+  const detailsPath = `/events/${event.id}`;
+  const registrationPath = `/events/${event.id}/register`;
 
   return (
     <div className={`${styles.card} ${event.section === "upcoming" ? styles.cardHoverEnabled : ""}`}>
@@ -67,11 +73,28 @@ export default function VolunteerEventCard({ event }: { event: AppEvent }) {
           <div className={styles.hoverText}>{event.school}</div>
 
           <div className={styles.hoverButtons}>
-            <button type="button" className={styles.hoverBtnLight}>
+            <button
+              type="button"
+              className={styles.hoverBtnLight}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                if (status !== "missing_waiver") {
+                  router.push(detailsPath);
+                }
+              }}
+            >
               {status === "missing_waiver" ? "Sign Waiver" : "Event Info"}
             </button>
 
-            <button type="button" className={styles.hoverBtnDark}>
+            <button
+              type="button"
+              className={styles.hoverBtnDark}
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(registrationPath);
+              }}
+            >
               Edit Registration
             </button>
           </div>
