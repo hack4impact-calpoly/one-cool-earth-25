@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import EventDetails from "@/components/EventDetails";
 import VolunteerList from "@/components/VolunteerList";

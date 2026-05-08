@@ -10,10 +10,13 @@ import styles from "@/styles/AdminEventsPage.module.css";
 import "@/app/globals.css";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import { MOCK_EVENTS } from "@/data/events";
+import CreateEventModal from "@/components/CreateEventModal";
 
 export default function CalendarPage() {
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   const today = new Date();
 
   const handleNext = () => {
@@ -51,6 +54,10 @@ export default function CalendarPage() {
       calendarApi.today();
       setViewDate(new Date());
     }
+  };
+
+  const handleEventCreated = async () => {
+    setIsCreateModalOpen(false);
   };
 
   const events = MOCK_EVENTS.filter((event) => event.section === "upcoming");
@@ -93,6 +100,32 @@ export default function CalendarPage() {
             </Button>
           </div>
 
+          <div>
+            <Button
+              variant="contained"
+              onClick={() => setIsCreateModalOpen(true)}
+              sx={{
+                backgroundColor: "#D8E7C3",
+                color: "#6E8B59",
+                border: "2px solid #7E9B6A",
+                borderRadius: "8px",
+                boxShadow: "none",
+                textTransform: "none",
+                fontFamily: "Lora, serif",
+                fontWeight: 700,
+                fontSize: "1.1rem",
+                lineHeight: 1,
+                padding: "10px 18px",
+                minWidth: "unset",
+                "&:hover": {
+                  backgroundColor: "#CFE0B7",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              Add Event
+            </Button>
+          </div>
           <div className="w-[291px] h-[50px] flex-shrink-0">
             <input
               type="text"
@@ -111,6 +144,11 @@ export default function CalendarPage() {
           height="auto"
         />
       </div>
+      <CreateEventModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={handleEventCreated}
+      />
     </div>
   );
 }

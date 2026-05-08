@@ -1,0 +1,214 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 48px;
+  font-family: Georgia, "Times New Roman", serif;
+  color: #111;
+  min-height: 100vh;
+}
+
+.inner {
+  width: 100%;
+  max-width: 640px; /* was 410px — much roomier */
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem; /* was 1.7rem */
+  font-weight: 700;
+  margin: 0 0 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* was 8px */
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.shortRow {
+  display: grid;
+  grid-template-columns: 1fr 160px; /* was 92px */
+  gap: 16px;
+}
+
+.fieldGroup,
+.compactFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.85rem; /* was 0.54rem — was basically invisible */
+  font-weight: 600;
+  color: #333;
+}
+
+.input,
+.select {
+  height: 42px; /* was 22px */
+  border: 1px solid #6f93de;
+  border-radius: 6px;
+  background: #fff;
+  padding: 8px 12px;
+  font-size: 0.95rem; /* was 0.58rem */
+  color: #555;
+  outline: none;
+}
+
+.input:disabled,
+.select:disabled {
+  opacity: 1;
+  background: #f9f9f9;
+  color: #666;
+  cursor: default;
+}
+
+.actionsSingle,
+.actionsDual {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.editButton,
+.saveButton,
+.cancelButton {
+  min-width: 140px;
+  height: 40px; /* was 21px */
+  border-radius: 8px;
+  font-size: 0.95rem; /* was 0.58rem */
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editButton,
+.saveButton {
+  background: #cfe7bb;
+  border: 1px solid #7d9f69;
+  color: #355235;
+}
+
+.cancelButton {
+  background: #efefef;
+  border: 1px solid #bdbdbd;
+  color: #444;
+}
+
+.deleteSection {
+  margin-top: 32px;
+}
+
+.deleteTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.deleteText {
+  font-size: 0.9rem; /* was 0.39rem — nearly unreadable */
+  line-height: 1.5;
+  color: #555;
+  text-decoration: underline;
+  margin: 0 0 12px;
+  max-width: 420px;
+}
+
+.deleteButton {
+  min-width: 150px;
+  height: 40px;
+  border: 1px solid #7d1717;
+  border-radius: 8px;
+  background: #bc2b24;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.deleteButtonWrap {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 20px;
+  }
+
+  .inner {
+    max-width: 100%;
+  }
+
+  .row,
+  .shortRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .input,
+  .select {
+    height: 38px;
+    font-size: 0.9rem;
+  }
+
+  .label {
+    font-size: 0.8rem;
+  }
+
+  .editButton,
+  .saveButton,
+  .cancelButton,
+  .deleteButton {
+    min-width: 120px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+}
+
+.inputReadOnly {
+  height: 42px;
+  border: none;
+  border-bottom: 1px solid #d0d0d0;
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 4px;
+  font-size: 0.95rem;
+  color: #222;
+  outline: none;
+  width: 100%;
+}
+
+/* Logout at bottom */
+.logoutSection {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: center;
+}
+
+.logoutButton {
+  min-width: 150px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #bdbdbd;
+  background: #f5f5f5;
+  color: #444;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.logoutButton:hover {
+  background: #e8e8e8;
+}

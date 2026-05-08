@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import { StepCircle, StepLine } from "@/components/ui/Stepper";
+import { useParams } from "next/navigation";
 
 type RegistrationMode = "loggedIn" | "guest";
 type RegistrationStep = 1 | 2 | 3;
@@ -52,6 +53,9 @@ export default function EventRegistrationPage() {
   const [partyMembersError, setPartyMembersError] = useState("");
   const [didHydrateMode, setDidHydrateMode] = useState(false);
   const [showRegisteredMessage, setShowRegisteredMessage] = useState(false);
+
+  const params = useParams();
+  const id = params.eventId as string;
 
   useEffect(() => {
     if (!isLoaded || didHydrateMode) return;
@@ -178,6 +182,46 @@ export default function EventRegistrationPage() {
     setShowRegisteredMessage(false);
   };
 
+  const handleRegistration = async () => {
+    let tempPartyMembers = partyMembers
+      .filter((pm) => pm.name && pm.email)
+      .map((pm) => {
+        return {
+          name: pm.name,
+          email: pm.email,
+          waiverSigned: false,
+          registrant: false,
+          attending: true,
+          attended: false,
+        };
+      });
+
+    const registrant = {
+      name: mode == "loggedIn" ? primaryName : guestName,
+      email: mode == "loggedIn" ? primaryEmail : guestEmail,
+      waiverSigned: false,
+      registrant: true,
+      attending: true,
+      attended: false,
+    };
+
+    tempPartyMembers = [registrant, ...tempPartyMembers];
+
+    const registrationBody = {
+      eventId: id,
+      partyMembers: tempPartyMembers,
+      affiliatedOrganization: organization,
+      additionalComments: notes,
+    };
+
+    const response = await fetch(`/api/events/registration`, {
+      method: "POST",
+      body: JSON.stringify(registrationBody),
+    });
+
+    console.log(response);
+  };
+
   return (
     <div className="min-h-screen bg-[#f7f7f2] font-lora text-[#161616]">
       <Navbar mode={navbarMode} />
@@ -249,7 +293,7 @@ export default function EventRegistrationPage() {
                 setShowRegisteredMessage(false);
                 setStep(2);
               }}
-              onRegister={() => setShowRegisteredMessage(true)}
+              onRegister={() => handleRegistration()}
             />
           ) : null}
         </section>

@@ -1,268 +1,73 @@
+/* AdminEventsPage.module.css */
+
 .page {
-  width: 100%;
-  padding: 28px 18px 60px;
+  padding: 1.5rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .section {
-  margin-top: 22px;
+  margin-bottom: 2.5rem;
 }
 
 .sectionTitle {
-  font-size: 34px;
-  font-weight: 800;
-  margin: 0 0 18px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
 }
 
-/* Date range control */
+/* --- Date row --- */
 .dateRow {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0;
-  margin-bottom: 18px;
+  gap: 0.5rem;
+  flex-wrap: wrap; /* ← wraps on very small screens */
+  margin-bottom: 1rem;
 }
 
 .dateInput {
-  width: 135px;
-  height: 38px;
-  border: 2px solid #8aa9d6;
-  padding: 0 10px;
-  font-size: 14px;
-  border-radius: 6px 0 0 6px;
-  outline: none;
-}
-
-.dateInput:last-of-type {
-  border-radius: 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  flex: 1 1 120px; /* ← shrinks/grows but stays readable */
+  min-width: 110px;
 }
 
 .toBox {
-  height: 38px;
-  padding: 0 10px;
-  border-top: 2px solid #8aa9d6;
-  border-bottom: 2px solid #8aa9d6;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  background: white;
+  font-size: 0.9rem;
+  color: #555;
+  white-space: nowrap;
 }
 
 .goButton {
-  height: 38px;
-  width: 44px;
-  border: 2px solid #8aa9d6;
-  border-left: none;
-  border-radius: 0 6px 6px 0;
-  background: #cfecc2;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1rem;
 }
 
-/* Row carousel */
+/* --- Card grid --- */
 .row {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 220px;
-  gap: 18px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
+  gap: 1rem;
+
+  /* Mobile first: 1 column */
+  grid-template-columns: 1fr;
 }
 
-.row::-webkit-scrollbar {
-  height: 10px;
-}
-.row::-webkit-scrollbar-thumb {
-  background: #cfcfcf;
-  border-radius: 999px;
-}
-.row::-webkit-scrollbar-track {
-  background: #efefef;
-  border-radius: 999px;
+/* Tablet: 2 columns */
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-/* Card */
-.card {
-  position: relative;
-  height: 260px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 2px solid rgba(0, 0, 0, 0.15);
-  background: #ddd;
-  cursor: pointer;
-  padding: 0;
-  text-align: left;
-  scroll-snap-align: start;
-}
-
-.cardBg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-}
-
-.cardOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.28);
-}
-
-.cardContent {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14px;
-  color: white;
-}
-
-.cardDate {
-  text-align: center;
-  line-height: 1;
-  margin-top: 4px;
-}
-
-.cardMonth {
-  font-size: 42px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-}
-
-.cardDay {
-  font-size: 44px;
-  font-weight: 800;
-  margin-top: 6px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-}
-
-.cardLocation {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  right: 14px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-  opacity: 0.95;
-}
-
-.pin {
-  font-size: 14px;
-}
-
-.school {
-  text-align: center;
-  max-width: 190px;
-}
-
-/* Hover panel container */
-.hoverPanel {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 18px;
-
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 150ms ease;
-}
-
-.card:hover .hoverPanel {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* White card inside the hover panel */
-.hoverPanelInner {
-  width: 190px;
-  border-radius: 10px;
-  background: white;
-  padding: 14px 12px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-}
-
-/* Text styling */
-.hoverTitle {
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
-.hoverText {
-  font-weight: 700;
-  margin: 4px 0;
-}
-
-/* Buttons */
-.hoverButtons {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.hoverBtnLight,
-.hoverBtnDark {
-  height: 30px;
-  border-radius: 7px;
-  cursor: pointer;
-  border: 1px solid #1d2b32;
-  font-weight: 700;
-}
-
-.hoverBtnLight {
-  background: #b9d6d6;
-}
-
-.hoverBtnDark {
-  background: #1f6f9b;
-  color: white;
-  border-color: #0f2b3a;
-}
-
-.card:hover .admin {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.admin {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: grid;
-  gap: 6px;
-  z-index: 3;
-}
-
-/* "Registered: X" */
-.registered {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  font-size: 12px;
-  font-weight: 700;
-  color: #111;
-}
-
-/* "Attended: X/X" (past only) */
-.attendance {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(230, 255, 230, 0.95);
-  border: 1px solid #2fb34a;
-  font-size: 12px;
-  font-weight: 700;
-  color: #111;
+/* Desktop: 3 columns */
+@media (min-width: 1024px) {
+  .row {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

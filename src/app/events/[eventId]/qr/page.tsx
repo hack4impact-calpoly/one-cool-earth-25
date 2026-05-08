@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import QRCode from "qrcode";
 
@@ -10,12 +10,18 @@ export default function EventQrPage() {
   const eventId = params?.eventId as string;
 
   const [qrDataUrl, setQrDataUrl] = useState("");
+  const [checkinUrl, setCheckinUrl] = useState("");
 
-  const checkinUrl = useMemo(() => {
-    return `${window.location.origin}/checkin/${eventId}`;
+  useEffect(() => {
+    if (!eventId) return;
+
+    const url = `${window.location.origin}/checkin/${eventId}`;
+    setCheckinUrl(url);
   }, [eventId]);
 
   useEffect(() => {
+    if (!checkinUrl) return;
+
     (async () => {
       const dataUrl = await QRCode.toDataURL(checkinUrl, {
         width: 280,
@@ -28,7 +34,6 @@ export default function EventQrPage() {
 
   return (
     <div style={styles.shell}>
-      {/* Top row */}
       <div style={styles.topRow}>
         <div>
           <h1 style={styles.title}>Garden Workday</h1>
@@ -41,13 +46,11 @@ export default function EventQrPage() {
         </button>
       </div>
 
-      {/* Center QR */}
       <div style={styles.center}>
         {qrDataUrl && <img src={qrDataUrl} alt="Event QR" style={styles.qr} />}
         <div style={styles.caption}>Please scan to log your attendance!</div>
       </div>
 
-      {/* Print icon bottom-right */}
       <button onClick={() => window.print()} style={styles.printBtn} aria-label="Print" title="Print">
         🖨
       </button>

@@ -6,7 +6,17 @@ import { useRouter } from "next/navigation";
 import styles from "@/styles/ConfirmEmail.module.css";
 import { IoReloadOutline } from "react-icons/io5";
 
-export default function ConfirmAccountPage({ email, fullName, dob }: { email: string; fullName: string; dob: string }) {
+export default function ConfirmAccountPage({
+  email,
+  fullName,
+  dob,
+  phoneNumber,
+}: {
+  email: string;
+  fullName: string;
+  dob: string;
+  phoneNumber: string;
+}) {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
@@ -42,6 +52,7 @@ export default function ConfirmAccountPage({ email, fullName, dob }: { email: st
             email,
             firstName: fullName.split(" ")[0],
             lastName: fullName.split(" ").slice(1).join(" ") || "",
+            phoneNumber,
             dob,
           }),
         });
