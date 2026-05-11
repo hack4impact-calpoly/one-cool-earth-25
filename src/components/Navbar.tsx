@@ -12,10 +12,10 @@ type NavItem = { label: string; href: string };
 const NAV_LINKS: Record<NavMode, NavItem[]> = {
   Admin: [
     { label: "Calendar", href: "/admin-calendar" },
-    { label: "Events", href: "/admin-events" },
+    { label: "Events", href: "/events" },
     { label: "Inbox", href: "/inbox" },
     { label: "Report", href: "/report" },
-    { label: "Account", href: "/admin-account" },
+    { label: "Account", href: "/account" },
   ],
   VolunteerNotLoggedIn: [
     { label: "Calendar", href: "/calendar" },
