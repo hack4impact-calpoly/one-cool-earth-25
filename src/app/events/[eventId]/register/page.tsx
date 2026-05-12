@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import { StepCircle, StepLine } from "@/components/ui/Stepper";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type RegistrationMode = "loggedIn" | "guest";
 type RegistrationStep = 1 | 2 | 3;
@@ -47,12 +47,13 @@ export default function EventRegistrationPage() {
   const [guestEmail, setGuestEmail] = useState("jdoe@gmail.com");
   const [partyMembers, setPartyMembers] = useState<AdditionalPartyMember[]>([emptyPartyMember(1)]);
   const [organization, setOrganization] = useState("N/A");
-  const [notes, setNotes] = useState("Question question question");
+  const [notes, setNotes] = useState("");
   const [guestError, setGuestError] = useState("");
   const [partyMemberErrors, setPartyMemberErrors] = useState<PartyMemberErrors>({});
   const [partyMembersError, setPartyMembersError] = useState("");
   const [didHydrateMode, setDidHydrateMode] = useState(false);
   const [showRegisteredMessage, setShowRegisteredMessage] = useState(false);
+  const router = useRouter();
 
   const params = useParams();
   const id = params.eventId as string;
@@ -219,7 +220,7 @@ export default function EventRegistrationPage() {
       body: JSON.stringify(registrationBody),
     });
 
-    console.log(response);
+    router.push("/events");
   };
 
   return (

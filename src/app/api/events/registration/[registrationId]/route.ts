@@ -6,7 +6,7 @@ import Registration from "@/database/models/Registration";
 export async function GET(request: Request, { params }: { params: { registrationId: string } }) {
   try {
     await connectDB();
-    const registration = await Registration.findById(params.registrationId);
+    const registration = await Registration.findById(params.registrationId).populate("eventId");
 
     if (!registration) {
       return NextResponse.json({ error: "Registration not found" }, { status: 404 });

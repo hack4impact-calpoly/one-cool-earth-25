@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "@/styles/EditEventRegistration.module.css";
 import { TbSignature, TbSignatureOff } from "react-icons/tb";
@@ -9,10 +9,11 @@ import { FaPlus } from "react-icons/fa";
 import { BeatLoader } from "react-spinners";
 
 type Reservation = {
-  title: string;
-  description: string;
-  location: string;
+  eventId: Event;
   start: string;
+  additionalComments: string;
+  affiliatedOrganization: string;
+  partyMembers: [Participant];
 };
 
 type Participant = {
@@ -23,32 +24,21 @@ type Participant = {
   attending: boolean;
 };
 
+type Event = {
+  description: string;
+  location: string;
+  name: string;
+  time: string;
+};
+
 export default function EditRegistration() {
   const params = useParams();
   const id = params.id as string;
+  const router = useRouter();
 
-  const [reservation, setReservation] = useState<Reservation | null>(null);
-  const [participants, setParticipants] = useState<Participant[]>([
-    {
-      name: "John Doe",
-      email: "jdoe@gmail.com",
-      mainAttendee: true,
-      waiverSigned: true,
-      attending: true,
-    },
-    {
-      name: "Jane Doe",
-      email: "janedoe@gmail.com",
-      waiverSigned: false,
-      attending: false,
-    },
-    {
-      name: "John Doe",
-      email: "jdoe@gmail.com",
-      waiverSigned: false,
-      attending: true,
-    },
-  ]);
+  const [event, setEvent] = useState<Event | null>(null);
+  const [registration, setRegistration] = useState<Reservation | null>(null);
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
   const tempOrganizations = ["N/A", "One Cool Earth", "PG&E", "Other Organization"];
   const [affiliatedOrganization, setAffiliatedOrganization] = useState("N/A");
@@ -57,6 +47,8 @@ export default function EditRegistration() {
   const [attendeeHovered, setAttendeeHovered] = useState<null | number>(null);
   const [orgsOpen, setOrgsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -65,7 +57,7 @@ export default function EditRegistration() {
       try {
         setLoading(true);
 
-        const response = await fetch(`/api/events/${id}`, {
+        const response = await fetch(`/api/events/registration/${id}`, {
           method: "GET",
         });
 
@@ -74,7 +66,7 @@ export default function EditRegistration() {
         }
 
         const result = await response.json();
-        setReservation(result);
+        setRegistration(result.registration);
       } catch (error) {
         console.error("Error fetching reservation:", error);
       } finally {
@@ -84,6 +76,16 @@ export default function EditRegistration() {
 
     fetchReservation();
   }, [id]);
+
+  useEffect(() => {
+    if (registration) {
+      console.log(registration);
+      setParticipants(registration.partyMembers);
+      setEvent(registration.eventId);
+      setAdditionalInfo(registration.additionalComments);
+      setAffiliatedOrganization(registration.affiliatedOrganization);
+    }
+  }, [registration]);
 
   function formatDate(date: string): string {
     if (!date) return "";
@@ -134,6 +136,53 @@ export default function EditRegistration() {
     setParticipants(participants.filter((_, i) => i !== index));
   };
 
+  const onSave = async () => {
+    try {
+      setEditing(true);
+      const newDoc = {
+        partyMembers: participants,
+        affiliatedOrganization: affiliatedOrganization,
+        additionalComments: additionalInfo,
+      };
+
+      const response = await fetch(`/api/events/registration/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(newDoc),
+      });
+
+      if (response.ok) {
+        console.log("Success updating");
+        router.push("/events");
+      } else {
+        throw Error("Failure to patch");
+      }
+    } catch (error) {
+      alert("Could not edit registration");
+    } finally {
+      setEditing(false);
+    }
+  };
+
+  const removeRegistration = async () => {
+    try {
+      setDeleting(true);
+      const response = await fetch(`/api/events/registration/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("success deleting");
+        router.push("/events");
+      } else {
+        throw Error("Fail to delete");
+      }
+    } catch (error) {
+      alert("Could not delete registration");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.page}>
@@ -142,7 +191,7 @@ export default function EditRegistration() {
     );
   }
 
-  if (!reservation) {
+  if (!registration) {
     return (
       <div className={styles.page}>
         <p>Unable to load registration.</p>
@@ -153,9 +202,9 @@ export default function EditRegistration() {
   return (
     <div className={styles.page}>
       <div>
-        <h1 className={styles.title}>{reservation.title}</h1>
-        <h2 className={styles.subTitle}>{reservation.description}</h2>
-        <h2 className={styles.date}>{formatDate(reservation.start)}</h2>
+        <h1 className={styles.title}>{event?.name ? event.name : ""}</h1>
+        <h2 className={styles.subTitle}>{event?.description ? event.description : ""}</h2>
+        <h2 className={styles.date}>{formatDate(event?.time ? event.time : "")}</h2>
       </div>
 
       <div className={styles.participants}>
@@ -239,8 +288,10 @@ export default function EditRegistration() {
       </div>
 
       <div className={styles.buttonContainer}>
-        <button className={styles.red}>cancel registration</button>
-        <button>save</button>
+        <button className={styles.red} onClick={removeRegistration}>
+          {deleting ? <BeatLoader size={8} /> : "cancel registration"}
+        </button>
+        <button onClick={onSave}>{editing ? <BeatLoader size={8} /> : "save"}</button>
       </div>
     </div>
   );
