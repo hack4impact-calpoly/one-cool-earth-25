@@ -243,15 +243,6 @@ export default function LoginForm() {
           </button>
         </form>
 
-        <div className={styles.oauthRow}>
-          <button type="button" className={styles.oauthButton}>
-            Log in w/
-          </button>
-          <button type="button" className={styles.oauthButton}>
-            Log in w/
-          </button>
-        </div>
-
         <button type="button" className={styles.forgotLink}>
           Forgot Password?
         </button>
