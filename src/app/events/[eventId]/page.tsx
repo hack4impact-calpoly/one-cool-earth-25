@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter, useParams } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { useRole } from "@/hooks/useRole";
 import EventDetails from "@/components/EventDetails";
 import VolunteerList from "@/components/VolunteerList";
 import NavBarWrapper from "@/components/NavbarWrapper";
@@ -24,7 +26,9 @@ function toDateTime(date: Date, time: string) {
 }
 
 export default function EventPage() {
-  const isAdminView = false;
+  const role = useRole();
+  const { isLoaded } = useUser();
+  const isAdminView = role === "admin";
   const router = useRouter();
   const params = useParams();
   const eventId = params?.eventId as string;
@@ -32,13 +36,17 @@ export default function EventPage() {
   const eventDetailsData = event
     ? {
         name: event.title,
-        description: `Join us at ${event.school} for hands-on garden support and community impact.`,
+        description: isAdminView
+          ? `Admin view for ${event.school}. Manage details, attendance, and follow-ups.`
+          : `Join us at ${event.school} for hands-on garden support and community impact.`,
         location: event.school,
         startDateTime: toDateTime(event.date, event.startTime),
         endDateTime: toDateTime(event.date, event.endTime),
         imageUrl: event.imageUrl,
       }
     : undefined;
+
+  if (!isLoaded) return null;
 
   // Later: fetch event by eventId from Mongo.
   // For now, your EventDetails already has defaultData.

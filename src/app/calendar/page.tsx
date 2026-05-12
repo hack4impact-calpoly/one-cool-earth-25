@@ -11,7 +11,10 @@ import styles from "@/styles/VolunteerEventsPage.module.css";
 import calendarStyles from "@/styles/CalendarPage.module.css";
 import { MOCK_EVENTS } from "@/data/events";
 import NavBarWrapper from "../../components/NavbarWrapper";
+import AdminEventCard from "@/components/AdminEventCard";
 import { AppEvent } from "@/data/events";
+import { useRole } from "@/hooks/useRole";
+import CreateEventModal from "@/components/CreateEventModal";
 
 export interface CalendarEvent {
   id: string;
@@ -23,6 +26,8 @@ export interface CalendarEvent {
 }
 
 export default function CalendarPage() {
+  const role = useRole();
+  const isAdmin = role === "admin";
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
@@ -30,6 +35,7 @@ export default function CalendarPage() {
   const [events, setEvents] = useState<AppEvent[]>(MOCK_EVENTS);
   const [loading, setLoading] = useState(true);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const today = new Date();
 
   useEffect(() => {
@@ -90,6 +96,10 @@ export default function CalendarPage() {
     }
   };
 
+  const handleEventCreated = async () => {
+    setIsCreateModalOpen(false);
+  };
+
   const handleSearch = (value: string) => {
     setSearchInput(value);
     if (value == "") {
@@ -112,6 +122,7 @@ export default function CalendarPage() {
     { label: "Creating Garden Art", Icon: BookOpen },
   ];
 
+  console.log(isAdmin);
   return (
     <div>
       <NavBarWrapper />
@@ -119,9 +130,9 @@ export default function CalendarPage() {
         <h1 className={calendarStyles.pageTitle}>Upcoming Events</h1>
         {upcomingCardEvents.length != 0 ? (
           <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
-            {upcomingCardEvents.map((event) => (
-              <VolunteerEventCard key={event.id} event={event} />
-            ))}
+            {isAdmin
+              ? upcomingCardEvents.map((event) => <AdminEventCard key={event.id} event={event} />)
+              : upcomingCardEvents.map((event) => <VolunteerEventCard key={event.id} event={event} />)}
           </div>
         ) : (
           <div className="m-3 mx-10 text-3xl">Nothing for now... check back soon!</div>
@@ -187,6 +198,34 @@ export default function CalendarPage() {
               Today
             </Button>
           </div>
+          {isAdmin && (
+            <div>
+              <Button
+                variant="contained"
+                onClick={() => setIsCreateModalOpen(true)}
+                sx={{
+                  backgroundColor: "#D8E7C3",
+                  color: "#6E8B59",
+                  border: "2px solid #7E9B6A",
+                  borderRadius: "8px",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  fontFamily: "Lora, serif",
+                  fontWeight: 700,
+                  fontSize: "1.1rem",
+                  lineHeight: 1,
+                  padding: "10px 18px",
+                  minWidth: "unset",
+                  "&:hover": {
+                    backgroundColor: "#CFE0B7",
+                    boxShadow: "none",
+                  },
+                }}
+              >
+                Add Event
+              </Button>
+            </div>
+          )}
           <div className="relative w-[291px] flex-col">
             <div className="h-[50px] flex-shrink-0">
               <input
@@ -216,6 +255,13 @@ export default function CalendarPage() {
           height="auto"
         />
       </div>
+      {isAdmin && (
+        <CreateEventModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={handleEventCreated}
+        />
+      )}
     </div>
   );
 }

@@ -94,6 +94,10 @@
   scroll-snap-align: start;
 }
 
+.adminCard {
+  border-radius: 8px;
+}
+
 .cardBg {
   position: absolute;
   inset: 0;
@@ -203,6 +207,35 @@
   border-color: #e24b4b;
 }
 
+.adminStatusWrap {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  z-index: 2;
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  transition: opacity 100ms ease;
+}
+
+.registered,
+.attendance {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 18px;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.attendance {
+  border: 2px solid #2fb34a;
+}
+
 /* Hover panel container */
 .hoverPanel {
   position: absolute;
@@ -228,6 +261,16 @@
   pointer-events: none;
 }
 
+.adminCard:hover .adminStatusWrap {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.adminCard .hoverPanel {
+  align-items: center;
+  padding-bottom: 0;
+}
+
 /* White card inside the hover panel */
 .hoverPanelInner {
   width: 190px;
@@ -236,6 +279,14 @@
   padding: 14px 12px;
   text-align: center;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.adminCard .hoverPanelInner {
+  width: 172px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.86);
+  padding: 18px 14px;
+  box-shadow: none;
 }
 
 /* Text styling */
@@ -273,6 +324,27 @@
   background: #1f6f9b;
   color: white;
   border-color: #0f2b3a;
+}
+
+.adminCard .hoverButtons {
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.adminCard .hoverBtnLight,
+.adminCard .hoverBtnDark {
+  height: 26px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.adminCard .hoverBtnLight {
+  background: #b9d6d6;
+}
+
+.adminCard .hoverBtnDark {
+  background: #1f6f9b;
 }
 
 @media (max-width: 768px) {

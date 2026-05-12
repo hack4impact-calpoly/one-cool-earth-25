@@ -6,6 +6,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/Account.module.css";
+import { useRole } from "@/hooks/useRole";
 
 type NotificationOption = "Text" | "Email" | "Both" | "None";
 
@@ -21,6 +22,8 @@ interface AccountFormData {
 }
 
 export default function AccountPage() {
+  const role = useRole();
+  const isAdmin = role === "admin";
   const { signOut } = useClerk();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);

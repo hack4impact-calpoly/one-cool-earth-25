@@ -1,22 +1,27 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import QRCode from "qrcode";
+import { MOCK_EVENTS } from "@/data/events";
+
+function formatDate(date: Date) {
+  return `${date.getMonth() + 1}/${date.getDate()}/${String(date.getFullYear()).slice(-2)}`;
+}
 
 export default function EventQrPage() {
   const router = useRouter();
   const params = useParams();
   const eventId = params?.eventId as string;
+  const event = MOCK_EVENTS.find((item) => item.id === eventId);
 
   const [qrDataUrl, setQrDataUrl] = useState("");
-  const [checkinUrl, setCheckinUrl] = useState("");
 
-  useEffect(() => {
+  const checkinUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
     if (!eventId) return;
-
-    const url = `${window.location.origin}/checkin/${eventId}`;
-    setCheckinUrl(url);
+    return `${window.location.origin}/checkin/${eventId}`;
   }, [eventId]);
 
   useEffect(() => {
@@ -36,19 +41,19 @@ export default function EventQrPage() {
     <div style={styles.shell}>
       <div style={styles.topRow}>
         <div>
-          <h1 style={styles.title}>Garden Workday</h1>
-          <div style={styles.meta}>Los Osos Elementary</div>
-          <div style={styles.meta}>3/11/25</div>
+          <h1 style={styles.title}>{event?.title ?? "Garden Workday"}</h1>
+          <div style={styles.meta}>{event?.school ?? "Unknown Location"}</div>
+          <div style={styles.meta}>{event ? formatDate(event.date) : ""}</div>
         </div>
 
         <button onClick={() => router.push(`/events/${eventId}`)} style={styles.backBtn}>
-          ← Back to Events
+          ← Back to Event
         </button>
       </div>
 
       <div style={styles.center}>
-        {qrDataUrl && <img src={qrDataUrl} alt="Event QR" style={styles.qr} />}
-        <div style={styles.caption}>Please scan to log your attendance!</div>
+        {qrDataUrl && <Image src={qrDataUrl} alt="Event QR" width={280} height={280} style={styles.qr} unoptimized />}
+        <div style={styles.caption}>Please scan to log attendance!</div>
       </div>
 
       <button onClick={() => window.print()} style={styles.printBtn} aria-label="Print" title="Print">
