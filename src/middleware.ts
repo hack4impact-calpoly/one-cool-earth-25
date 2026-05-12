@@ -22,6 +22,9 @@ export default clerkMiddleware(async (auth, req) => {
   const userId = session.userId;
 
   const role = (session.sessionClaims?.publicMetadata as { role?: string })?.role;
+  if (isAdminRoute(req) && role !== "admin") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
 
   if (!userId && isLoggedInRoute(req)) {
     return NextResponse.redirect(new URL("/login", req.url));

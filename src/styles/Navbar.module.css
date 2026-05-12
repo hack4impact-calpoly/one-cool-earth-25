@@ -3,8 +3,10 @@
 .nav {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* changed from flex-end */
-  align-items: center;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
   padding: 20px 40px;
   position: relative;
 }
@@ -45,14 +47,13 @@
 .container {
   display: inline-flex;
   align-items: center;
-
+  margin-left: auto;
   padding: 0px;
   height: 42px;
   border: 1px solid #000;
   border-radius: 30px;
   background: #fff;
   gap: 10px;
-
   white-space: nowrap;
 }
 
