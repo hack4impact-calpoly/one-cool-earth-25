@@ -47,7 +47,7 @@ export default function EventRegistrationPage() {
   const [guestEmail, setGuestEmail] = useState("jdoe@gmail.com");
   const [partyMembers, setPartyMembers] = useState<AdditionalPartyMember[]>([emptyPartyMember(1)]);
   const [organization, setOrganization] = useState("N/A");
-  const [notes, setNotes] = useState("Question question question");
+  const [notes, setNotes] = useState("");
   const [guestError, setGuestError] = useState("");
   const [partyMemberErrors, setPartyMemberErrors] = useState<PartyMemberErrors>({});
   const [partyMembersError, setPartyMembersError] = useState("");
