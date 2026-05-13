@@ -1,12 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRole } from "@/hooks/useRole";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import AdminEventCard from "@/components/AdminEventCard";
 import { AppEvent, MOCK_EVENTS } from "@/data/events";
+
+function toDateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function fromDateInputValue(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function startOfLocalDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+}
+
+function endOfLocalDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999).getTime();
+}
+
+function isDateInRange(date: Date, start: Date, end: Date) {
+  const dateTime = date.getTime();
+  return startOfLocalDay(start) <= dateTime && dateTime <= endOfLocalDay(end);
+}
 
 function DateRangeControl({
   start,
@@ -19,10 +44,21 @@ function DateRangeControl({
   setStart: (d: Date) => void;
   setEnd: (d: Date) => void;
 }) {
-  const toInput = (d: Date) => d.toISOString().slice(0, 10);
-  const fromInputLocal = (value: string) => {
-    const [y, m, d] = value.split("-").map(Number);
-    return new Date(y, m - 1, d);
+  const [draftStart, setDraftStart] = useState(toDateInputValue(start));
+  const [draftEnd, setDraftEnd] = useState(toDateInputValue(end));
+
+  useEffect(() => {
+    setDraftStart(toDateInputValue(start));
+  }, [start]);
+
+  useEffect(() => {
+    setDraftEnd(toDateInputValue(end));
+  }, [end]);
+
+  const applyDateRange = () => {
+    if (draftStart === "" || draftEnd === "") return;
+    setStart(fromDateInputValue(draftStart));
+    setEnd(fromDateInputValue(draftEnd));
   };
 
   return (
@@ -30,23 +66,27 @@ function DateRangeControl({
       <input
         type="date"
         className={styles.dateInput}
-        value={toInput(start)}
+        value={draftStart}
         onChange={(e) => {
-          if (e.target.value === "") return;
-          setStart(fromInputLocal(e.target.value));
+          setDraftStart(e.target.value);
         }}
       />
       <div className={styles.toBox}>to</div>
       <input
         type="date"
         className={styles.dateInput}
-        value={toInput(end)}
+        value={draftEnd}
         onChange={(e) => {
-          if (e.target.value === "") return;
-          setEnd(fromInputLocal(e.target.value));
+          setDraftEnd(e.target.value);
         }}
       />
-      <button type="button" className={styles.goButton} aria-label="Apply date range">
+      <button
+        type="button"
+        className={styles.goButton}
+        aria-label="Apply date range"
+        onClick={applyDateRange}
+        disabled={draftStart === "" || draftEnd === ""}
+      >
         →
       </button>
     </div>
@@ -81,8 +121,8 @@ export default function VolunteerEventsPage() {
 
   if (!isLoaded) return null;
 
-  const upcoming = events.filter((e) => e.section === "upcoming" && upStart <= e.date && e.date <= upEnd);
-  const past = events.filter((e) => e.section === "past" && pastStart <= e.date && e.date <= pastEnd);
+  const upcoming = events.filter((e) => e.section === "upcoming" && isDateInRange(e.date, upStart, upEnd));
+  const past = events.filter((e) => e.section === "past" && isDateInRange(e.date, pastStart, pastEnd));
   const upcomingSorted = [...upcoming].sort((a, b) => a.date.getTime() - b.date.getTime());
   const pastSorted = [...past].sort((a, b) => a.date.getTime() - b.date.getTime());
 
