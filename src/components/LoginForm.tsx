@@ -243,9 +243,9 @@ export default function LoginForm() {
           </button>
         </form>
 
-        <button type="button" className={styles.forgotLink}>
+        <a href="/forgot-password" className={styles.forgotLink}>
           Forgot Password?
-        </button>
+        </a>
       </div>
     </div>
   );
