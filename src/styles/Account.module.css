@@ -212,3 +212,10 @@
 .logoutButton:hover {
   background: #e8e8e8;
 }
+
+.errorText {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
