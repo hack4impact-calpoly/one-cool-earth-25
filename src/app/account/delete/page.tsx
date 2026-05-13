@@ -4,12 +4,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/Account.module.css";
+import { useState } from "react";
 
 export default function DeleteAccountPage() {
   const router = useRouter();
+  const [error, setError] = useState(false);
 
   const handleDelete = async () => {
-    router.push("/account/delete/success");
+    const res = await fetch("/api/user", { method: "DELETE" });
+
+    if (res.ok) {
+      router.push("/account/delete/success");
+    } else {
+      setError(true);
+    }
   };
 
   return (
@@ -42,6 +50,7 @@ export default function DeleteAccountPage() {
                 Delete my account
               </button>
             </div>
+            {error && <p className={styles.errorText}>Something went wrong. Please try again.</p>}
           </div>
         </div>
       </main>

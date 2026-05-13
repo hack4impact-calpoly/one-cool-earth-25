@@ -44,3 +44,22 @@ export async function GET() {
 
   return Response.json(user);
 }
+
+export async function DELETE() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  await connectDB();
+
+  // Delete from your DB
+  await User.findOneAndDelete({ clerkId: userId });
+
+  // Delete from Clerk
+  const client = await clerkClient();
+  await client.users.deleteUser(userId);
+
+  return Response.json({ success: true });
+}
