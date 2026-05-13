@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import {
   BookOpen,
@@ -26,6 +26,7 @@ import { AppEvent, isUpcomingEvent } from "@/data/events";
 import { useRole } from "@/hooks/useRole";
 import CreateEventModal from "@/components/CreateEventModal";
 import EventPopup from "@/components/EventPopup";
+import { applyWaiverStatusToEvent, useWaiverStatus } from "@/hooks/useWaiverStatus";
 
 type RegistrationEvent = {
   _id?: string;
@@ -42,6 +43,7 @@ export default function CalendarPage() {
   const { isLoaded, user } = useUser();
   const isAdmin = role === "admin";
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
+  const { status: waiverStatus } = useWaiverStatus(role === "volunteer");
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
@@ -193,7 +195,15 @@ export default function CalendarPage() {
     }
   };
 
-  const upcomingCardEvents = events.filter((event) => isUpcomingEvent(event));
+  const upcomingCardEvents = useMemo(() => {
+    const baseUpcomingEvents = events.filter((event) => isUpcomingEvent(event));
+
+    if (isAdmin || !waiverStatus) {
+      return baseUpcomingEvents;
+    }
+
+    return baseUpcomingEvents.map((event) => applyWaiverStatusToEvent(event, waiverStatus));
+  }, [events, isAdmin, waiverStatus]);
 
   const responsibilities = [
     { label: "Planting", Icon: Leaf },
