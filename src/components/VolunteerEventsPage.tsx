@@ -46,9 +46,10 @@ function DateRangeControl({
           setEnd(fromInputLocal(e.target.value));
         }}
       />
-      <button type="button" className={styles.goButton} aria-label="Apply date range">
+
+      {/*<button type="button" className={styles.goButton} aria-label="Apply date range">
         →
-      </button>
+      </button>*/}
     </div>
   );
 }

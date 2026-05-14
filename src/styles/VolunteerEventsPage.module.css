@@ -32,7 +32,7 @@
 }
 
 .dateInput:last-of-type {
-  border-radius: 0;
+  border-radius: 0 6px 6px 0;
 }
 
 .toBox {
