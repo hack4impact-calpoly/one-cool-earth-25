@@ -124,8 +124,15 @@
 }
 
 .todayButton {
+  min-width: unset !important;
+  border-width: 1px !important;
+  border-radius: 8px !important;
+  padding: 10px 18px !important;
+  font-family: "Lora", serif !important;
   text-transform: none !important;
   font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
 }
 
 .searchBox {

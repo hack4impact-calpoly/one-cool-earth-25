@@ -204,9 +204,9 @@ export default function CalendarPage() {
                 variant="contained"
                 onClick={() => setIsCreateModalOpen(true)}
                 sx={{
-                  backgroundColor: "#D8E7C3",
-                  color: "#6E8B59",
-                  border: "2px solid #7E9B6A",
+                  backgroundColor: "#dcf9c9",
+                  color: "#568264",
+                  border: "1px solid #307433",
                   borderRadius: "8px",
                   boxShadow: "none",
                   textTransform: "none",
