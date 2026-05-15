@@ -120,6 +120,7 @@
   justify-content: center;
   padding: 14px;
   color: white;
+  transition: opacity 150ms ease;
 }
 
 .cardDate {
@@ -254,6 +255,10 @@
 .cardHoverEnabled:hover .hoverPanel {
   opacity: 1;
   pointer-events: auto;
+}
+
+.cardHoverEnabled:hover .cardContent {
+  opacity: 0;
 }
 
 .cardHoverEnabled:hover .statusWrap {
