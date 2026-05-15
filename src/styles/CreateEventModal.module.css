@@ -125,11 +125,12 @@
   font-size: 19px;
   cursor: pointer;
   box-sizing: border-box;
+  transition: background-color 0.2s ease;
 }
 
 .imageButton:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background-color: #cfe0b7;
+  box-shadow: none;
 }
 
 .imageButton:active {
@@ -166,11 +167,12 @@
   font-size: 25px;
   cursor: pointer;
   box-sizing: border-box;
+  transition: background-color 0.2s ease;
 }
 
 .actionButton:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background-color: #cfe0b7;
+  box-shadow: none;
 }
 
 .actionButton:active {
