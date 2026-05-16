@@ -22,7 +22,7 @@
 }
 
 .dateInput {
-  width: 135px;
+  width: 145px;
   height: 38px;
   border: 2px solid #8aa9d6;
   padding: 0 10px;
@@ -32,7 +32,7 @@
 }
 
 .dateInput:last-of-type {
-  border-radius: 0;
+  border-radius: 0 6px 6px 0;
 }
 
 .toBox {
