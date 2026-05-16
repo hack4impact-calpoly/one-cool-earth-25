@@ -196,7 +196,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
             />
 
             <div className={styles.imageButtonRow}>
-              <button type="button" className={styles.imageButton} onClick={() => fileInputRef.current?.click()}>
+              <button type="button" className={styles.actionButton} onClick={() => fileInputRef.current?.click()}>
                 {draft.imageUrl ? "Change Image" : "Upload Image"}
               </button>
 
