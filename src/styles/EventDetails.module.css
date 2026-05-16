@@ -74,11 +74,12 @@
   border: 1px solid #568264;
   background: #dcf9c9;
   color: #568264;
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 5px 12px;
   font-weight: 700;
   font-size: 25px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .imagePreview {
@@ -95,17 +96,18 @@
   border: 1px solid #568264;
   background: #dcf9c9;
   color: #568264;
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 6px 10px;
   font-weight: 700;
   font-size: 19px;
   cursor: pointer;
   margin-top: 8px;
+  transition: background-color 0.2s ease;
 }
 
 .imageButton:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background-color: #cfe0b7;
+  box-shadow: none;
 }
 
 .imageButton:active {
@@ -113,8 +115,8 @@
 }
 
 .saveButton:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background-color: #cfe0b7;
+  box-shadow: none;
 }
 
 .saveButton:active {
