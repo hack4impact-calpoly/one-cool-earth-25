@@ -5,16 +5,21 @@ import Event from "@/database/models/Event";
 export async function GET() {
   try {
     await connectDB();
-    const rawEvents = await Event.find({});
+
+    const rawEvents = await Event.find({}).sort({ startTime: 1 });
 
     const formattedEvents = rawEvents.map((event: any) => ({
-      id: event._id,
-      title: event.name, // 'name' becomes 'title'
-      start: event.time, // 'time' becomes 'start'
+      id: event._id.toString(),
+      title: event.name,
       description: event.description,
       location: event.location,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      imageUrl: event.imageUrl,
+      section: event.section,
+      registeredCount: event.registeredCount,
+      attendanceCount: event.attendanceCount,
     }));
-    /* for what fullcalendar expects*/
 
     return NextResponse.json(formattedEvents);
   } catch (error) {
@@ -26,13 +31,19 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     await connectDB();
+
     const eventData = await request.json();
 
     const newEvent = new Event({
       name: eventData.name,
       description: eventData.description,
       location: eventData.location,
-      time: eventData.time,
+      startTime: eventData.startTime,
+      endTime: eventData.endTime,
+      imageUrl: eventData.imageUrl,
+      section: eventData.section,
+      registeredCount: eventData.registeredCount ?? 0,
+      attendanceCount: eventData.attendanceCount ?? 0,
     });
 
     await newEvent.save();
@@ -44,9 +55,11 @@ export async function POST(request: Request) {
   }
 }
 
+// Don't need anymore
 export async function DELETE(request: Request) {
   try {
     await connectDB();
+
     const { id } = await request.json();
 
     await Event.findByIdAndDelete(id);

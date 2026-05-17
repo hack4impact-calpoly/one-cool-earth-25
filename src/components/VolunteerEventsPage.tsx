@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRole } from "@/hooks/useRole";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import AdminEventCard from "@/components/AdminEventCard";
-import { AppEvent, MOCK_EVENTS } from "@/data/events";
+import { AppEvent } from "@/data/events";
 
 function DateRangeControl({
   start,
@@ -64,11 +64,13 @@ function EventCardList({ events, isAdminView }: { events: AppEvent[]; isAdminVie
   );
 }
 
+// Not only Volunteer, renders both Volunteer and Admin
 export default function VolunteerEventsPage() {
   const role = useRole();
   const { isLoaded } = useUser();
   const isAdminView = role === "admin";
-  const events = MOCK_EVENTS;
+  const [events, setEvents] = useState<AppEvent[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const curYear = new Date().getFullYear();
   const [upStart, setUpStart] = useState(new Date(curYear, 0, 1));
@@ -76,12 +78,41 @@ export default function VolunteerEventsPage() {
   const [pastStart, setPastStart] = useState(new Date(curYear, 0, 1));
   const [pastEnd, setPastEnd] = useState(new Date(curYear, 11, 31));
 
-  if (!isLoaded) return null;
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/events");
+        const data = await response.json();
 
-  const upcoming = events.filter((e) => e.section === "upcoming" && upStart <= e.date && e.date <= upEnd);
-  const past = events.filter((e) => e.section === "past" && pastStart <= e.date && e.date <= pastEnd);
-  const upcomingSorted = [...upcoming].sort((a, b) => a.date.getTime() - b.date.getTime());
-  const pastSorted = [...past].sort((a, b) => a.date.getTime() - b.date.getTime());
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to fetch events");
+        }
+
+        const formattedEvents = data.map((event: AppEvent) => ({
+          ...event,
+          startTime: new Date(event.startTime),
+          endTime: new Date(event.endTime),
+        }));
+
+        setEvents(formattedEvents);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  if (!isLoaded || loading) return null;
+
+  const upcoming = events.filter((e) => e.section === "upcoming" && upStart <= e.startTime && e.startTime <= upEnd);
+  const past = events.filter((e) => e.section === "past" && pastStart <= e.startTime && e.startTime <= pastEnd);
+
+  const upcomingSorted = [...upcoming].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+  const pastSorted = [...past].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 
   return (
     <main className={styles.page}>

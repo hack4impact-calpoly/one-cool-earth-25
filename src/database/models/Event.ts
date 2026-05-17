@@ -15,9 +15,33 @@ const eventSchema = new Schema(
       type: String,
     },
 
-    time: {
+    startTime: {
       type: Date,
       required: true,
+    },
+
+    endTime: {
+      type: Date,
+      required: true,
+    },
+
+    imageUrl: {
+      type: String,
+    },
+
+    section: {
+      type: String,
+      enum: ["upcoming", "past"],
+      required: true,
+    },
+
+    registeredCount: {
+      type: Number,
+      required: true,
+    },
+
+    attendanceCount: {
+      type: Number,
     },
   },
   {

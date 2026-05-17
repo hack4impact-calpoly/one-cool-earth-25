@@ -9,21 +9,20 @@ import { Button } from "@mui/material";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import calendarStyles from "@/styles/CalendarPage.module.css";
-import { MOCK_EVENTS } from "@/data/events";
 import NavBarWrapper from "../../components/NavbarWrapper";
 import AdminEventCard from "@/components/AdminEventCard";
 import { AppEvent } from "@/data/events";
 import { useRole } from "@/hooks/useRole";
 import CreateEventModal from "@/components/CreateEventModal";
 
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  start: string;
-  description?: string;
-  location?: string;
-  date: Date;
-}
+// export interface CalendarEvent {
+//   id: string;
+//   title: string;
+//   start: string;
+//   description?: string;
+//   location?: string;
+//   date: Date;
+// }
 
 export default function CalendarPage() {
   const role = useRole();
@@ -32,7 +31,7 @@ export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<AppEvent[]>([]);
-  const [events, setEvents] = useState<AppEvent[]>(MOCK_EVENTS);
+  const [events, setEvents] = useState<AppEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -48,7 +47,13 @@ export default function CalendarPage() {
           throw new Error(data?.error || "Failed to fetch events");
         }
 
-        setEvents(Array.isArray(data) ? data : []);
+        const formattedEvents = data.map((event: AppEvent) => ({
+          ...event,
+          startTime: new Date(event.startTime),
+          endTime: new Date(event.endTime),
+        }));
+
+        setEvents(formattedEvents);
       } catch (error) {
         console.error("Failed to fetch events:", error);
         setEvents([]);
@@ -98,22 +103,44 @@ export default function CalendarPage() {
 
   const handleEventCreated = async () => {
     setIsCreateModalOpen(false);
+    try {
+      const response = await fetch("/api/events");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to fetch events");
+      }
+
+      const formattedEvents = data.map((event: AppEvent) => ({
+        ...event,
+        startTime: new Date(event.startTime),
+        endTime: new Date(event.endTime),
+      }));
+
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error("Failed to refresh events:", error);
+    }
   };
 
   const handleSearch = (value: string) => {
     setSearchInput(value);
-    if (value == "") {
+
+    if (value === "") {
       setSearchResults([]);
       return;
     }
-    const results = MOCK_EVENTS.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
+
+    const results = events.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
 
     setSearchResults(results);
   };
-  const upcomingCardEvents = MOCK_EVENTS.filter((event) => {
+
+  const upcomingCardEvents = events.filter((event) => {
     const now = new Date();
-    return now < event.date;
+    return event.section === "upcoming" && now < event.startTime;
   });
+
   const responsibilities = [
     { label: "Planting", Icon: Leaf },
     { label: "Building Plant Beds", Icon: House },
@@ -249,7 +276,12 @@ export default function CalendarPage() {
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
-          events={events}
+          events={events.map((event) => ({
+            id: event.id,
+            title: event.title,
+            start: event.startTime,
+            end: event.endTime,
+          }))}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
