@@ -15,15 +15,6 @@ import { AppEvent } from "@/data/events";
 import { useRole } from "@/hooks/useRole";
 import CreateEventModal from "@/components/CreateEventModal";
 
-// export interface CalendarEvent {
-//   id: string;
-//   title: string;
-//   start: string;
-//   description?: string;
-//   location?: string;
-//   date: Date;
-// }
-
 export default function CalendarPage() {
   const role = useRole();
   const isAdmin = role === "admin";
@@ -206,68 +197,58 @@ export default function CalendarPage() {
 
         <div className={calendarStyles.controlsRow}>
           <div className={calendarStyles.controlsLeft}>
-            <div className={calendarStyles.arrowGroup}>
-              <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
-                <ChevronLeft size={40} color="#BEBEBE" />
-              </button>
-              <button onClick={handleNext} className="hover:opacity-70 transition-opacity">
-                <ChevronRight size={40} color="#BEBEBE" />
-              </button>
+            <div className={calendarStyles.calendarNav}>
+              <div className={calendarStyles.arrowGroup}>
+                <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
+                  <ChevronLeft size={40} color="#BEBEBE" />
+                </button>
+
+                <button onClick={handleNext} className="hover:opacity-70 transition-opacity">
+                  <ChevronRight size={40} color="#BEBEBE" />
+                </button>
+              </div>
+
+              <h2 className={calendarStyles.monthLabel}>
+                {viewDate.toLocaleString("default", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </h2>
             </div>
 
-            <h2 className={calendarStyles.monthLabel}>
-              {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
-            </h2>
-          </div>
-
-          <div className={calendarStyles.todayWrap}>
-            <Button className={calendarStyles.todayButton} variant="outlined" onClick={handleReset}>
+            <Button className={calendarStyles.todayButton} variant="contained" onClick={handleReset}>
               Today
             </Button>
           </div>
-          {isAdmin && (
-            <div>
+
+          <div className={calendarStyles.controlsRight}>
+            {isAdmin && (
               <Button
                 variant="contained"
                 onClick={() => setIsCreateModalOpen(true)}
-                sx={{
-                  backgroundColor: "#D8E7C3",
-                  color: "#6E8B59",
-                  border: "2px solid #7E9B6A",
-                  borderRadius: "8px",
-                  boxShadow: "none",
-                  textTransform: "none",
-                  fontFamily: "Lora, serif",
-                  fontWeight: 700,
-                  fontSize: "1.1rem",
-                  lineHeight: 1,
-                  padding: "10px 18px",
-                  minWidth: "unset",
-                  "&:hover": {
-                    backgroundColor: "#CFE0B7",
-                    boxShadow: "none",
-                  },
-                }}
+                className={calendarStyles.addEventButton}
               >
                 Add Event
               </Button>
-            </div>
-          )}
-          <div className="relative w-[291px] flex-col">
-            <div className="h-[50px] flex-shrink-0">
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
-                value={searchInput}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-            </div>
-            {searchResults.length > 0 && (
-              <div className="absolute top-full left-0 w-full bg-white rounded-lg shadow-lg mt-2 z-50 max-h-60 overflow-y-auto">
-                <SearchResultList results={searchResults} />
-              </div>
             )}
+
+            <div className={`${calendarStyles.searchBox} relative flex-col`}>
+              <div className="h-[50px] flex-shrink-0">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
+                  value={searchInput}
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </div>
+
+              {searchResults.length > 0 && (
+                <div className="absolute top-full left-0 w-full bg-white rounded-lg shadow-lg mt-2 z-50 max-h-60 overflow-y-auto">
+                  <SearchResultList results={searchResults} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

@@ -80,6 +80,7 @@ export default function VolunteerEventCard({ event }: { event: AppEvent }) {
           </div>
           <div className={styles.hoverText}>{event.location}</div>
 
+          {/* TODO: Fix this */}
           <div className={styles.hoverButtons}>
             <button
               type="button"
