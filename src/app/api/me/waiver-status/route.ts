@@ -4,18 +4,18 @@ import Waiver from "@/database/models/Waiver";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-type WaiverStatusValue = "complete" | "incomplete";
-
-const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+//const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+const CACHE_MAX_AGE_MS = 1000 * 2;
 const JOTFORM_SUBMISSIONS_LIMIT = 1000;
 
 const apiKey = process.env.JOTFORM_API_KEY;
 const baseUrl = process.env.JOTFORM_BASE_URL;
 const formId = process.env.JOTFORM_WAIVER_FORM_ID;
+const schoolFieldName = process.env.JOTFORM_SCHOOL_FIELD_NAME;
 
 export async function GET() {
   /*Check ENV vars*/
-  if (!apiKey || !baseUrl || !formId) {
+  if (!apiKey || !baseUrl || !formId || !schoolFieldName) {
     return NextResponse.json({ error: "ENV variables invalid" }, { status: 500 });
   }
 
@@ -43,17 +43,24 @@ export async function GET() {
 
   const normalizedEmail = normalizeEmail(email);
 
-  const existingWaiver = await Waiver.findOne({
+  const existingWaivers = await Waiver.find({
     clerkId: userId,
   });
 
-  if (existingWaiver) {
-    const age = Date.now() - existingWaiver.waiverLastCheckedAt.getTime();
-    if (age < CACHE_MAX_AGE_MS || existingWaiver.status === "complete") {
+  if (existingWaivers.length > 0) {
+    const allWaiversFresh = existingWaivers.every((waiver) => {
+      const age = Date.now() - waiver.waiverLastCheckedAt.getTime();
+      return age < CACHE_MAX_AGE_MS;
+    });
+
+    if (allWaiversFresh) {
+      const completedSchools = existingWaivers.map((waiver) => {
+        return waiver.schoolNormalized;
+      });
       return NextResponse.json({
-        status: existingWaiver.status,
+        completedSchools,
         source: "cache",
-        checkedAt: existingWaiver.waiverLastCheckedAt,
+        checkedAt: existingWaivers[0].waiverLastCheckedAt,
       });
     }
   }
@@ -74,36 +81,50 @@ export async function GET() {
     return NextResponse.json({ error: "Invalid Jotform Response" }, { status: 500 });
   }
 
-  const matchingSubmission = submissions.find((submission) => {
+  const matchingSubmissions = submissions.filter((submission) => {
     return getSubmissionEmail(submission.answers) === normalizedEmail;
   });
 
-  let status: WaiverStatusValue;
-  if (matchingSubmission) {
-    status = "complete";
-  } else {
-    status = "incomplete";
-  }
+  const completedSchools = Array.from(
+    new Set(
+      matchingSubmissions
+        .map((submission) => {
+          return getSubmissionSchool(submission.answers);
+        })
+        .filter((school) => {
+          return school !== null;
+        }),
+    ),
+  );
 
   const time = new Date();
 
-  await Waiver.findOneAndUpdate(
-    { clerkId: userId },
-    {
-      clerkId: userId,
-      email: normalizedEmail,
-      status: status,
-      waiverLastCheckedAt: time,
-      waiverSubmissionId: matchingSubmission?.id ?? null,
-    },
-    { upsert: true, new: true },
-  );
+  for (const school of completedSchools) {
+    await Waiver.findOneAndUpdate(
+      {
+        clerkId: userId,
+        schoolNormalized: school,
+      },
+      {
+        clerkId: userId,
+        schoolNormalized: school,
+        email: normalizedEmail,
+        status: "complete",
+        waiverLastCheckedAt: time,
+      },
+      { upsert: true, new: true },
+    );
+  }
 
-  return NextResponse.json({ status, source: "jotform", checkedAt: time });
+  return NextResponse.json({ completedSchools, source: "jotform", checkedAt: time });
 }
 
 function normalizeEmail(email: string) {
   return email.toLowerCase().trim();
+}
+
+function normalizeSchool(school: string) {
+  return school.toLowerCase().trim().replace(/\s+/g, " ");
 }
 
 function getSubmissionEmail(answers: any) {
@@ -115,6 +136,21 @@ function getSubmissionEmail(answers: any) {
   for (const item of vals) {
     if (item && typeof item === "object" && item.type === "control_email" && typeof item.answer === "string") {
       return normalizeEmail(item.answer);
+    }
+  }
+  return null;
+}
+
+function getSubmissionSchool(answers: any) {
+  if (!answers || typeof answers !== "object") {
+    return null;
+  }
+
+  const vals: any[] = Object.values(answers);
+
+  for (const item of vals) {
+    if (item && typeof item === "object" && item.name === schoolFieldName && typeof item.answer === "string") {
+      return normalizeSchool(item.answer);
     }
   }
   return null;
