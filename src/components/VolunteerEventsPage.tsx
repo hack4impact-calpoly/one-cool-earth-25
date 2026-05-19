@@ -203,7 +203,9 @@ export default function VolunteerEventsPage() {
     );
   }
 
-  const upcoming = eventsWithWaiverStatus.filter((e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd));
+  const upcoming = eventsWithWaiverStatus.filter(
+    (e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd),
+  );
   const past = eventsWithWaiverStatus.filter((e) => isPastEvent(e) && isInDateRange(e.startTime, pastStart, pastEnd));
 
   const upcomingSorted = [...upcoming].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
