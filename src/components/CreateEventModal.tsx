@@ -31,6 +31,7 @@ const getDefaultDraft = (): EventData => ({
 
 export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateEventModalProps) {
   const [draft, setDraft] = useState<EventData>(getDefaultDraft());
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -43,10 +44,33 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
     }
 
     setDraft(getDefaultDraft());
+    setSelectedImageFile(null);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  };
+
+  const uploadImage = async () => {
+    if (!selectedImageFile) {
+      return draft.imageUrl;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedImageFile);
+
+    const response = await fetch("/api/events/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error || "Failed to upload image");
+    }
+
+    return data.url as string;
   };
 
   const handleSave = async () => {
@@ -72,6 +96,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
 
     try {
       setSubmitting(true);
+      const uploadedImageUrl = await uploadImage();
 
       const response = await fetch("/api/events", {
         method: "POST",
@@ -84,7 +109,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
           location: draft.location,
           startTime: startDateTime,
           endTime: endDateTime,
-          imageUrl: draft.imageUrl,
+          imageUrl: uploadedImageUrl,
           registeredCount: 0,
           attendanceCount: 0,
         }),
@@ -110,11 +135,13 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
 
     if (!file) {
       setDraft({ ...draft, imageUrl: undefined });
+      setSelectedImageFile(null);
       return;
     }
 
     const url = URL.createObjectURL(file);
     setDraft({ ...draft, imageUrl: url });
+    setSelectedImageFile(file);
   };
 
   return (
