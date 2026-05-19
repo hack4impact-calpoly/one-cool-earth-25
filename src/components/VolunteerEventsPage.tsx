@@ -60,15 +60,27 @@ function DateRangeControl({
   );
 }
 
-function EventCardList({ events, isAdminView }: { events: AppEvent[]; isAdminView: boolean }) {
+function EventCardList({
+  events,
+  isAdminView,
+  emptyMessage,
+}: {
+  events: AppEvent[];
+  isAdminView: boolean;
+  emptyMessage: string;
+}) {
   return (
     <div className={styles.row}>
-      {events.map((event) =>
-        isAdminView ? (
-          <AdminEventCard key={event.id} event={event} />
-        ) : (
-          <VolunteerEventCard key={event.id} event={event} />
-        ),
+      {events.length === 0 ? (
+        <div className={styles.emptyEventCard}>{emptyMessage}</div>
+      ) : (
+        events.map((event) =>
+          isAdminView ? (
+            <AdminEventCard key={event.id} event={event} />
+          ) : (
+            <VolunteerEventCard key={event.id} event={event} />
+          ),
+        )
       )}
     </div>
   );
@@ -179,7 +191,11 @@ export default function VolunteerEventsPage() {
 
         <DateRangeControl start={upStart} end={upEnd} setStart={setUpStart} setEnd={setUpEnd} />
 
-        <EventCardList events={upcomingSorted} isAdminView={isAdminView} />
+        <EventCardList
+          events={upcomingSorted}
+          isAdminView={isAdminView}
+          emptyMessage={isAdminView ? "No upcoming events" : "No upcoming registrations"}
+        />
       </section>
 
       <section className={styles.section}>
@@ -187,7 +203,11 @@ export default function VolunteerEventsPage() {
 
         <DateRangeControl start={pastStart} end={pastEnd} setStart={setPastStart} setEnd={setPastEnd} />
 
-        <EventCardList events={pastSorted} isAdminView={isAdminView} />
+        <EventCardList
+          events={pastSorted}
+          isAdminView={isAdminView}
+          emptyMessage={isAdminView ? "No past events" : "No past registrations"}
+        />
       </section>
     </main>
   );
