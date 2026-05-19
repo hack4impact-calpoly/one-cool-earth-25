@@ -44,9 +44,9 @@ export default function VolunteerList({ canViewVolunteers = false }: { canViewVo
     <div className={styles.card}>
       <div className={styles.header}>
         <h1 className={styles.title}>Volunteers</h1>
-        <div className={styles.headerIcon}>
+        {/* <div className={styles.headerIcon}>
           <Image src={mail} alt="Email volunteers" width={25} height={25} />
-        </div>
+        </div> */}
       </div>
 
       <div className={styles.list}>

@@ -1,12 +1,20 @@
 /* EventDetails.module.css */
 
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .container {
   background: #f9fbff;
   border: 1px solid #527abe;
   border-radius: 5px;
   padding: 10px 15px;
-  /*max-width: 45%; */
-  max-height: 35%;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  max-height: none;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -87,7 +95,7 @@
   border-radius: 6px;
   border: 1px solid #527abe;
   width: 100%;
-  max-width: 320px;
+  max-width: 520px;
   height: auto;
   display: block;
 }
