@@ -1,12 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRole } from "@/hooks/useRole";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import AdminEventCard from "@/components/AdminEventCard";
-import { AppEvent, MOCK_EVENTS } from "@/data/events";
+import { AppEvent, isPastEvent, isUpcomingEvent } from "@/data/events";
+
+type RegistrationEvent = {
+  _id?: string;
+  id?: string;
+};
+
+type UserRegistration = {
+  eventId?: string | RegistrationEvent | null;
+};
 
 function DateRangeControl({
   start,
@@ -64,11 +73,22 @@ function EventCardList({ events, isAdminView }: { events: AppEvent[]; isAdminVie
   );
 }
 
+function isInDateRange(date: Date, start: Date, end: Date) {
+  const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+  return startDay <= day && day <= endDay;
+}
+
+// Not only Volunteer, renders both Volunteer and Admin
 export default function VolunteerEventsPage() {
   const role = useRole();
-  const { isLoaded } = useUser();
+  const { isLoaded, user } = useUser();
   const isAdminView = role === "admin";
-  const events = MOCK_EVENTS;
+  const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
+  const [events, setEvents] = useState<AppEvent[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const curYear = new Date().getFullYear();
   const [upStart, setUpStart] = useState(new Date(curYear, 0, 1));
@@ -76,12 +96,73 @@ export default function VolunteerEventsPage() {
   const [pastStart, setPastStart] = useState(new Date(curYear, 0, 1));
   const [pastEnd, setPastEnd] = useState(new Date(curYear, 11, 31));
 
-  if (!isLoaded) return null;
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!isLoaded) return;
 
-  const upcoming = events.filter((e) => e.section === "upcoming" && upStart <= e.date && e.date <= upEnd);
-  const past = events.filter((e) => e.section === "past" && pastStart <= e.date && e.date <= pastEnd);
-  const upcomingSorted = [...upcoming].sort((a, b) => a.date.getTime() - b.date.getTime());
-  const pastSorted = [...past].sort((a, b) => a.date.getTime() - b.date.getTime());
+      try {
+        setLoading(true);
+        const response = await fetch("/api/events");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to fetch events");
+        }
+
+        const formattedEvents: AppEvent[] = data.map((event: AppEvent) => ({
+          ...event,
+          startTime: new Date(event.startTime),
+          endTime: new Date(event.endTime),
+        }));
+
+        if (isAdminView) {
+          setEvents(formattedEvents);
+          return;
+        }
+
+        if (!userEmail) {
+          setEvents([]);
+          return;
+        }
+
+        const registrationResponse = await fetch(`/api/events/registration/users/${encodeURIComponent(userEmail)}`);
+        const registrationData = await registrationResponse.json();
+
+        if (!registrationResponse.ok) {
+          throw new Error(registrationData?.error || "Failed to fetch registrations");
+        }
+
+        const registeredEventIds = new Set(
+          (registrationData.registrations as UserRegistration[]).flatMap((registration) => {
+            const eventId = registration.eventId;
+
+            if (!eventId) return [];
+            if (typeof eventId === "string") return [eventId];
+
+            const id = eventId.id || eventId._id;
+            return id ? [id] : [];
+          }),
+        );
+
+        setEvents(formattedEvents.filter((event) => registeredEventIds.has(event.id)));
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [isAdminView, isLoaded, userEmail]);
+
+  if (!isLoaded || loading) return null;
+
+  const upcoming = events.filter((e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd));
+  const past = events.filter((e) => isPastEvent(e) && isInDateRange(e.startTime, pastStart, pastEnd));
+
+  const upcomingSorted = [...upcoming].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+  const pastSorted = [...past].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 
   return (
     <main className={styles.page}>

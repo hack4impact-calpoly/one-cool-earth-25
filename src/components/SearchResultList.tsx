@@ -8,11 +8,11 @@ interface SearchResultProps {
 export default function SearchResultList({ results }: SearchResultProps) {
   return (
     <div className="w-full rounded-xl shadow-md">
-      {results
+      {[...results]
         .sort((e1, e2) => {
-          if (e1.date < e2.date) {
+          if (e1.startTime < e2.startTime) {
             return -1;
-          } else if (e2.date == e2.date) {
+          } else if (e2.startTime == e2.startTime) {
             return 0;
           } else return 1;
         })
@@ -24,7 +24,7 @@ export default function SearchResultList({ results }: SearchResultProps) {
                   <strong>{event.title}</strong>
                 </div>
                 <div className="text-md">
-                  {event.date?.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+                  {event.startTime?.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
                 </div>
               </div>
             </a>

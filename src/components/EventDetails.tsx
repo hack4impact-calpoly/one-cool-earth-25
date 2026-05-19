@@ -1,37 +1,27 @@
 "use client";
-import React, { CSSProperties, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import editIcon from "../icons/editIcon.svg";
 import styles from "../styles/EventDetails.module.css";
+import { AppEvent } from "@/data/events";
 
 interface EventDetailsProps {
-  eventData?: EventData;
+  event: AppEvent | null;
   isEditable?: boolean;
 }
 
-interface EventData {
-  name: string;
-  description: string;
-  location: string;
-  startDateTime: Date;
-  endDateTime: Date;
-  imageUrl?: string;
-}
-
-const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = false }) => {
-  const defaultData: EventData = {
-    name: "Garden Workday",
-    description:
-      "We have ongoing garden workday opportunities that happen all over the county throughout the year. These workdays typically occur after school or on Saturdays and include tasks such as spreading wood chips, building beds, planting, weeding, spreading mulch, etc.",
-    location: "Baywood Elementary",
-    startDateTime: new Date("2025-03-11T15:00:00"),
-    endDateTime: new Date("2025-03-11T17:00:00"),
-    imageUrl: undefined,
-  };
-
-  const [data, setData] = useState<EventData>(eventData || defaultData);
-  const [draft, setDraft] = useState<EventData>(data);
+const EventDetails: React.FC<EventDetailsProps> = ({ event, isEditable = false }) => {
+  const [draft, setDraft] = useState<AppEvent | null>(event);
   const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setDraft(event);
+  }, [event]);
+
+  if (!draft) {
+    return <div className={styles.wrapper}>No event found.</div>;
+  }
 
   const formatDate = (date: Date): string => {
     const month = date.getMonth() + 1;
@@ -66,43 +56,72 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
   };
 
   const startEditing = () => {
-    setDraft(data);
     setIsEditing(true);
   };
 
-  const saveEditing = () => {
-    setData(draft);
-    setIsEditing(false);
+  const saveEditing = async () => {
+    if (!draft) return;
+
+    try {
+      const response = await fetch(`/api/events/${draft.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(draft),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to update event");
+      }
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save event:", error);
+    }
   };
 
   const handleDateChange = (dateStr: string) => {
-    const newDate = new Date(dateStr);
-    const newStart = new Date(draft.startDateTime);
-    const newEnd = new Date(draft.endDateTime);
-    newStart.setFullYear(newDate.getFullYear());
-    newStart.setMonth(newDate.getMonth());
-    newStart.setDate(newDate.getDate());
-    newEnd.setFullYear(newDate.getFullYear());
-    newEnd.setMonth(newDate.getMonth());
-    newEnd.setDate(newDate.getDate());
-    setDraft({ ...draft, startDateTime: newStart, endDateTime: newEnd });
+    const [year, month, day] = dateStr.split("-").map(Number);
+
+    const newStart = new Date(draft.startTime);
+    const newEnd = new Date(draft.endTime);
+
+    newStart.setFullYear(year, month - 1, day);
+    newEnd.setFullYear(year, month - 1, day);
+
+    setDraft({
+      ...draft,
+      startTime: newStart,
+      endTime: newEnd,
+    });
   };
 
   const handleStartTimeChange = (timeStr: string) => {
     const [hours, minutes] = timeStr.split(":").map(Number);
-    const newStart = new Date(draft.startDateTime);
+
+    const newStart = new Date(draft.startTime);
     newStart.setHours(hours, minutes, 0, 0);
-    setDraft({ ...draft, startDateTime: newStart });
+
+    setDraft({
+      ...draft,
+      startTime: newStart,
+    });
   };
 
   const handleEndTimeChange = (timeStr: string) => {
     const [hours, minutes] = timeStr.split(":").map(Number);
-    const newEnd = new Date(draft.endDateTime);
-    newEnd.setHours(hours, minutes, 0, 0);
-    setDraft({ ...draft, endDateTime: newEnd });
-  };
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const newEnd = new Date(draft.endTime);
+    newEnd.setHours(hours, minutes, 0, 0);
+
+    setDraft({
+      ...draft,
+      endTime: newEnd,
+    });
+  };
 
   const handleImageChange = (file: File | null) => {
     if (draft.imageUrl?.startsWith("blob:")) {
@@ -137,13 +156,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
         <div>
           <span className={styles.detailLabel}>Title: </span>
           {!isEditing ? (
-            <span className={styles.detailValue}>{data.name}</span>
+            <span className={styles.detailValue}>{draft.title}</span>
           ) : (
             <div style={{ marginTop: "8px" }}>
               <input
                 className={styles.input}
-                value={draft.name}
-                onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                value={draft.title}
+                onChange={(e) => setDraft({ ...draft, title: e.target.value })}
               />
             </div>
           )}
@@ -152,12 +171,12 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
         <div>
           <span className={styles.detailLabel}>Description: </span>
           {!isEditing ? (
-            <span className={styles.detailValue}>{data.description}</span>
+            <span className={styles.detailValue}>{draft.description}</span>
           ) : (
             <div style={{ marginTop: "8px" }}>
               <textarea
                 className={styles.textarea}
-                value={draft.description}
+                value={draft.description ?? ""}
                 onChange={(e) => setDraft({ ...draft, description: e.target.value })}
               />
             </div>
@@ -167,12 +186,12 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
         <div>
           <span className={styles.detailLabel}>Location: </span>
           {!isEditing ? (
-            <span className={styles.detailValue}>{data.location}</span>
+            <span className={styles.detailValue}>{draft.location}</span>
           ) : (
             <div style={{ marginTop: "8px" }}>
               <input
                 className={styles.input}
-                value={draft.location}
+                value={draft.location ?? ""}
                 onChange={(e) => setDraft({ ...draft, location: e.target.value })}
               />
             </div>
@@ -182,13 +201,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
         <div>
           <span className={styles.detailLabel}>Date: </span>
           {!isEditing ? (
-            <span className={styles.detailValue}>{formatDate(data.startDateTime)}</span>
+            <span className={styles.detailValue}>{formatDate(draft.startTime)}</span>
           ) : (
             <div style={{ marginTop: "8px" }}>
               <input
                 type="date"
                 className={styles.input}
-                value={toDateInputValue(draft.startDateTime)}
+                value={toDateInputValue(draft.startTime)}
                 onChange={(e) => handleDateChange(e.target.value)}
               />
             </div>
@@ -198,14 +217,14 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
         <div>
           <span className={styles.detailLabel}>Time: </span>
           {!isEditing ? (
-            <span className={styles.detailValue}>{formatTime(data.startDateTime, data.endDateTime)}</span>
+            <span className={styles.detailValue}>{formatTime(draft.startTime, draft.endTime)}</span>
           ) : (
             <div className={styles.timeInputRow}>
               <input
                 type="time"
                 className={styles.input}
                 style={{ width: "auto", flex: 1 }}
-                value={toTimeInputValue(draft.startDateTime)}
+                value={toTimeInputValue(draft.startTime)}
                 onChange={(e) => handleStartTimeChange(e.target.value)}
               />
               <span>-</span>
@@ -213,7 +232,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
                 type="time"
                 className={styles.input}
                 style={{ width: "auto", flex: 1 }}
-                value={toTimeInputValue(draft.endDateTime)}
+                value={toTimeInputValue(draft.endTime)}
                 onChange={(e) => handleEndTimeChange(e.target.value)}
               />
             </div>
@@ -223,10 +242,10 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData, isEditable = fal
         <div>
           <span className={styles.detailLabel}>Image: </span>
           {!isEditing ? (
-            data.imageUrl ? (
+            draft.imageUrl ? (
               <div style={{ marginTop: "10px" }}>
                 <Image
-                  src={data.imageUrl}
+                  src={draft.imageUrl}
                   alt="event upload"
                   width={320}
                   height={200}

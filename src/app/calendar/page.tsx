@@ -9,21 +9,11 @@ import { Button } from "@mui/material";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import calendarStyles from "@/styles/CalendarPage.module.css";
-import { MOCK_EVENTS } from "@/data/events";
 import NavBarWrapper from "../../components/NavbarWrapper";
 import AdminEventCard from "@/components/AdminEventCard";
-import { AppEvent } from "@/data/events";
+import { AppEvent, isUpcomingEvent } from "@/data/events";
 import { useRole } from "@/hooks/useRole";
 import CreateEventModal from "@/components/CreateEventModal";
-
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  start: string;
-  description?: string;
-  location?: string;
-  date: Date;
-}
 
 export default function CalendarPage() {
   const role = useRole();
@@ -32,7 +22,7 @@ export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<AppEvent[]>([]);
-  const [events, setEvents] = useState<AppEvent[]>(MOCK_EVENTS);
+  const [events, setEvents] = useState<AppEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -48,7 +38,13 @@ export default function CalendarPage() {
           throw new Error(data?.error || "Failed to fetch events");
         }
 
-        setEvents(Array.isArray(data) ? data : []);
+        const formattedEvents = data.map((event: AppEvent) => ({
+          ...event,
+          startTime: new Date(event.startTime),
+          endTime: new Date(event.endTime),
+        }));
+
+        setEvents(formattedEvents);
       } catch (error) {
         console.error("Failed to fetch events:", error);
         setEvents([]);
@@ -98,22 +94,41 @@ export default function CalendarPage() {
 
   const handleEventCreated = async () => {
     setIsCreateModalOpen(false);
+    try {
+      const response = await fetch("/api/events");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to fetch events");
+      }
+
+      const formattedEvents = data.map((event: AppEvent) => ({
+        ...event,
+        startTime: new Date(event.startTime),
+        endTime: new Date(event.endTime),
+      }));
+
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error("Failed to refresh events:", error);
+    }
   };
 
   const handleSearch = (value: string) => {
     setSearchInput(value);
-    if (value == "") {
+
+    if (value === "") {
       setSearchResults([]);
       return;
     }
-    const results = MOCK_EVENTS.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
+
+    const results = events.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
 
     setSearchResults(results);
   };
-  const upcomingCardEvents = MOCK_EVENTS.filter((event) => {
-    const now = new Date();
-    return now < event.date;
-  });
+
+  const upcomingCardEvents = events.filter((event) => isUpcomingEvent(event));
+
   const responsibilities = [
     { label: "Planting", Icon: Leaf },
     { label: "Building Plant Beds", Icon: House },
@@ -179,68 +194,58 @@ export default function CalendarPage() {
 
         <div className={calendarStyles.controlsRow}>
           <div className={calendarStyles.controlsLeft}>
-            <div className={calendarStyles.arrowGroup}>
-              <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
-                <ChevronLeft size={40} color="#BEBEBE" />
-              </button>
-              <button onClick={handleNext} className="hover:opacity-70 transition-opacity">
-                <ChevronRight size={40} color="#BEBEBE" />
-              </button>
+            <div className={calendarStyles.calendarNav}>
+              <div className={calendarStyles.arrowGroup}>
+                <button onClick={handlePrev} className="hover:opacity-70 transition-opacity">
+                  <ChevronLeft size={40} color="#BEBEBE" />
+                </button>
+
+                <button onClick={handleNext} className="hover:opacity-70 transition-opacity">
+                  <ChevronRight size={40} color="#BEBEBE" />
+                </button>
+              </div>
+
+              <h2 className={calendarStyles.monthLabel}>
+                {viewDate.toLocaleString("default", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </h2>
             </div>
 
-            <h2 className={calendarStyles.monthLabel}>
-              {viewDate.toLocaleString("default", { month: "long", year: "numeric" })}
-            </h2>
-          </div>
-
-          <div className={calendarStyles.todayWrap}>
-            <Button className={calendarStyles.todayButton} variant="outlined" onClick={handleReset}>
+            <Button className={calendarStyles.todayButton} variant="contained" onClick={handleReset}>
               Today
             </Button>
           </div>
-          {isAdmin && (
-            <div>
+
+          <div className={calendarStyles.controlsRight}>
+            {isAdmin && (
               <Button
                 variant="contained"
                 onClick={() => setIsCreateModalOpen(true)}
-                sx={{
-                  backgroundColor: "#D8E7C3",
-                  color: "#6E8B59",
-                  border: "2px solid #7E9B6A",
-                  borderRadius: "8px",
-                  boxShadow: "none",
-                  textTransform: "none",
-                  fontFamily: "Lora, serif",
-                  fontWeight: 700,
-                  fontSize: "1.1rem",
-                  lineHeight: 1,
-                  padding: "10px 18px",
-                  minWidth: "unset",
-                  "&:hover": {
-                    backgroundColor: "#CFE0B7",
-                    boxShadow: "none",
-                  },
-                }}
+                className={calendarStyles.addEventButton}
               >
                 Add Event
               </Button>
-            </div>
-          )}
-          <div className="relative w-[291px] flex-col">
-            <div className="h-[50px] flex-shrink-0">
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
-                value={searchInput}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-            </div>
-            {searchResults.length > 0 && (
-              <div className="absolute top-full left-0 w-full bg-white rounded-lg shadow-lg mt-2 z-50 max-h-60 overflow-y-auto">
-                <SearchResultList results={searchResults} />
-              </div>
             )}
+
+            <div className={`${calendarStyles.searchBox} relative flex-col`}>
+              <div className="h-[50px] flex-shrink-0">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full h-full border-none rounded-full bg-[#D1E3F0] px-6 text-xl font-bold text-black placeholder:text-black placeholder:opacity-100 focus:outline-none"
+                  value={searchInput}
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </div>
+
+              {searchResults.length > 0 && (
+                <div className="absolute top-full left-0 w-full bg-white rounded-lg shadow-lg mt-2 z-50 max-h-60 overflow-y-auto">
+                  <SearchResultList results={searchResults} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -249,7 +254,12 @@ export default function CalendarPage() {
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
-          events={events}
+          events={events.map((event) => ({
+            id: event.id,
+            title: event.title,
+            start: event.startTime,
+            end: event.endTime,
+          }))}
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"

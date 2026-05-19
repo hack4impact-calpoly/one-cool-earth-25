@@ -8,8 +8,9 @@ interface EventData {
   name: string;
   description: string;
   location: string;
-  startDateTime: Date;
-  endDateTime: Date;
+  date: string;
+  startTime: string;
+  endTime: string;
   imageUrl?: string;
 }
 interface CreateEventModalProps {
@@ -18,15 +19,18 @@ interface CreateEventModalProps {
   onSuccess: () => void;
 }
 
-export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateEventModalProps) {
-  const [draft, setDraft] = useState<EventData>({
-    name: "",
-    description: "",
-    location: "",
-    startDateTime: new Date(),
-    endDateTime: new Date(),
-  });
+const getDefaultDraft = (): EventData => ({
+  name: "",
+  description: "",
+  location: "",
+  date: "",
+  startTime: "",
+  endTime: "",
+  imageUrl: undefined,
+});
 
+export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateEventModalProps) {
+  const [draft, setDraft] = useState<EventData>(getDefaultDraft());
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -38,31 +42,29 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
       URL.revokeObjectURL(draft.imageUrl);
     }
 
-    setDraft({
-      name: "",
-      description: "",
-      location: "",
-      startDateTime: new Date(),
-      endDateTime: new Date(),
-      imageUrl: undefined,
-    });
+    setDraft(getDefaultDraft());
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
+
   const handleSave = async () => {
     if (
       !draft.name.trim() ||
       !draft.location.trim() ||
       !draft.description.trim() ||
-      !draft.startDateTime ||
-      !draft.endDateTime
+      !draft.date ||
+      !draft.startTime ||
+      !draft.endTime
     ) {
       setError("Please fill out all fields.");
       return;
     }
-    if (draft.endDateTime <= draft.startDateTime) {
+    const startDateTime = new Date(`${draft.date}T${draft.startTime}`);
+    const endDateTime = new Date(`${draft.date}T${draft.endTime}`);
+
+    if (endDateTime <= startDateTime) {
       setError("End time must be after start time");
       return;
     }
@@ -80,9 +82,11 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
           name: draft.name,
           description: draft.description,
           location: draft.location,
-          time: draft.startDateTime,
-          // endDateTime: draft.endDateTime,
-          // imageUrl: draft.imageUrl,
+          startTime: startDateTime,
+          endTime: endDateTime,
+          imageUrl: draft.imageUrl, // Make sure that it POSTS the actual link once image functionality is added. Currently just adds a random blob. TODO: If the admin doesn't add an image then it should show a default image.
+          registeredCount: 0,
+          attendanceCount: 0,
         }),
       });
       if (!response.ok) {
@@ -97,28 +101,6 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const handleStartTimeChange = (timeStr: string) => {
-    const [hours, minutes] = timeStr.split(":").map(Number);
-    const newStart = new Date(draft.startDateTime);
-    newStart.setHours(hours, minutes, 0, 0);
-
-    setDraft({
-      ...draft,
-      startDateTime: newStart,
-    });
-  };
-
-  const handleEndTimeChange = (timeStr: string) => {
-    const [hours, minutes] = timeStr.split(":").map(Number);
-    const newEnd = new Date(draft.endDateTime);
-    newEnd.setHours(hours, minutes, 0, 0);
-
-    setDraft({
-      ...draft,
-      endDateTime: newEnd,
-    });
   };
 
   const handleImageChange = (file: File | null) => {
@@ -146,15 +128,30 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
           <div className={styles.formRow}>
             <div className={styles.field}>
               <span className={styles.detailLabel}>Date:</span>
-              <input type="date" className={styles.input} />
+              <input
+                type="date"
+                className={styles.input}
+                value={draft.date}
+                onChange={(e) => setDraft({ ...draft, date: e.target.value })}
+              />
             </div>
 
             <div className={styles.field}>
               <span className={styles.detailLabel}>Time:</span>
               <div className={styles.timeRow}>
-                <input type="time" className={styles.input} onChange={(e) => handleStartTimeChange(e.target.value)} />
+                <input
+                  type="time"
+                  className={styles.input}
+                  value={draft.startTime}
+                  onChange={(e) => setDraft({ ...draft, startTime: e.target.value })}
+                />
                 <span className={styles.toText}>to</span>
-                <input type="time" className={styles.input} onChange={(e) => handleEndTimeChange(e.target.value)} />
+                <input
+                  type="time"
+                  className={styles.input}
+                  value={draft.endTime}
+                  onChange={(e) => setDraft({ ...draft, endTime: e.target.value })}
+                />
               </div>
             </div>
           </div>
