@@ -52,6 +52,26 @@ body {
   opacity: 1 !important;
 }
 
+.fc .fc-daygrid-event {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.fc .fc-event-main,
+.fc .fc-event-main-frame {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.fc .fc-event-title,
+.fc .fc-event-title-container {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .fc .fc-cell-shaded,
 .fc .fc-daygrid-day,
 .fc td,
