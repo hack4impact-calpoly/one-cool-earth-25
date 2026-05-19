@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 //const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
-const CACHE_MAX_AGE_MS = 1000 * 2;
+const CACHE_MAX_AGE_MS = 1000 * 200000;
 const JOTFORM_SUBMISSIONS_LIMIT = 1000;
 
 const apiKey = process.env.JOTFORM_API_KEY;
@@ -124,7 +124,7 @@ function normalizeEmail(email: string) {
 }
 
 function normalizeSchool(school: string) {
-  return school.toLowerCase().trim().replace(/\s+/g, " ");
+  return school.toLowerCase().trim().replace(/\./g, "");
 }
 
 function getSubmissionEmail(answers: any) {

@@ -3,31 +3,32 @@
 import { useEffect, useState } from "react";
 import { AppEvent, isUpcomingEvent } from "@/data/events";
 
-export type ApiWaiverStatus = "complete" | "incomplete";
-
 type WaiverStatusResponse = {
-  status?: ApiWaiverStatus;
+  completedSchools?: string[];
   error?: string;
 };
 
-export function applyWaiverStatusToEvent(event: AppEvent, waiverStatus: ApiWaiverStatus): AppEvent {
-  if (!isUpcomingEvent(event)) {
+export function applyWaiverStatusToEvent(event: AppEvent, completedSchools: string[]): AppEvent {
+  if (!isUpcomingEvent(event) || !event.location) {
     return event;
   }
 
+  const normalizedEventSchool = normalizeSchool(event.location);
+  const hasCompletedWaiver = completedSchools.includes(normalizedEventSchool);
+
   return {
     ...event,
-    waiverSigned: waiverStatus === "complete",
+    waiverSigned: hasCompletedWaiver,
   };
 }
 
 export function useWaiverStatus(enabled: boolean) {
-  const [status, setStatus] = useState<ApiWaiverStatus | null>(null);
+  const [completedSchools, setCompletedSchools] = useState<string[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!enabled) {
-      setStatus(null);
+      setCompletedSchools(null);
       setError(null);
       return;
     }
@@ -41,7 +42,7 @@ export function useWaiverStatus(enabled: boolean) {
         if (!response.ok) {
           if (response.status === 401) {
             if (!cancelled) {
-              setStatus(null);
+              setCompletedSchools(null);
               setError("unauthorized");
             }
             return;
@@ -53,9 +54,9 @@ export function useWaiverStatus(enabled: boolean) {
 
         const data = (await response.json()) as WaiverStatusResponse;
 
-        if (data.status === "complete" || data.status === "incomplete") {
+        if (Array.isArray(data.completedSchools)) {
           if (!cancelled) {
-            setStatus(data.status);
+            setCompletedSchools(data.completedSchools);
             setError(null);
           }
           return;
@@ -64,7 +65,7 @@ export function useWaiverStatus(enabled: boolean) {
         throw new Error("Invalid waiver status response");
       } catch (err) {
         if (!cancelled) {
-          setStatus(null);
+          setCompletedSchools(null);
           setError(err instanceof Error ? err.message : "Failed to load waiver status");
         }
       }
@@ -77,5 +78,9 @@ export function useWaiverStatus(enabled: boolean) {
     };
   }, [enabled]);
 
-  return { status, error };
+  return { completedSchools, error };
+}
+
+function normalizeSchool(school: string): string {
+  return school.toLowerCase().trim().replace(/\./g, "").replace(/\s+/g, " ");
 }

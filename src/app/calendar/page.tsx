@@ -43,7 +43,7 @@ export default function CalendarPage() {
   const { isLoaded, user } = useUser();
   const isAdmin = role === "admin";
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
-  const { status: waiverStatus } = useWaiverStatus(role === "volunteer");
+  const { completedSchools } = useWaiverStatus(role === "volunteer");
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
@@ -198,13 +198,12 @@ export default function CalendarPage() {
   const upcomingCardEvents = useMemo(() => {
     const baseUpcomingEvents = events.filter((event) => isUpcomingEvent(event));
 
-    if (isAdmin || !waiverStatus) {
+    if (isAdmin || completedSchools === null) {
       return baseUpcomingEvents;
     }
 
-    return baseUpcomingEvents.map((event) => applyWaiverStatusToEvent(event, waiverStatus));
-  }, [events, isAdmin, waiverStatus]);
-
+    return baseUpcomingEvents.map((event) => applyWaiverStatusToEvent(event, completedSchools));
+  }, [events, isAdmin, completedSchools]);
   const responsibilities = [
     { label: "Planting", Icon: Leaf },
     { label: "Building Plant Beds", Icon: House },

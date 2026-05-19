@@ -109,7 +109,7 @@ export default function VolunteerEventsPage() {
   const { isLoaded, user } = useUser();
   const isAdminView = role === "admin";
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
-  const { status: waiverStatus } = useWaiverStatus(isLoaded && !isAdminView);
+  const { completedSchools } = useWaiverStatus(isLoaded && !isAdminView);
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [registrationIdsByEventId, setRegistrationIdsByEventId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -187,12 +187,12 @@ export default function VolunteerEventsPage() {
   }, [isAdminView, isLoaded, userEmail]);
 
   const eventsWithWaiverStatus = useMemo(() => {
-    if (isAdminView || !waiverStatus) {
+    if (isAdminView || completedSchools === null) {
       return events;
     }
 
-    return events.map((event) => applyWaiverStatusToEvent(event, waiverStatus));
-  }, [events, isAdminView, waiverStatus]);
+    return events.map((event) => applyWaiverStatusToEvent(event, completedSchools));
+  }, [events, isAdminView, completedSchools]);
 
   if (!isLoaded || loading) {
     return (
