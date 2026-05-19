@@ -56,7 +56,7 @@
 .pageTitle {
   font-size: 48px;
   font-weight: 800;
-  margin: 12px 0 22px;
+  margin: 0;
 }
 
 .grid {
@@ -118,4 +118,56 @@
   padding: 10px 14px 16px 14px;
   max-height: 640px; /* matches screenshot scroll area */
   overflow: auto;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0 22px;
+}
+
+.backBtn {
+  border: 1px solid #568264;
+  background: transparent;
+  color: #568264;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  height: 34px;
+  white-space: nowrap;
+}
+
+.volunteerEventOnly {
+  display: block;
+  width: 100%;
+}
+
+.fullEventCard {
+  width: 100%;
+  max-width: none;
+}
+
+@media (max-width: 768px) {
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pageTitle {
+    font-size: 36px;
+  }
+
+  .backBtn {
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: 28px;
+  }
 }

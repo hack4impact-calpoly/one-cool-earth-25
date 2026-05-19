@@ -14,6 +14,7 @@ export default function EventPage() {
   const role = useRole();
   const { isLoaded } = useUser();
   const isAdminView = role === "admin";
+  const isVolunteerView = !isAdminView;
   const router = useRouter();
   const params = useParams();
   const eventId = params?.eventId as string;
@@ -75,13 +76,20 @@ export default function EventPage() {
           </div>
         )}
 
-        <h1 className={styles.pageTitle}>{event?.title ?? "Event Not Found"}</h1>
+        <div className={styles.titleRow}>
+          <h1 className={styles.pageTitle}>{event?.title ?? "Event Not Found"}</h1>
 
-        <section className={styles.grid}>
-          <div className={styles.eventCard}>
+          <button type="button" className={styles.backBtn} onClick={() => router.push("/calendar")}>
+            ← Back to Calendar
+          </button>
+        </div>
+
+        <section className={isAdminView ? styles.grid : styles.volunteerEventOnly}>
+          <div className={isAdminView ? styles.eventCard : styles.fullEventCard}>
             <EventDetails event={event} isEditable={isAdminView} />
           </div>
-          <VolunteerList canViewVolunteers={isAdminView} />
+
+          {isAdminView && <VolunteerList canViewVolunteers />}
         </section>
       </main>
     </div>
