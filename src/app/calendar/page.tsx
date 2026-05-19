@@ -1,6 +1,17 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { BookOpen, ChevronLeft, ChevronRight, ChevronsUpDown, House, Leaf, Shovel, Sprout } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import {
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsUpDown,
+  House,
+  Leaf,
+  LoaderCircle,
+  Shovel,
+  Sprout,
+} from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -14,15 +25,30 @@ import AdminEventCard from "@/components/AdminEventCard";
 import { AppEvent, isUpcomingEvent } from "@/data/events";
 import { useRole } from "@/hooks/useRole";
 import CreateEventModal from "@/components/CreateEventModal";
+import EventPopup from "@/components/EventPopup";
+
+type RegistrationEvent = {
+  _id?: string;
+  id?: string;
+};
+
+type UserRegistration = {
+  _id?: string;
+  eventId?: string | RegistrationEvent | null;
+};
 
 export default function CalendarPage() {
   const role = useRole();
+  const { isLoaded, user } = useUser();
   const isAdmin = role === "admin";
+  const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const calendarRef = useRef<FullCalendar>(null);
   const [viewDate, setViewDate] = useState(new Date());
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<AppEvent[]>([]);
   const [events, setEvents] = useState<AppEvent[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<AppEvent | null>(null);
+  const [registrationIdsByEventId, setRegistrationIdsByEventId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -30,7 +56,10 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      if (!isLoaded) return;
+
       try {
+        setLoading(true);
         const response = await fetch("/api/events");
         const data = await response.json();
 
@@ -45,16 +74,46 @@ export default function CalendarPage() {
         }));
 
         setEvents(formattedEvents);
+
+        if (isAdmin || !userEmail) {
+          setRegistrationIdsByEventId({});
+          return;
+        }
+
+        const registrationResponse = await fetch(`/api/events/registration/users/${encodeURIComponent(userEmail)}`);
+        const registrationData = await registrationResponse.json();
+
+        if (!registrationResponse.ok) {
+          throw new Error(registrationData?.error || "Failed to fetch registrations");
+        }
+
+        const nextRegistrationIdsByEventId = (registrationData.registrations as UserRegistration[]).reduce<
+          Record<string, string>
+        >((result, registration) => {
+          const eventId = registration.eventId;
+
+          if (!eventId || !registration._id) return result;
+
+          const id = typeof eventId === "string" ? eventId : eventId.id || eventId._id;
+          if (id) {
+            result[id] = registration._id;
+          }
+
+          return result;
+        }, {});
+
+        setRegistrationIdsByEventId(nextRegistrationIdsByEventId);
       } catch (error) {
         console.error("Failed to fetch events:", error);
         setEvents([]);
+        setRegistrationIdsByEventId({});
       } finally {
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, []);
+  }, [isAdmin, isLoaded, userEmail]);
 
   const handleNext = () => {
     if (calendarRef.current) {
@@ -127,6 +186,13 @@ export default function CalendarPage() {
     setSearchResults(results);
   };
 
+  const handleEventClick = (clickInfo: { event: { id: string } }) => {
+    const event = events.find((item) => item.id === clickInfo.event.id);
+    if (event) {
+      setSelectedEvent(event);
+    }
+  };
+
   const upcomingCardEvents = events.filter((event) => isUpcomingEvent(event));
 
   const responsibilities = [
@@ -138,6 +204,18 @@ export default function CalendarPage() {
   ];
 
   console.log(isAdmin);
+  if (loading) {
+    return (
+      <div>
+        <NavBarWrapper />
+        <div className={calendarStyles.pageLoading} aria-live="polite">
+          <LoaderCircle className={calendarStyles.loadingIcon} aria-hidden="true" />
+          <span>Loading calendar...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <NavBarWrapper />
@@ -147,10 +225,19 @@ export default function CalendarPage() {
           <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
             {isAdmin
               ? upcomingCardEvents.map((event) => <AdminEventCard key={event.id} event={event} />)
-              : upcomingCardEvents.map((event) => <VolunteerEventCard key={event.id} event={event} />)}
+              : upcomingCardEvents.map((event) => (
+                  <VolunteerEventCard
+                    key={event.id}
+                    event={event}
+                    registered={Boolean(registrationIdsByEventId[event.id])}
+                    registrationId={registrationIdsByEventId[event.id]}
+                  />
+                ))}
           </div>
         ) : (
-          <div className="m-3 mx-10 text-3xl">Nothing for now... check back soon!</div>
+          <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
+            <div className={styles.emptyEventCard}>No upcoming events</div>
+          </div>
         )}
 
         <section className={calendarStyles.responsibilitiesSection}>
@@ -249,8 +336,6 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        {loading ? <div className={calendarStyles.loadingText}>Loading events...</div> : null}
-
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -263,8 +348,10 @@ export default function CalendarPage() {
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
+          eventClick={handleEventClick}
         />
       </div>
+      {selectedEvent ? <EventPopup event={selectedEvent} onClose={() => setSelectedEvent(null)} /> : null}
       {isAdmin && (
         <CreateEventModal
           isOpen={isCreateModalOpen}

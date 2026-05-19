@@ -35,7 +35,15 @@ function formatTime(date: Date) {
   });
 }
 
-export default function VolunteerEventCard({ event }: { event: AppEvent }) {
+export default function VolunteerEventCard({
+  event,
+  registered = false,
+  registrationId,
+}: {
+  event: AppEvent;
+  registered?: boolean;
+  registrationId?: string;
+}) {
   const router = useRouter();
 
   const monthLabel = event.startTime.toLocaleString("en-US", { month: "long" });
@@ -44,6 +52,7 @@ export default function VolunteerEventCard({ event }: { event: AppEvent }) {
 
   const detailsPath = `/events/${event.id}`;
   const registrationPath = `/events/${event.id}/register`;
+  const editRegistrationPath = registrationId ? `/edit-registration/${registrationId}` : registrationPath;
 
   return (
     <div className={`${styles.card} ${canRegister ? styles.cardHoverEnabled : ""}`}>
@@ -98,10 +107,10 @@ export default function VolunteerEventCard({ event }: { event: AppEvent }) {
               className={styles.hoverBtnDark}
               onClick={(e) => {
                 e.stopPropagation();
-                router.push(registrationPath);
+                router.push(registered ? editRegistrationPath : registrationPath);
               }}
             >
-              Edit Registration
+              {registered ? "Edit Registration" : "Register"}
             </button>
           </div>
         </div>

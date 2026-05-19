@@ -3,6 +3,29 @@
   padding: 28px 18px 60px;
 }
 
+.pageLoading {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #4f6e22;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.loadingIcon {
+  width: 28px;
+  height: 28px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .section {
   margin-top: 22px;
 }
@@ -91,6 +114,22 @@
   cursor: pointer;
   padding: 0;
   text-align: left;
+  scroll-snap-align: start;
+}
+
+.emptyEventCard {
+  height: 260px;
+  border: 2px dashed #b8c7a4;
+  border-radius: 14px;
+  background: #f7f9f3;
+  color: #4f6e22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
   scroll-snap-align: start;
 }
 

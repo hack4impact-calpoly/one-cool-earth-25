@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { LoaderCircle } from "lucide-react";
 import { useRole } from "@/hooks/useRole";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
@@ -14,6 +15,7 @@ type RegistrationEvent = {
 };
 
 type UserRegistration = {
+  _id?: string;
   eventId?: string | RegistrationEvent | null;
 };
 
@@ -59,15 +61,34 @@ function DateRangeControl({
   );
 }
 
-function EventCardList({ events, isAdminView }: { events: AppEvent[]; isAdminView: boolean }) {
+function EventCardList({
+  events,
+  isAdminView,
+  emptyMessage,
+  registrationIdsByEventId,
+}: {
+  events: AppEvent[];
+  isAdminView: boolean;
+  emptyMessage: string;
+  registrationIdsByEventId?: Record<string, string>;
+}) {
   return (
     <div className={styles.row}>
-      {events.map((event) =>
-        isAdminView ? (
-          <AdminEventCard key={event.id} event={event} />
-        ) : (
-          <VolunteerEventCard key={event.id} event={event} />
-        ),
+      {events.length === 0 ? (
+        <div className={styles.emptyEventCard}>{emptyMessage}</div>
+      ) : (
+        events.map((event) =>
+          isAdminView ? (
+            <AdminEventCard key={event.id} event={event} />
+          ) : (
+            <VolunteerEventCard
+              key={event.id}
+              event={event}
+              registered
+              registrationId={registrationIdsByEventId?.[event.id]}
+            />
+          ),
+        )
       )}
     </div>
   );
@@ -88,6 +109,7 @@ export default function VolunteerEventsPage() {
   const isAdminView = role === "admin";
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const [events, setEvents] = useState<AppEvent[]>([]);
+  const [registrationIdsByEventId, setRegistrationIdsByEventId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   const curYear = new Date().getFullYear();
@@ -117,11 +139,13 @@ export default function VolunteerEventsPage() {
 
         if (isAdminView) {
           setEvents(formattedEvents);
+          setRegistrationIdsByEventId({});
           return;
         }
 
         if (!userEmail) {
           setEvents([]);
+          setRegistrationIdsByEventId({});
           return;
         }
 
@@ -132,19 +156,23 @@ export default function VolunteerEventsPage() {
           throw new Error(registrationData?.error || "Failed to fetch registrations");
         }
 
-        const registeredEventIds = new Set(
-          (registrationData.registrations as UserRegistration[]).flatMap((registration) => {
-            const eventId = registration.eventId;
+        const nextRegistrationIdsByEventId = (registrationData.registrations as UserRegistration[]).reduce<
+          Record<string, string>
+        >((result, registration) => {
+          const eventId = registration.eventId;
 
-            if (!eventId) return [];
-            if (typeof eventId === "string") return [eventId];
+          if (!eventId || !registration._id) return result;
 
-            const id = eventId.id || eventId._id;
-            return id ? [id] : [];
-          }),
-        );
+          const id = typeof eventId === "string" ? eventId : eventId.id || eventId._id;
+          if (id) {
+            result[id] = registration._id;
+          }
 
-        setEvents(formattedEvents.filter((event) => registeredEventIds.has(event.id)));
+          return result;
+        }, {});
+
+        setRegistrationIdsByEventId(nextRegistrationIdsByEventId);
+        setEvents(formattedEvents.filter((event) => nextRegistrationIdsByEventId[event.id]));
       } catch (error) {
         console.error("Failed to fetch events:", error);
         setEvents([]);
@@ -156,7 +184,14 @@ export default function VolunteerEventsPage() {
     fetchEvents();
   }, [isAdminView, isLoaded, userEmail]);
 
-  if (!isLoaded || loading) return null;
+  if (!isLoaded || loading) {
+    return (
+      <main className={styles.pageLoading} aria-live="polite">
+        <LoaderCircle className={styles.loadingIcon} aria-hidden="true" />
+        <span>Loading events...</span>
+      </main>
+    );
+  }
 
   const upcoming = events.filter((e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd));
   const past = events.filter((e) => isPastEvent(e) && isInDateRange(e.startTime, pastStart, pastEnd));
@@ -171,7 +206,12 @@ export default function VolunteerEventsPage() {
 
         <DateRangeControl start={upStart} end={upEnd} setStart={setUpStart} setEnd={setUpEnd} />
 
-        <EventCardList events={upcomingSorted} isAdminView={isAdminView} />
+        <EventCardList
+          events={upcomingSorted}
+          isAdminView={isAdminView}
+          emptyMessage={isAdminView ? "No upcoming events" : "No upcoming registrations"}
+          registrationIdsByEventId={registrationIdsByEventId}
+        />
       </section>
 
       <section className={styles.section}>
@@ -179,7 +219,12 @@ export default function VolunteerEventsPage() {
 
         <DateRangeControl start={pastStart} end={pastEnd} setStart={setPastStart} setEnd={setPastEnd} />
 
-        <EventCardList events={pastSorted} isAdminView={isAdminView} />
+        <EventCardList
+          events={pastSorted}
+          isAdminView={isAdminView}
+          emptyMessage={isAdminView ? "No past events" : "No past registrations"}
+          registrationIdsByEventId={registrationIdsByEventId}
+        />
       </section>
     </main>
   );
