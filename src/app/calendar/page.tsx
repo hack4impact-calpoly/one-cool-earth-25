@@ -24,6 +24,7 @@ import AdminEventCard from "@/components/AdminEventCard";
 import { AppEvent, isUpcomingEvent } from "@/data/events";
 import { useRole } from "@/hooks/useRole";
 import CreateEventModal from "@/components/CreateEventModal";
+import EventPopup from "@/components/EventPopup";
 
 export default function CalendarPage() {
   const role = useRole();
@@ -33,6 +34,7 @@ export default function CalendarPage() {
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<AppEvent[]>([]);
   const [events, setEvents] = useState<AppEvent[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<AppEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -135,6 +137,13 @@ export default function CalendarPage() {
     const results = events.filter((event) => event.title.toLowerCase().includes(value.toLowerCase()));
 
     setSearchResults(results);
+  };
+
+  const handleEventClick = (clickInfo: { event: { id: string } }) => {
+    const event = events.find((item) => item.id === clickInfo.event.id);
+    if (event) {
+      setSelectedEvent(event);
+    }
   };
 
   const upcomingCardEvents = events.filter((event) => isUpcomingEvent(event));
@@ -283,8 +292,10 @@ export default function CalendarPage() {
           initialView="dayGridMonth"
           headerToolbar={false}
           height="auto"
+          eventClick={handleEventClick}
         />
       </div>
+      {selectedEvent ? <EventPopup event={selectedEvent} onClose={() => setSelectedEvent(null)} /> : null}
       {isAdmin && (
         <CreateEventModal
           isOpen={isCreateModalOpen}
