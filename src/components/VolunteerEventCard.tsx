@@ -56,7 +56,7 @@ export default function VolunteerEventCard({
 
   return (
     <div className={`${styles.card} ${canRegister ? styles.cardHoverEnabled : ""}`}>
-      <div className={styles.cardBg} style={{ backgroundImage: `url(${event.imageUrl})` }} />
+      <div className={styles.cardBg} style={event.imageUrl ? { backgroundImage: `url(${event.imageUrl})` } : {}} />
       <div className={styles.cardOverlay} />
 
       {/* <div className={styles.statusWrap}>

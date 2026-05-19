@@ -2,27 +2,6 @@ import connectDB from "@/database/db";
 import { NextResponse } from "next/server";
 import Event from "@/database/models/Event";
 
-const TEST_EVENT_IMAGES = [
-  "/images/testImage1.JPG",
-  "/images/testImage2.JPG",
-  "/images/testImage3.JPG",
-  "/images/testImage4.jpeg",
-  "/images/testImage5.JPG",
-];
-
-function getTestEventImage(seed: string) {
-  const index = seed.split("").reduce((total, char) => total + char.charCodeAt(0), 0) % TEST_EVENT_IMAGES.length;
-  return TEST_EVENT_IMAGES[index];
-}
-
-function getEventImageUrl(imageUrl: string | undefined, seed: string) {
-  if (imageUrl && !imageUrl.startsWith("blob:")) {
-    return imageUrl;
-  }
-
-  return getTestEventImage(seed);
-}
-
 export async function GET() {
   try {
     await connectDB();
@@ -36,7 +15,7 @@ export async function GET() {
       location: event.location,
       startTime: event.startTime,
       endTime: event.endTime,
-      imageUrl: getEventImageUrl(event.imageUrl, event._id.toString()),
+      imageUrl: event.imageUrl,
       registeredCount: event.registeredCount,
       attendanceCount: event.attendanceCount,
     }));
@@ -60,7 +39,7 @@ export async function POST(request: Request) {
       location: eventData.location,
       startTime: eventData.startTime,
       endTime: eventData.endTime,
-      imageUrl: getEventImageUrl(eventData.imageUrl, `${eventData.name}-${eventData.startTime}`),
+      imageUrl: eventData.imageUrl,
       registeredCount: eventData.registeredCount ?? 0,
       attendanceCount: eventData.attendanceCount ?? 0,
     });

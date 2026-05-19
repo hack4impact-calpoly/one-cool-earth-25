@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import editIcon from "../icons/editIcon.svg";
 import styles from "../styles/EventDetails.module.css";
 import { AppEvent } from "@/data/events";
@@ -11,12 +12,17 @@ interface EventDetailsProps {
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ event, isEditable = false }) => {
+  const router = useRouter();
   const [draft, setDraft] = useState<AppEvent | null>(event);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setDraft(event);
+    setSelectedImageFile(null);
   }, [event]);
 
   if (!draft) {
@@ -63,12 +69,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, isEditable = false }
     if (!draft) return;
 
     try {
+      const imageUrl = await uploadImage();
       const response = await fetch(`/api/events/${draft.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(draft),
+        body: JSON.stringify({ ...draft, imageUrl }),
       });
 
       const data = await response.json();
@@ -78,8 +85,56 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, isEditable = false }
       }
 
       setIsEditing(false);
+      setSelectedImageFile(null);
     } catch (error) {
       console.error("Failed to save event:", error);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (!selectedImageFile) {
+      return draft.imageUrl;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedImageFile);
+
+    const response = await fetch("/api/events/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error || "Failed to upload image");
+    }
+
+    return data.url as string;
+  };
+
+  const deleteEvent = async () => {
+    if (!draft || isDeleting) return;
+
+    try {
+      setIsDeleting(true);
+
+      const response = await fetch(`/api/events/${draft.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to delete event");
+      }
+
+      router.push("/calendar");
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -129,10 +184,12 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, isEditable = false }
     }
     if (!file) {
       setDraft({ ...draft, imageUrl: undefined });
+      setSelectedImageFile(null);
       return;
     }
     const url = URL.createObjectURL(file);
     setDraft({ ...draft, imageUrl: url });
+    setSelectedImageFile(file);
   };
 
   return (
@@ -302,9 +359,49 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, isEditable = false }
       {/* Save button OUTSIDE the bordered container */}
       {isEditing && (
         <div className={styles.footerRow}>
-          <button type="button" className={styles.saveButton} onClick={saveEditing}>
+          <button
+            type="button"
+            className={styles.deleteButton}
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={isDeleting}
+          >
+            delete event
+          </button>
+          <button type="button" className={styles.saveButton} onClick={saveEditing} disabled={isDeleting}>
             save
           </button>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className={styles.confirmOverlay} onClick={() => !isDeleting && setShowDeleteConfirm(false)}>
+          <div
+            className={styles.confirmModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-event-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="delete-event-title" className={styles.confirmTitle}>
+              Delete Event
+            </h3>
+            <p className={styles.confirmText}>
+              Are you sure you want to delete {draft.title}? This action cannot be undone.
+            </p>
+            <div className={styles.confirmButtonRow}>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+              >
+                cancel
+              </button>
+              <button type="button" className={styles.deleteButton} onClick={deleteEvent} disabled={isDeleting}>
+                {isDeleting ? "deleting..." : "delete event"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
