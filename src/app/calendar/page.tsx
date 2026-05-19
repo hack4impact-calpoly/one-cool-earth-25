@@ -235,7 +235,9 @@ export default function CalendarPage() {
                 ))}
           </div>
         ) : (
-          <div className="m-3 mx-10 text-3xl">Nothing for now... check back soon!</div>
+          <div className={`${styles.row} ${calendarStyles.eventsRow}`}>
+            <div className={styles.emptyEventCard}>No upcoming events</div>
+          </div>
         )}
 
         <section className={calendarStyles.responsibilitiesSection}>
