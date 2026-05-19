@@ -15,6 +15,30 @@
   margin-bottom: 18px;
 }
 
+.pageLoading {
+  min-height: calc(100vh - 120px);
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #4f6e22;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.loadingIcon {
+  width: 28px;
+  height: 28px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .responsibilitiesSection {
   padding: 8px 0 4px;
 }

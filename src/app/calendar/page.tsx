@@ -1,6 +1,16 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { BookOpen, ChevronLeft, ChevronRight, ChevronsUpDown, House, Leaf, Shovel, Sprout } from "lucide-react";
+import {
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsUpDown,
+  House,
+  Leaf,
+  LoaderCircle,
+  Shovel,
+  Sprout,
+} from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -138,6 +148,18 @@ export default function CalendarPage() {
   ];
 
   console.log(isAdmin);
+  if (loading) {
+    return (
+      <div>
+        <NavBarWrapper />
+        <div className={calendarStyles.pageLoading} aria-live="polite">
+          <LoaderCircle className={calendarStyles.loadingIcon} aria-hidden="true" />
+          <span>Loading calendar...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <NavBarWrapper />
@@ -248,8 +270,6 @@ export default function CalendarPage() {
             </div>
           </div>
         </div>
-
-        {loading ? <div className={calendarStyles.loadingText}>Loading events...</div> : null}
 
         <FullCalendar
           ref={calendarRef}

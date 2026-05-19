@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { LoaderCircle } from "lucide-react";
 import { useRole } from "@/hooks/useRole";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
@@ -156,7 +157,14 @@ export default function VolunteerEventsPage() {
     fetchEvents();
   }, [isAdminView, isLoaded, userEmail]);
 
-  if (!isLoaded || loading) return null;
+  if (!isLoaded || loading) {
+    return (
+      <main className={styles.pageLoading} aria-live="polite">
+        <LoaderCircle className={styles.loadingIcon} aria-hidden="true" />
+        <span>Loading events...</span>
+      </main>
+    );
+  }
 
   const upcoming = events.filter((e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd));
   const past = events.filter((e) => isPastEvent(e) && isInDateRange(e.startTime, pastStart, pastEnd));

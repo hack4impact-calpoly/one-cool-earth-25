@@ -7,6 +7,30 @@
   box-sizing: border-box;
 }
 
+.pageLoading {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #4f6e22;
+  font-family: "Lora", serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.loadingIcon {
+  width: 28px;
+  height: 28px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .desktopNav {
   display: block;
 }
