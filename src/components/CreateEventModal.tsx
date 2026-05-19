@@ -85,7 +85,6 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess }: CreateE
           startTime: startDateTime,
           endTime: endDateTime,
           imageUrl: draft.imageUrl, // Make sure that it POSTS the actual link once image functionality is added. Currently just adds a random blob. TODO: If the admin doesn't add an image then it should show a default image.
-          section: "upcoming",
           registeredCount: 0,
           attendanceCount: 0,
         }),

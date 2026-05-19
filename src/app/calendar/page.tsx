@@ -11,7 +11,7 @@ import styles from "@/styles/VolunteerEventsPage.module.css";
 import calendarStyles from "@/styles/CalendarPage.module.css";
 import NavBarWrapper from "../../components/NavbarWrapper";
 import AdminEventCard from "@/components/AdminEventCard";
-import { AppEvent } from "@/data/events";
+import { AppEvent, isUpcomingEvent } from "@/data/events";
 import { useRole } from "@/hooks/useRole";
 import CreateEventModal from "@/components/CreateEventModal";
 
@@ -127,10 +127,7 @@ export default function CalendarPage() {
     setSearchResults(results);
   };
 
-  const upcomingCardEvents = events.filter((event) => {
-    const now = new Date();
-    return event.section === "upcoming" && now < event.startTime;
-  });
+  const upcomingCardEvents = events.filter((event) => isUpcomingEvent(event));
 
   const responsibilities = [
     { label: "Planting", Icon: Leaf },

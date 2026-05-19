@@ -6,7 +6,16 @@ import { useRole } from "@/hooks/useRole";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import AdminEventCard from "@/components/AdminEventCard";
-import { AppEvent } from "@/data/events";
+import { AppEvent, isPastEvent, isUpcomingEvent } from "@/data/events";
+
+type RegistrationEvent = {
+  _id?: string;
+  id?: string;
+};
+
+type UserRegistration = {
+  eventId?: string | RegistrationEvent | null;
+};
 
 function DateRangeControl({
   start,
@@ -64,11 +73,20 @@ function EventCardList({ events, isAdminView }: { events: AppEvent[]; isAdminVie
   );
 }
 
+function isInDateRange(date: Date, start: Date, end: Date) {
+  const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+  return startDay <= day && day <= endDay;
+}
+
 // Not only Volunteer, renders both Volunteer and Admin
 export default function VolunteerEventsPage() {
   const role = useRole();
-  const { isLoaded } = useUser();
+  const { isLoaded, user } = useUser();
   const isAdminView = role === "admin";
+  const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -80,7 +98,10 @@ export default function VolunteerEventsPage() {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      if (!isLoaded) return;
+
       try {
+        setLoading(true);
         const response = await fetch("/api/events");
         const data = await response.json();
 
@@ -88,13 +109,42 @@ export default function VolunteerEventsPage() {
           throw new Error(data?.error || "Failed to fetch events");
         }
 
-        const formattedEvents = data.map((event: AppEvent) => ({
+        const formattedEvents: AppEvent[] = data.map((event: AppEvent) => ({
           ...event,
           startTime: new Date(event.startTime),
           endTime: new Date(event.endTime),
         }));
 
-        setEvents(formattedEvents);
+        if (isAdminView) {
+          setEvents(formattedEvents);
+          return;
+        }
+
+        if (!userEmail) {
+          setEvents([]);
+          return;
+        }
+
+        const registrationResponse = await fetch(`/api/events/registration/users/${encodeURIComponent(userEmail)}`);
+        const registrationData = await registrationResponse.json();
+
+        if (!registrationResponse.ok) {
+          throw new Error(registrationData?.error || "Failed to fetch registrations");
+        }
+
+        const registeredEventIds = new Set(
+          (registrationData.registrations as UserRegistration[]).flatMap((registration) => {
+            const eventId = registration.eventId;
+
+            if (!eventId) return [];
+            if (typeof eventId === "string") return [eventId];
+
+            const id = eventId.id || eventId._id;
+            return id ? [id] : [];
+          }),
+        );
+
+        setEvents(formattedEvents.filter((event) => registeredEventIds.has(event.id)));
       } catch (error) {
         console.error("Failed to fetch events:", error);
         setEvents([]);
@@ -104,12 +154,12 @@ export default function VolunteerEventsPage() {
     };
 
     fetchEvents();
-  }, []);
+  }, [isAdminView, isLoaded, userEmail]);
 
   if (!isLoaded || loading) return null;
 
-  const upcoming = events.filter((e) => e.section === "upcoming" && upStart <= e.startTime && e.startTime <= upEnd);
-  const past = events.filter((e) => e.section === "past" && pastStart <= e.startTime && e.startTime <= pastEnd);
+  const upcoming = events.filter((e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd));
+  const past = events.filter((e) => isPastEvent(e) && isInDateRange(e.startTime, pastStart, pastEnd));
 
   const upcomingSorted = [...upcoming].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
   const pastSorted = [...past].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());

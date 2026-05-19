@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/VolunteerEventsPage.module.css";
-import { AppEvent } from "@/data/events";
+import { AppEvent, isPastEvent } from "@/data/events";
 
 function getOrdinalDay(day: number) {
   const suffix = day > 3 && day < 21 ? "th" : ["th", "st", "nd", "rd"][day % 10] || "th";
@@ -25,6 +25,7 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
   const dayLabel = getOrdinalDay(event.startTime.getDate());
   const router = useRouter();
   const eventHref = `/events/${event.id}`;
+  const isPast = isPastEvent(event);
 
   return (
     <div className={`${styles.card} ${styles.cardHoverEnabled} ${styles.adminCard}`}>
@@ -34,7 +35,7 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
 
       <div className={styles.adminStatusWrap}>
         <div className={styles.registered}>Registered: {event.registeredCount}</div>
-        {event.section === "past" && (
+        {isPast && (
           <div className={styles.attendance}>
             Attended: {event.attendanceCount ?? "—"}/{event.registeredCount}
           </div>
@@ -67,7 +68,7 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
             </button>
 
             <button type="button" className={styles.hoverBtnDark} onClick={() => router.push(eventHref)}>
-              {event.section === "past" ? "Event Report" : "View Event Info"}
+              {isPast ? "Event Report" : "View Event Info"}
             </button>
           </div>
         </div>

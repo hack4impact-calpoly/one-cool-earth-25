@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/VolunteerEventsPage.module.css";
-import { AppEvent } from "@/data/events";
+import { AppEvent, isUpcomingEvent } from "@/data/events";
 // import { VolunteerStatus } from "@/data/events";
 
 // function Status({ status }: { status: VolunteerStatus }) {
@@ -40,13 +40,13 @@ export default function VolunteerEventCard({ event }: { event: AppEvent }) {
 
   const monthLabel = event.startTime.toLocaleString("en-US", { month: "long" });
   const dayNumber = event.startTime.getDate();
-  // const status = event.volunteerStatus ?? "none";
+  const canRegister = isUpcomingEvent(event);
 
   const detailsPath = `/events/${event.id}`;
   const registrationPath = `/events/${event.id}/register`;
 
   return (
-    <div className={`${styles.card} ${event.section === "upcoming" ? styles.cardHoverEnabled : ""}`}>
+    <div className={`${styles.card} ${canRegister ? styles.cardHoverEnabled : ""}`}>
       <div className={styles.cardBg} style={{ backgroundImage: `url(${event.imageUrl})` }} />
       <div className={styles.cardOverlay} />
 
@@ -87,13 +87,10 @@ export default function VolunteerEventCard({ event }: { event: AppEvent }) {
               className={styles.hoverBtnLight}
               onClick={(e) => {
                 e.stopPropagation();
-
-                if (status !== "missing_waiver") {
-                  router.push(detailsPath);
-                }
+                router.push(detailsPath);
               }}
             >
-              {status === "missing_waiver" ? "Sign Waiver" : "Event Info"}
+              Event Info
             </button>
 
             <button

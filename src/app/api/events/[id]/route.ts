@@ -19,7 +19,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
       startTime: event.startTime,
       endTime: event.endTime,
       imageUrl: event.imageUrl,
-      section: event.section,
       registeredCount: event.registeredCount,
       attendanceCount: event.attendanceCount,
     };
@@ -46,7 +45,6 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         startTime: eventData.startTime,
         endTime: eventData.endTime,
         imageUrl: eventData.imageUrl,
-        section: eventData.section,
         registeredCount: eventData.registeredCount,
         attendanceCount: eventData.attendanceCount,
       },

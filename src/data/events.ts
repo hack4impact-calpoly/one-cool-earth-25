@@ -1,6 +1,3 @@
-export type EventSection = "upcoming" | "past";
-// missing waiver, missed, attended, none
-
 export type AppEvent = {
   id: string;
   title: string;
@@ -9,7 +6,18 @@ export type AppEvent = {
   startTime: Date;
   endTime: Date;
   imageUrl?: string;
-  section: EventSection;
   registeredCount: number;
   attendanceCount?: number;
 };
+
+function startOfDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function isUpcomingEvent(event: AppEvent, now = new Date()) {
+  return startOfDay(now) <= startOfDay(event.startTime);
+}
+
+export function isPastEvent(event: AppEvent, now = new Date()) {
+  return !isUpcomingEvent(event, now);
+}

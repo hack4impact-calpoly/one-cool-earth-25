@@ -29,12 +29,6 @@ const eventSchema = new Schema(
       type: String,
     },
 
-    section: {
-      type: String,
-      enum: ["upcoming", "past"],
-      required: true,
-    },
-
     registeredCount: {
       type: Number,
       required: true,

@@ -16,7 +16,6 @@ export async function GET() {
       startTime: event.startTime,
       endTime: event.endTime,
       imageUrl: event.imageUrl,
-      section: event.section,
       registeredCount: event.registeredCount,
       attendanceCount: event.attendanceCount,
     }));
@@ -41,7 +40,6 @@ export async function POST(request: Request) {
       startTime: eventData.startTime,
       endTime: eventData.endTime,
       imageUrl: eventData.imageUrl,
-      section: eventData.section,
       registeredCount: eventData.registeredCount ?? 0,
       attendanceCount: eventData.attendanceCount ?? 0,
     });
