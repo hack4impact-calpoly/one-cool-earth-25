@@ -15,6 +15,7 @@ type RegistrationEvent = {
 };
 
 type UserRegistration = {
+  _id?: string;
   eventId?: string | RegistrationEvent | null;
 };
 
@@ -64,10 +65,12 @@ function EventCardList({
   events,
   isAdminView,
   emptyMessage,
+  registrationIdsByEventId,
 }: {
   events: AppEvent[];
   isAdminView: boolean;
   emptyMessage: string;
+  registrationIdsByEventId?: Record<string, string>;
 }) {
   return (
     <div className={styles.row}>
@@ -78,7 +81,12 @@ function EventCardList({
           isAdminView ? (
             <AdminEventCard key={event.id} event={event} />
           ) : (
-            <VolunteerEventCard key={event.id} event={event} />
+            <VolunteerEventCard
+              key={event.id}
+              event={event}
+              registered
+              registrationId={registrationIdsByEventId?.[event.id]}
+            />
           ),
         )
       )}
@@ -101,6 +109,7 @@ export default function VolunteerEventsPage() {
   const isAdminView = role === "admin";
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const [events, setEvents] = useState<AppEvent[]>([]);
+  const [registrationIdsByEventId, setRegistrationIdsByEventId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   const curYear = new Date().getFullYear();
@@ -130,11 +139,13 @@ export default function VolunteerEventsPage() {
 
         if (isAdminView) {
           setEvents(formattedEvents);
+          setRegistrationIdsByEventId({});
           return;
         }
 
         if (!userEmail) {
           setEvents([]);
+          setRegistrationIdsByEventId({});
           return;
         }
 
@@ -145,19 +156,23 @@ export default function VolunteerEventsPage() {
           throw new Error(registrationData?.error || "Failed to fetch registrations");
         }
 
-        const registeredEventIds = new Set(
-          (registrationData.registrations as UserRegistration[]).flatMap((registration) => {
-            const eventId = registration.eventId;
+        const nextRegistrationIdsByEventId = (registrationData.registrations as UserRegistration[]).reduce<
+          Record<string, string>
+        >((result, registration) => {
+          const eventId = registration.eventId;
 
-            if (!eventId) return [];
-            if (typeof eventId === "string") return [eventId];
+          if (!eventId || !registration._id) return result;
 
-            const id = eventId.id || eventId._id;
-            return id ? [id] : [];
-          }),
-        );
+          const id = typeof eventId === "string" ? eventId : eventId.id || eventId._id;
+          if (id) {
+            result[id] = registration._id;
+          }
 
-        setEvents(formattedEvents.filter((event) => registeredEventIds.has(event.id)));
+          return result;
+        }, {});
+
+        setRegistrationIdsByEventId(nextRegistrationIdsByEventId);
+        setEvents(formattedEvents.filter((event) => nextRegistrationIdsByEventId[event.id]));
       } catch (error) {
         console.error("Failed to fetch events:", error);
         setEvents([]);
@@ -195,6 +210,7 @@ export default function VolunteerEventsPage() {
           events={upcomingSorted}
           isAdminView={isAdminView}
           emptyMessage={isAdminView ? "No upcoming events" : "No upcoming registrations"}
+          registrationIdsByEventId={registrationIdsByEventId}
         />
       </section>
 
@@ -207,6 +223,7 @@ export default function VolunteerEventsPage() {
           events={pastSorted}
           isAdminView={isAdminView}
           emptyMessage={isAdminView ? "No past events" : "No past registrations"}
+          registrationIdsByEventId={registrationIdsByEventId}
         />
       </section>
     </main>
