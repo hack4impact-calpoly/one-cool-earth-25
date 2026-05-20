@@ -30,8 +30,15 @@ const initialVolunteerData: VolunteerMap = {
 export default function VolunteerList({ canViewVolunteers = false }: { canViewVolunteers?: boolean }) {
   const [volunteers, setVolunteers] = useState<VolunteerMap>(initialVolunteerData);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [selectedVolunteerIds, setSelectedVolunteerIds] = useState<string[]>(Object.keys(initialVolunteerData));
+  const [selectedTemplate, setSelectedTemplate] = useState("No Template");
+  const [message, setMessage] = useState("Dear [Volunteer],");
 
   if (!canViewVolunteers) return null;
+
+  const volunteerEntries = Object.entries(volunteers);
+  const selectedVolunteers = volunteerEntries.filter(([id]) => selectedVolunteerIds.includes(id));
 
   const toggleAttendance = (id: string) => {
     setVolunteers((prev) => ({
@@ -40,13 +47,49 @@ export default function VolunteerList({ canViewVolunteers = false }: { canViewVo
     }));
   };
 
+  const toggleVolunteerSelection = (id: string) => {
+    setSelectedVolunteerIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
+  };
+
+  const selectVolunteersByWaiver = (waiver: any) => {
+    setSelectedVolunteerIds(volunteerEntries.filter(([, volunteer]) => volunteer.waiver === waiver).map(([id]) => id));
+  };
+
+  const handleTemplateChange = (template: string) => {
+    setSelectedTemplate(template);
+
+    if (template === "Signup") {
+      setMessage("Dear [Volunteer],\n\nThank you for signing up for this event.");
+      return;
+    }
+
+    if (template === "Event Reminder") {
+      setMessage("Dear [Volunteer],\n\nThis is a reminder about your upcoming event.");
+      return;
+    }
+
+    setMessage("Dear [Volunteer],");
+  };
+
+  const sendEmail = () => {
+    const bcc = selectedVolunteers.map(([, volunteer]) => volunteer.email).join(",");
+    const mailtoUrl = `mailto:?bcc=${encodeURIComponent(bcc)}&body=${encodeURIComponent(message)}`;
+    window.location.href = mailtoUrl;
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.header}>
         <h1 className={styles.title}>Volunteers</h1>
-        {/* <div className={styles.headerIcon}>
+        <button
+          type="button"
+          className={styles.headerIconButton}
+          onClick={() => setIsEmailModalOpen(true)}
+          aria-label="Email volunteers"
+          title="Email volunteers"
+        >
           <Image src={mail} alt="Email volunteers" width={25} height={25} />
-        </div> */}
+        </button>
       </div>
 
       <div className={styles.list}>
@@ -95,6 +138,111 @@ export default function VolunteerList({ canViewVolunteers = false }: { canViewVo
           </tbody>
         </table>
       </div>
+
+      {isEmailModalOpen && (
+        <div className={styles.emailOverlay} onClick={() => setIsEmailModalOpen(false)}>
+          <div
+            className={styles.emailModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="email-volunteers-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className={styles.closeButton}
+              onClick={() => setIsEmailModalOpen(false)}
+              aria-label="Close email popup"
+            >
+              X
+            </button>
+
+            <h2 id="email-volunteers-title" className={styles.emailTitle}>
+              Email {selectedVolunteers.length} Volunteers
+            </h2>
+
+            <div className={styles.recipientActions}>
+              <button
+                type="button"
+                className={styles.filterButton}
+                onClick={() => setSelectedVolunteerIds(Object.keys(volunteers))}
+              >
+                Select All
+              </button>
+              <button type="button" className={styles.filterButton} onClick={() => setSelectedVolunteerIds([])}>
+                Deselect All
+              </button>
+              <button
+                type="button"
+                className={styles.filterButton}
+                onClick={() => selectVolunteersByWaiver(missingWaiver)}
+              >
+                Select Unsigned Waivers
+              </button>
+              <button
+                type="button"
+                className={styles.filterButton}
+                onClick={() => selectVolunteersByWaiver(approvedWaiver)}
+              >
+                Select Signed Waivers
+              </button>
+            </div>
+
+            <div className={styles.recipientList}>
+              {volunteerEntries.map(([id, volunteer]) => {
+                const isSelected = selectedVolunteerIds.includes(id);
+
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`${styles.recipientRow} ${isSelected ? styles.recipientRowSelected : ""}`}
+                    onClick={() => toggleVolunteerSelection(id)}
+                  >
+                    <span className={styles.checkColumn}>{isSelected ? "✓" : ""}</span>
+                    <span className={styles.recipientName}>{volunteer.name}</span>
+                    <span className={styles.recipientEmail}>{volunteer.email}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className={styles.templateSection}>
+              <div className={styles.templateLabel}>Templates:</div>
+              <div className={styles.templateButtons}>
+                {["Signup", "Event Reminder", "No Template"].map((template) => (
+                  <button
+                    key={template}
+                    type="button"
+                    className={`${styles.templateButton} ${selectedTemplate === template ? styles.templateButtonActive : ""}`}
+                    onClick={() => handleTemplateChange(template)}
+                  >
+                    {template}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <textarea
+              className={styles.emailMessage}
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              aria-label="Email message"
+            />
+
+            <div className={styles.sendRow}>
+              <button
+                type="button"
+                className={styles.sendButton}
+                onClick={sendEmail}
+                disabled={selectedVolunteers.length === 0}
+              >
+                send &gt;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
