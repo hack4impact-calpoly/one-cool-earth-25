@@ -63,10 +63,6 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
           <div className={styles.hoverText}>{event.location}</div>
 
           <div className={styles.hoverButtons}>
-            <button type="button" className={styles.hoverBtnLight} onClick={() => router.push(eventHref)}>
-              Edit Event
-            </button>
-
             <button type="button" className={styles.hoverBtnDark} onClick={() => router.push(eventHref)}>
               {isPast ? "Event Report" : "View Event Info"}
             </button>
