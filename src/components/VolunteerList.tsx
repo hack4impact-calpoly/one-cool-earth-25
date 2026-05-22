@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "../styles/VolunteerList.module.css";
 
@@ -16,24 +16,81 @@ type Volunteer = {
   email: string;
   waiver: any;
   attendance: boolean;
+  waiverSigned: boolean;
 };
 
 type VolunteerMap = Record<string, Volunteer>;
 
-const initialVolunteerData: VolunteerMap = {
-  volunteer1: { name: "Jane Doe", email: "jdoe@gmail.com", waiver: approvedWaiver, attendance: true },
-  volunteer2: { name: "Jane Doe", email: "jdoe@gmail.com", waiver: missingWaiver, attendance: false },
-  volunteer3: { name: "Jane Doe", email: "jdoe@gmail.com", waiver: approvedWaiver, attendance: false },
-  volunteer4: { name: "Jane Doe", email: "jdoe@gmail.com", waiver: missingWaiver, attendance: true },
+type PartyMember = {
+  name: string;
+  email: string;
+  waiverSigned?: boolean;
+  attending?: boolean;
+  attended?: boolean;
 };
 
-export default function VolunteerList({ canViewVolunteers = false }: { canViewVolunteers?: boolean }) {
-  const [volunteers, setVolunteers] = useState<VolunteerMap>(initialVolunteerData);
+type Registration = {
+  _id: string;
+  partyMembers?: PartyMember[];
+};
+
+type VolunteerListProps = {
+  canViewVolunteers?: boolean;
+  eventId?: string;
+};
+
+export default function VolunteerList({ canViewVolunteers = false, eventId }: VolunteerListProps) {
+  const [volunteers, setVolunteers] = useState<VolunteerMap>({});
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
-  const [selectedVolunteerIds, setSelectedVolunteerIds] = useState<string[]>(Object.keys(initialVolunteerData));
+  const [selectedVolunteerIds, setSelectedVolunteerIds] = useState<string[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState("No Template");
   const [message, setMessage] = useState("Dear [Volunteer],");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!canViewVolunteers || !eventId) return;
+
+    const fetchVolunteers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/events/registration/event/${eventId}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to fetch volunteers");
+        }
+
+        const nextVolunteers = (data.registrations as Registration[]).reduce<VolunteerMap>((result, registration) => {
+          registration.partyMembers
+            ?.filter((member) => member.attending !== false)
+            .forEach((member, index) => {
+              const waiverSigned = Boolean(member.waiverSigned);
+              result[`${registration._id}-${index}`] = {
+                name: member.name,
+                email: member.email,
+                waiver: waiverSigned ? approvedWaiver : missingWaiver,
+                waiverSigned,
+                attendance: Boolean(member.attended),
+              };
+            });
+
+          return result;
+        }, {});
+
+        setVolunteers(nextVolunteers);
+        setSelectedVolunteerIds(Object.keys(nextVolunteers));
+      } catch (error) {
+        console.error("Failed to fetch volunteers:", error);
+        setVolunteers({});
+        setSelectedVolunteerIds([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVolunteers();
+  }, [canViewVolunteers, eventId]);
 
   if (!canViewVolunteers) return null;
 
@@ -51,8 +108,10 @@ export default function VolunteerList({ canViewVolunteers = false }: { canViewVo
     setSelectedVolunteerIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
   };
 
-  const selectVolunteersByWaiver = (waiver: any) => {
-    setSelectedVolunteerIds(volunteerEntries.filter(([, volunteer]) => volunteer.waiver === waiver).map(([id]) => id));
+  const selectVolunteersByWaiver = (waiverSigned: boolean) => {
+    setSelectedVolunteerIds(
+      volunteerEntries.filter(([, volunteer]) => volunteer.waiverSigned === waiverSigned).map(([id]) => id),
+    );
   };
 
   const handleTemplateChange = (template: string) => {
@@ -93,50 +152,56 @@ export default function VolunteerList({ canViewVolunteers = false }: { canViewVo
       </div>
 
       <div className={styles.list}>
-        <table className={styles.table}>
-          <colgroup>
-            <col className={styles.colName} />
-            <col className={styles.colGap} />
-            <col className={styles.colEmail} />
-            <col className={styles.colFlex} />
-            <col className={styles.colActions} />
-          </colgroup>
+        {loading ? (
+          <div className={styles.emptyState}>Loading volunteers...</div>
+        ) : volunteerEntries.length === 0 ? (
+          <div className={styles.emptyState}>No registered volunteers yet.</div>
+        ) : (
+          <table className={styles.table}>
+            <colgroup>
+              <col className={styles.colName} />
+              <col className={styles.colGap} />
+              <col className={styles.colEmail} />
+              <col className={styles.colFlex} />
+              <col className={styles.colActions} />
+            </colgroup>
 
-          <tbody>
-            {Object.entries(volunteers).map(([id, volunteer]: [string, Volunteer]) => (
-              <tr key={id} className={styles.row}>
-                <td className={styles.name}>{volunteer.name}</td>
-                <td className={styles.gap} />
-                <td className={styles.email}>{volunteer.email}</td>
-                <td className={styles.flex} />
-                <td className={styles.actions}>
-                  <Image src={volunteer.waiver} alt="Waiver status" width={25} height={25} />
-                  <button
-                    type="button"
-                    className={styles.iconButton}
-                    onClick={() => toggleAttendance(id)}
-                    onMouseEnter={() => setHoveredId(id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                    title={volunteer.attendance ? "mark as not attended" : "mark as attended"}
-                  >
-                    <Image
-                      src={
-                        hoveredId === id && !volunteer.attendance
-                          ? hoveredAttended
-                          : volunteer.attendance
-                            ? attended
-                            : notAttended
-                      }
-                      alt="Attendance status"
-                      width={25}
-                      height={25}
-                    />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            <tbody>
+              {volunteerEntries.map(([id, volunteer]: [string, Volunteer]) => (
+                <tr key={id} className={styles.row}>
+                  <td className={styles.name}>{volunteer.name}</td>
+                  <td className={styles.gap} />
+                  <td className={styles.email}>{volunteer.email}</td>
+                  <td className={styles.flex} />
+                  <td className={styles.actions}>
+                    <Image src={volunteer.waiver} alt="Waiver status" width={25} height={25} />
+                    <button
+                      type="button"
+                      className={styles.iconButton}
+                      onClick={() => toggleAttendance(id)}
+                      onMouseEnter={() => setHoveredId(id)}
+                      onMouseLeave={() => setHoveredId(null)}
+                      title={volunteer.attendance ? "mark as not attended" : "mark as attended"}
+                    >
+                      <Image
+                        src={
+                          hoveredId === id && !volunteer.attendance
+                            ? hoveredAttended
+                            : volunteer.attendance
+                              ? attended
+                              : notAttended
+                        }
+                        alt="Attendance status"
+                        width={25}
+                        height={25}
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {isEmailModalOpen && (
@@ -172,18 +237,10 @@ export default function VolunteerList({ canViewVolunteers = false }: { canViewVo
               <button type="button" className={styles.filterButton} onClick={() => setSelectedVolunteerIds([])}>
                 Deselect All
               </button>
-              <button
-                type="button"
-                className={styles.filterButton}
-                onClick={() => selectVolunteersByWaiver(missingWaiver)}
-              >
+              <button type="button" className={styles.filterButton} onClick={() => selectVolunteersByWaiver(false)}>
                 Select Unsigned Waivers
               </button>
-              <button
-                type="button"
-                className={styles.filterButton}
-                onClick={() => selectVolunteersByWaiver(approvedWaiver)}
-              >
+              <button type="button" className={styles.filterButton} onClick={() => selectVolunteersByWaiver(true)}>
                 Select Signed Waivers
               </button>
             </div>

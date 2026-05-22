@@ -1,6 +1,7 @@
 import connectDB from "@/database/db";
 import { NextResponse } from "next/server";
 import Event from "@/database/models/Event";
+import { getRegistrationCountsByEventId } from "@/lib/events/registrationCounts";
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
@@ -11,6 +12,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
+    const registrationCountsByEventId = await getRegistrationCountsByEventId([event._id.toString()]);
+    const registrationCounts = registrationCountsByEventId.get(event._id.toString());
+
     const formattedEvent = {
       id: event._id.toString(),
       title: event.name,
@@ -19,8 +23,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
       startTime: event.startTime,
       endTime: event.endTime,
       imageUrl: event.imageUrl,
-      registeredCount: event.registeredCount,
-      attendanceCount: event.attendanceCount,
+      registeredCount: registrationCounts?.registeredCount ?? 0,
+      attendanceCount: registrationCounts?.attendanceCount ?? 0,
     };
 
     return NextResponse.json(formattedEvent);
@@ -45,8 +49,6 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         startTime: eventData.startTime,
         endTime: eventData.endTime,
         imageUrl: eventData.imageUrl,
-        registeredCount: eventData.registeredCount,
-        attendanceCount: eventData.attendanceCount,
       },
       { new: true },
     );
