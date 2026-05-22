@@ -124,7 +124,7 @@ export default function CreateAccountForm() {
   };
 
   return (
-    <div className="w-full max-w-[820px] pb-24 md:pt-14">
+    <div className="w-full max-w-[820px] pt-10 pb-24 md:pt-14">
       <AuthMobileHeader />
 
       <div className="mx-auto w-full max-w-[360px] px-5 md:max-w-none md:px-0">

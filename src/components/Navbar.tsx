@@ -87,7 +87,7 @@ export default function NavBar({ mode }: { mode: NavMode }) {
       </div>
 
       {/* mobile */}
-      {menuOpen && (
+      {/* {menuOpen && (
         <div className={styles.mobileMenu}>
           {links.map((item) => {
             const active = isActivePath(pathname, item.href);
@@ -103,7 +103,7 @@ export default function NavBar({ mode }: { mode: NavMode }) {
             );
           })}
         </div>
-      )}
+      )} */}
     </nav>
   );
 }

@@ -8,6 +8,7 @@ import Image from "next/image";
 import eyeClosed from "../icons/eyeClosed.svg";
 import eyeShow from "../icons/eyeShow.svg";
 import AuthMobileHeader from "./AuthMobileHeader";
+import NavBar from "./Navbar";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -142,111 +143,120 @@ export default function LoginForm() {
   }
 
   return (
-    <div className={styles.loginCard}>
-      <AuthMobileHeader />
+    <>
+      <div className="hidden md:block">
+        <NavBar mode="VolunteerNotLoggedIn" />
+      </div>
+      <div className={styles.loginCard}>
+        <AuthMobileHeader />
 
-      <div className={styles.loginPanel}>
-        <h1 className={styles.title}>Login</h1>
+        <div className={styles.loginPanel}>
+          <h1 className={styles.title}>Login</h1>
 
-        <p className={styles.subtitle}>
-          Don&apos;t have an Account?{" "}
-          <a className={styles.loginLink} href="/create-account">
-            Create Account
-          </a>
-        </p>
+          <p className={styles.subtitle}>
+            Don&apos;t have an Account?{" "}
+            <a className={styles.loginLink} href="/create-account">
+              Create Account
+            </a>
+          </p>
 
-        <form className={styles.loginForm} onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label className={styles.formLabel} htmlFor="email">
-              Email Address
-            </label>
-
-            <input
-              id="email"
-              className={styles.formInput}
-              placeholder="example@email.com"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (needsSecondFactor) resetSecondFactorState();
-                if (error) setError(null);
-              }}
-              type="email"
-              autoComplete="email"
-              onBlur={() => {
-                const eTrim = email.trim();
-                if (eTrim.length === 0) setEmailError("Email is required.");
-                else if (!isValidEmail(eTrim)) setEmailError("Please enter a valid email address.");
-                else setEmailError("");
-              }}
-              aria-invalid={submitted && !!emailError}
-            />
-
-            {emailError && <p className={styles.fieldError}>{emailError}</p>}
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.formLabel} htmlFor="password">
-              Password
-            </label>
-
-            <div className={styles.passwordWrapper}>
-              <input
-                id="password"
-                className={styles.formInput}
-                placeholder="********************"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (needsSecondFactor) resetSecondFactorState();
-                  if (error) setError(null);
-                }}
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-              />
-
-              <button type="button" className={styles.passwordToggle} onClick={() => setShowPassword((prev) => !prev)}>
-                {showPassword ? (
-                  <Image src={eyeClosed} alt="Hide" width={20} height={20} />
-                ) : (
-                  <Image src={eyeShow} alt="Show" width={20} height={20} />
-                )}
-              </button>
-            </div>
-          </div>
-
-          {needsSecondFactor ? (
+          <form className={styles.loginForm} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
-              <label className={styles.formLabel} htmlFor="second-factor-code">
-                Verification Code
+              <label className={styles.formLabel} htmlFor="email">
+                Email Address
               </label>
 
               <input
-                id="second-factor-code"
+                id="email"
                 className={styles.formInput}
-                placeholder={secondFactorHint ? `Code sent to ${secondFactorHint}` : "Enter verification code"}
-                value={secondFactorCode}
+                placeholder="example@email.com"
+                value={email}
                 onChange={(e) => {
-                  setSecondFactorCode(e.target.value);
+                  setEmail(e.target.value);
+                  if (needsSecondFactor) resetSecondFactorState();
                   if (error) setError(null);
                 }}
-                inputMode="numeric"
-                autoComplete="one-time-code"
+                type="email"
+                autoComplete="email"
+                onBlur={() => {
+                  const eTrim = email.trim();
+                  if (eTrim.length === 0) setEmailError("Email is required.");
+                  else if (!isValidEmail(eTrim)) setEmailError("Please enter a valid email address.");
+                  else setEmailError("");
+                }}
+                aria-invalid={submitted && !!emailError}
               />
+
+              {emailError && <p className={styles.fieldError}>{emailError}</p>}
             </div>
-          ) : null}
 
-          {error && <p className={styles.error}>{error}</p>}
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel} htmlFor="password">
+                Password
+              </label>
 
-          <button className={styles.loginButton} type="submit" disabled={!canSubmit || isSubmitting}>
-            {isSubmitting ? "Logging in..." : needsSecondFactor ? "Verify code" : "Log in"}
-          </button>
-        </form>
+              <div className={styles.passwordWrapper}>
+                <input
+                  id="password"
+                  className={styles.formInput}
+                  placeholder="********************"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (needsSecondFactor) resetSecondFactorState();
+                    if (error) setError(null);
+                  }}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                />
 
-        <a href="/forgot-password" className={styles.forgotLink}>
-          Forgot Password?
-        </a>
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? (
+                    <Image src={eyeClosed} alt="Hide" width={20} height={20} />
+                  ) : (
+                    <Image src={eyeShow} alt="Show" width={20} height={20} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {needsSecondFactor ? (
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel} htmlFor="second-factor-code">
+                  Verification Code
+                </label>
+
+                <input
+                  id="second-factor-code"
+                  className={styles.formInput}
+                  placeholder={secondFactorHint ? `Code sent to ${secondFactorHint}` : "Enter verification code"}
+                  value={secondFactorCode}
+                  onChange={(e) => {
+                    setSecondFactorCode(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                />
+              </div>
+            ) : null}
+
+            {error && <p className={styles.error}>{error}</p>}
+
+            <button className={styles.loginButton} type="submit" disabled={!canSubmit || isSubmitting}>
+              {isSubmitting ? "Logging in..." : needsSecondFactor ? "Verify code" : "Log in"}
+            </button>
+          </form>
+
+          <a href="/forgot-password" className={styles.forgotLink}>
+            Forgot Password?
+          </a>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,15 +1,15 @@
-@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Patua+One&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-lora: "Lora", serif;
+  --font-patua: "Patua One", serif;
 }
 
 html,
 body {
-  font-family: var(--font-lora);
+  font-family: var(--font-patua);
 }
 
 .fc .fc-cell-shaded,
@@ -102,7 +102,7 @@ body {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  font-family: var(--font-lora);
+  font-family: var(--font-patua);
   transition: all 0.2s ease;
 }
 
@@ -110,4 +110,137 @@ body {
   background-color: #226999 !important;
   color: white !important;
   opacity: 1 !important;
+}
+
+/* styles/footer.css */
+
+.waiver-section {
+  background: #647fc0;
+  padding: 50px 20px 70px;
+  text-align: center;
+}
+
+.waiver-section h2 {
+  color: #f3e7a8;
+  font-size: 2.5rem;
+  margin-bottom: 45px;
+  font-weight: light;
+}
+
+.waiver-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 200px;
+  flex-wrap: wrap;
+}
+
+.waiver-buttons button {
+  background: white;
+  padding: 10px 45px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  font-family: serif;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 50px 24px;
+  }
+
+  .waiver-section h2 {
+    font-size: 2.2rem;
+  }
+
+  .waiver-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .waiver-buttons button {
+    width: 240px;
+  }
+}
+
+.footer {
+  background: #e9e9e9;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  padding: 80px 120px;
+  flex-wrap: wrap;
+}
+
+.footer-left {
+  max-width: 320px;
+}
+
+.socials {
+  display: flex;
+  gap: 18px;
+  font-size: 2rem;
+  margin-bottom: 50px;
+}
+
+.contact-info p {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+}
+
+.contact-info a {
+  color: black;
+  font-weight: 600;
+}
+
+.copyright {
+  margin-top: 60px;
+  font-size: 0.4rem;
+  font-weight: lighter;
+}
+
+.footer-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.newsletter-card {
+  background: #f4f4f4;
+  padding: 40px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.newsletter-card h3 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.newsletter-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.newsletter-card label {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.newsletter-card input {
+  height: 52px;
+  border: 1px solid #bfbfbf;
+  margin-bottom: 28px;
+  padding: 0 14px;
+  font-size: 1rem;
+}
+
+.newsletter-card button {
+  width: 160px;
+  height: 52px;
+  border: none;
+  background: #bcbcbc;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
 }
