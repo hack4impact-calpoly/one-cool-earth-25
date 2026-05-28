@@ -147,15 +147,18 @@ export default function AccountPage() {
               <div className={styles.shortRow}>
                 <div className={styles.fieldGroup}>
                   <label className={styles.label}>Phone Number</label>
-                  <input
-                    className={styles.input}
-                    type="text"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    placeholder={"(XXX) XXX-XXXX"}
-                  />
+                  {isEditing ? (
+                    <input
+                      className={styles.input}
+                      type="text"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
+                      placeholder={"(XXX) XXX-XXXX"}
+                    />
+                  ) : (
+                    <div className={styles.inputReadOnly}>{formData.phoneNumber || "—"}</div>
+                  )}
                 </div>
 
                 <div className={styles.compactFieldGroup}>

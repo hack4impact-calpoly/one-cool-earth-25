@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { LoaderCircle } from "lucide-react";
 import { useRole } from "@/hooks/useRole";
 import EventDetails from "@/components/EventDetails";
 import VolunteerList from "@/components/VolunteerList";
@@ -51,7 +52,17 @@ export default function EventPage() {
     fetchEvent();
   }, [eventId]);
 
-  if (!isLoaded || loading) return null;
+  if (!isLoaded || loading) {
+    return (
+      <div className={styles.page}>
+        <NavBarWrapper />
+        <main className={styles.pageLoading} aria-live="polite">
+          <LoaderCircle className={styles.loadingIcon} aria-hidden="true" />
+          <span>Loading event...</span>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -89,7 +100,7 @@ export default function EventPage() {
             <EventDetails event={event} isEditable={isAdminView} />
           </div>
 
-          {isAdminView && <VolunteerList canViewVolunteers />}
+          {isAdminView && <VolunteerList canViewVolunteers eventId={eventId} />}
         </section>
       </main>
     </div>
