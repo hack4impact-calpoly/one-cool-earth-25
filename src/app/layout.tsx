@@ -1,6 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
-import { Patua_One } from "next/font/google";
+import { Patua_One, Lora } from "next/font/google";
 import "./globals.css";
 
 import FooterWrapper from "@/components/FooterWrapper";
@@ -11,6 +11,12 @@ const patuaOne = Patua_One({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-patua",
+});
+
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-lora",
 });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -30,7 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${patuaOne.variable} antialiased`}>
+        <body className={`${patuaOne.variable} ${lora.variable} antialiased`}>
           {children}
 
           <FooterWrapper hasSignedWaiver={hasSignedWaiver} />
