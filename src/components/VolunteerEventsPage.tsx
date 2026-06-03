@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
 import { useRole } from "@/hooks/useRole";
+import { applyWaiverStatusToEvent, useWaiverStatus } from "@/hooks/useWaiverStatus";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import VolunteerEventCard from "@/components/VolunteerEventCard";
 import AdminEventCard from "@/components/AdminEventCard";
@@ -108,6 +109,7 @@ export default function VolunteerEventsPage() {
   const { isLoaded, user } = useUser();
   const isAdminView = role === "admin";
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
+  const { completedSchools } = useWaiverStatus(isLoaded && !isAdminView);
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [registrationIdsByEventId, setRegistrationIdsByEventId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -184,6 +186,14 @@ export default function VolunteerEventsPage() {
     fetchEvents();
   }, [isAdminView, isLoaded, userEmail]);
 
+  const eventsWithWaiverStatus = useMemo(() => {
+    if (isAdminView || completedSchools === null) {
+      return events;
+    }
+
+    return events.map((event) => applyWaiverStatusToEvent(event, completedSchools));
+  }, [events, isAdminView, completedSchools]);
+
   if (!isLoaded || loading) {
     return (
       <main className={styles.pageLoading} aria-live="polite">
@@ -193,8 +203,10 @@ export default function VolunteerEventsPage() {
     );
   }
 
-  const upcoming = events.filter((e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd));
-  const past = events.filter((e) => isPastEvent(e) && isInDateRange(e.startTime, pastStart, pastEnd));
+  const upcoming = eventsWithWaiverStatus.filter(
+    (e) => isUpcomingEvent(e) && isInDateRange(e.startTime, upStart, upEnd),
+  );
+  const past = eventsWithWaiverStatus.filter((e) => isPastEvent(e) && isInDateRange(e.startTime, pastStart, pastEnd));
 
   const upcomingSorted = [...upcoming].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
   const pastSorted = [...past].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());

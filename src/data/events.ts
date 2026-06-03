@@ -8,6 +8,7 @@ export type AppEvent = {
   imageUrl?: string;
   registeredCount: number;
   attendanceCount?: number;
+  waiverSigned?: boolean;
 };
 
 function startOfDay(date: Date) {
