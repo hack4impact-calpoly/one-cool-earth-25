@@ -29,7 +29,7 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
 
   return (
     <div className={`${styles.card} ${styles.cardHoverEnabled} ${styles.adminCard}`}>
-      <div className={styles.cardBg} style={{ backgroundImage: `url(${event.imageUrl})` }} />
+      <div className={styles.cardBg} style={event.imageUrl ? { backgroundImage: `url(${event.imageUrl})` } : {}} />
       <div className={styles.cardOverlay} />
       <div style={{ color: "red", fontWeight: "bold", fontSize: "24px" }}>ADMIN CARD</div>
 
@@ -63,10 +63,6 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
           <div className={styles.hoverText}>{event.location}</div>
 
           <div className={styles.hoverButtons}>
-            <button type="button" className={styles.hoverBtnLight} onClick={() => router.push(eventHref)}>
-              Edit Event
-            </button>
-
             <button type="button" className={styles.hoverBtnDark} onClick={() => router.push(eventHref)}>
               {isPast ? "Event Report" : "View Event Info"}
             </button>

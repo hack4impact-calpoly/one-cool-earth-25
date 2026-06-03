@@ -9,20 +9,26 @@ const isAdminRoute = createRouteMatcher([
   "/report(.*)",
 ]);
 
-const isLoggedInRoute = createRouteMatcher([
-  "/account(.*)",
+const isLoggedInRoute = createRouteMatcher(["/account(.*)", "/checkin(.*)", "/edit-registration(.*)", "/events(.*)"]);
+
+const isPublicRoute = createRouteMatcher([
+  "/",
   "/calendar(.*)",
-  "/checkin(.*)",
-  "/edit-registration(.*)",
-  "/events(.*)",
+  "/login(.*)",
+  "/create-account(.*)",
+  "/forgot-password(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
   const session = await auth();
   const userId = session.userId;
 
+  if (isPublicRoute(req)) {
+    return NextResponse.next();
+  }
+
   if (!userId && isLoggedInRoute(req)) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/calendar", req.url));
   }
 
   if (!isAdminRoute(req)) {
@@ -30,7 +36,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   if (!userId) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/calendar", req.url));
   }
 
   const client = await clerkClient();
