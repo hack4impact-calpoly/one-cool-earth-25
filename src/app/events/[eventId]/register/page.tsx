@@ -6,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import { StepCircle, StepLine } from "@/components/ui/Stepper";
 import { useParams, useRouter } from "next/navigation";
+import { useWaiverStatus } from "@/hooks/useWaiverStatus";
 
 type RegistrationMode = "loggedIn" | "guest";
 type RegistrationStep = 1 | 2 | 3;
@@ -53,30 +54,18 @@ export default function EventRegistrationPage() {
   const [partyMembersError, setPartyMembersError] = useState("");
   const [didHydrateMode, setDidHydrateMode] = useState(false);
   const [showRegisteredMessage, setShowRegisteredMessage] = useState(false);
-  const [waiverCompleted, setWaiverCompleted] = useState(false);
   const router = useRouter();
 
   const params = useParams();
   const id = params.eventId as string;
+
+  const { waiverCompleted } = useWaiverStatus(isLoaded);
 
   useEffect(() => {
     if (!isLoaded || didHydrateMode) return;
     setMode(isSignedIn ? "loggedIn" : "guest");
     setDidHydrateMode(true);
   }, [didHydrateMode, isLoaded, isSignedIn]);
-
-  useEffect(() => {
-    async function fetchWaiverStatus() {
-      if (!isLoaded || !user?.id) return;
-
-      const response = await fetch("/api/user");
-      const data = await response.json();
-
-      setWaiverCompleted(Boolean(data.waiverCompleted));
-    }
-
-    fetchWaiverStatus();
-  }, [isLoaded, user?.id]);
 
   const primaryName = useMemo(() => {
     if (mode === "loggedIn") {

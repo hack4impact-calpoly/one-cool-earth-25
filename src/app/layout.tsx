@@ -21,25 +21,29 @@ const lora = Lora({
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser();
-  const email = user?.emailAddresses?.[0]?.emailAddress;
+
+  const clerkId = user?.id;
+  const email = user?.emailAddresses?.[0]?.emailAddress?.toLowerCase();
 
   let hasSignedWaiver = false;
 
-  if (email) {
+  if (clerkId || email) {
     await connectDB();
 
-    const waiver = await Waiver.findOne({ email });
+    const waiver = await Waiver.findOne({
+      status: "complete",
+      $or: [...(clerkId ? [{ clerkId }] : []), ...(email ? [{ email }] : [])],
+    }).lean();
 
     hasSignedWaiver = !!waiver;
   }
-
   return (
     <ClerkProvider>
       <html lang="en">
         <body className={`${patuaOne.variable} ${lora.variable} antialiased`}>
           {children}
 
-          <FooterWrapper hasSignedWaiver={hasSignedWaiver} />
+          <FooterWrapper initialHasSignedWaiver={hasSignedWaiver} />
         </body>
       </html>
     </ClerkProvider>

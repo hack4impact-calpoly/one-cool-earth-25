@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { AppEvent } from "@/data/events";
+import { useRole } from "@/hooks/useRole";
 
 interface EventPopupProps {
   event: AppEvent;
@@ -25,6 +26,7 @@ function formatTime(date: Date) {
 
 export default function EventPopup({ event, onClose }: EventPopupProps) {
   const router = useRouter();
+  const role = useRole();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4" onClick={onClose}>
@@ -41,7 +43,7 @@ export default function EventPopup({ event, onClose }: EventPopupProps) {
           X
         </button>
 
-        <h2 className="mb-3 pr-8 font-lora text-3xl font-bold">{event.title}</h2>
+        <h2 className="mb-3 pr-8 font-[var(--font-lora)] text-3xl font-bold">{event.title}</h2>
 
         <p className="text-sm font-bold leading-6">
           {formatDate(event.startTime)}
@@ -60,17 +62,19 @@ export default function EventPopup({ event, onClose }: EventPopupProps) {
           <button
             type="button"
             onClick={() => router.push(`/events/${event.id}`)}
-            className="w-[35%] rounded-md bg-[#6BA9D3] p-2.5 font-lora text-lg font-semibold text-black hover:opacity-80"
+            className="w-[35%] rounded-md bg-[#6BA9D3] p-2.5 font-[var(--font-lora)] text-lg font-semibold text-black hover:opacity-80"
           >
             Learn More
           </button>
-          <button
-            type="button"
-            onClick={() => router.push(`/events/${event.id}/register`)}
-            className="w-[42%] rounded-md bg-[#A5C6A5] p-2.5 font-lora text-xl font-bold text-black hover:opacity-80"
-          >
-            Register
-          </button>
+          {role !== "admin" && (
+            <button
+              type="button"
+              onClick={() => router.push(`/events/${event.id}/register`)}
+              className="w-[42%] rounded-md bg-[#A5C6A5] p-2.5 font-[var(--font-lora)] text-xl font-bold text-black hover:opacity-80"
+            >
+              Register
+            </button>
+          )}
         </div>
       </div>
     </div>

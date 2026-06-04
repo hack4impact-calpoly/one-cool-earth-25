@@ -8,6 +8,7 @@ import { LoaderCircle } from "lucide-react";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/Account.module.css";
 import { useRole } from "@/hooks/useRole";
+import { useWaiverStatus } from "@/hooks/useWaiverStatus";
 
 type NotificationOption = "Text" | "Email" | "Both" | "None";
 
@@ -30,7 +31,9 @@ export default function AccountPage() {
   const [isEditing, setIsEditing] = useState(false);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
-  const [waiverCompleted, setWaiverCompleted] = useState(false);
+  const { waiverCompleted } = useWaiverStatus(true);
+
+  const hasSignedWaiver = waiverCompleted;
 
   const [formData, setFormData] = useState<AccountFormData>({
     firstName: "",
@@ -66,8 +69,6 @@ export default function AccountPage() {
           email: data.email || "",
           phoneNumber: data.phoneNumber || "",
         }));
-
-        setWaiverCompleted(Boolean(data.waiverCompleted));
       } catch (error) {
         console.error("Failed to load user:", error);
       } finally {
@@ -213,7 +214,7 @@ export default function AccountPage() {
               <div className={styles.fieldGroup}>
                 <label className={styles.label}>Waiver Status</label>
                 <div className={styles.inputReadOnly}>
-                  {waiverCompleted ? (
+                  {hasSignedWaiver ? (
                     "Waiver completed"
                   ) : (
                     <>

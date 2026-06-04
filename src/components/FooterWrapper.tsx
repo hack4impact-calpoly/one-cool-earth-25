@@ -1,18 +1,18 @@
-// components/FooterWrapper.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
-import Footer from "./Footer";
+import Footer from "@/components/Footer";
+import { useWaiverStatus } from "@/hooks/useWaiverStatus";
 
-export default function FooterWrapper({ hasSignedWaiver }: { hasSignedWaiver: boolean }) {
+export default function FooterWrapper({ initialHasSignedWaiver }: { initialHasSignedWaiver: boolean }) {
   const pathname = usePathname();
 
+  const { waiverCompleted } = useWaiverStatus(true);
+
+  const hasSignedWaiver = initialHasSignedWaiver || waiverCompleted;
+
   const hideFooter =
-    pathname.startsWith("/sign-in") ||
-    pathname.startsWith("/sign-up") ||
-    pathname.startsWith("/forgot-password") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/create-account");
+    pathname.startsWith("/login") || pathname.startsWith("/create-account") || pathname.startsWith("/forgot-password");
 
   if (hideFooter) return null;
 

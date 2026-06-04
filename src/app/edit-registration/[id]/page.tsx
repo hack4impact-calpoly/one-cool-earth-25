@@ -8,6 +8,7 @@ import { MdRemoveCircle } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
 import { BeatLoader } from "react-spinners";
 import Link from "next/link";
+import { useWaiverStatus } from "@/hooks/useWaiverStatus";
 
 type Reservation = {
   eventId: Event;
@@ -51,6 +52,9 @@ export default function EditRegistration() {
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { waiverCompleted } = useWaiverStatus(true);
+
+  const hasSignedWaiver = waiverCompleted;
 
   useEffect(() => {
     if (!id) return;
@@ -88,6 +92,14 @@ export default function EditRegistration() {
       setAffiliatedOrganization(registration.affiliatedOrganization);
     }
   }, [registration]);
+
+  useEffect(() => {
+    if (!hasSignedWaiver) return;
+
+    setParticipants((prev) =>
+      prev.map((participant) => (participant.mainAttendee ? { ...participant, waiverSigned: true } : participant)),
+    );
+  }, [hasSignedWaiver]);
 
   function formatDate(date: string): string {
     if (!date) return "";
@@ -234,9 +246,9 @@ export default function EditRegistration() {
                 >
                   <TbSignatureOff fontSize={30} color={"#4171B0"} />
                   {sigHovered === index && (
-                    <div className={styles.popup} onClick={() => changeInfo(index, "waiverSigned", true)}>
+                    <Link href="https://form.jotform.com/70895957565174" target="_blank" className={styles.popup}>
                       sign waiver
-                    </div>
+                    </Link>
                   )}
                 </div>
               )}
