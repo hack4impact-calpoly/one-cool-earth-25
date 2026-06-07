@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import styles from "../styles/AuthMobileHeader.module.css";
 
@@ -10,10 +9,7 @@ const links = [
   { label: "Login", href: "/login" },
 ];
 
-const isActivePath = (pathname: string, href: string) => pathname === href || pathname.startsWith(href + "/");
-
 export default function AuthMobileHeader() {
-  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -33,20 +29,11 @@ export default function AuthMobileHeader() {
       </button>
 
       <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}>
-        {links.map((item) => {
-          const active = isActivePath(pathname, item.href);
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${styles.mobileLink} ${active ? styles.active : ""}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              {item.label.toUpperCase()}
-            </Link>
-          );
-        })}
+        {links.map((item) => (
+          <Link key={item.href} href={item.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+            {item.label.toUpperCase()}
+          </Link>
+        ))}
       </div>
     </div>
   );

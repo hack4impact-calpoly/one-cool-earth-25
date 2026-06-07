@@ -77,11 +77,6 @@
   background: transparent;
 }
 
-.active {
-  background: #e7f0ff;
-  border: 1px solid #000;
-}
-
 @media (min-width: 768px) {
   .mobileHeader {
     display: none;
