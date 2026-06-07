@@ -17,13 +17,11 @@ export default function NotRegisteredView({ eventId }: { eventId: string }) {
 
       <div className={styles.divider} />
 
-      <p className={styles.description}>
-        Our records show you are not registered for <strong>“Garden Workday”</strong>.
-      </p>
+      <p className={styles.description}>Our records show you are not registered for this event yet.</p>
 
       <div className={styles.buttonGroup}>
-        <button className={styles.primaryButton} onClick={() => router.push(`/events/${eventId}`)}>
-          Go to Register Page →
+        <button className={styles.primaryButton} onClick={() => router.push(`/events/${eventId}/register?checkin=1`)}>
+          Register for This Event →
         </button>
 
         <button className={styles.secondaryButton} onClick={() => router.push(`/events/${eventId}/qr`)}>

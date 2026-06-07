@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import styles from "../../../styles/CheckinOverlay.module.css";
 
-export default function NotLoggedInView({ eventId }: { eventId: string }) {
+export default function NotLoggedInView({ eventId, redirectPath }: { eventId: string; redirectPath: string }) {
   const router = useRouter();
 
   return (
@@ -16,7 +16,10 @@ export default function NotLoggedInView({ eventId }: { eventId: string }) {
       <p className={styles.description}>Please log in with your account before checking in for this event.</p>
 
       <div className={styles.buttonGroup}>
-        <button className={styles.primaryButton} onClick={() => router.push("/login")}>
+        <button
+          className={styles.primaryButton}
+          onClick={() => router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`)}
+        >
           Login →
         </button>
 

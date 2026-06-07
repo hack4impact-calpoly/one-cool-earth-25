@@ -6,6 +6,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import NavBarWrapper from "@/components/NavbarWrapper";
+import RegistrationNotificationSettings from "@/components/RegistrationNotificationSettings";
 import styles from "@/styles/Account.module.css";
 import { useRole } from "@/hooks/useRole";
 import { useWaiverStatus } from "@/hooks/useWaiverStatus";
@@ -31,7 +32,7 @@ export default function AccountPage() {
   const [isEditing, setIsEditing] = useState(false);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
-  const { waiverCompleted } = useWaiverStatus(true);
+  const { waiverCompleted, loading: waiverStatusLoading, refreshWaiverStatus } = useWaiverStatus(true);
 
   const hasSignedWaiver = waiverCompleted;
 
@@ -213,25 +214,35 @@ export default function AccountPage() {
               </div>
               <div className={styles.fieldGroup}>
                 <label className={styles.label}>Waiver Status</label>
-                <div className={styles.inputReadOnly}>
-                  {hasSignedWaiver ? (
-                    "Waiver completed"
-                  ) : (
-                    <>
-                      Incomplete{" "}
-                      <span className={styles.waiverText}>
-                        (Fill out the waiver -{" "}
-                        <Link href="https://form.jotform.com/70895957565174" className={styles.waiverLink}>
-                          English
-                        </Link>
-                        {" | "}
-                        <Link href="https://form.jotform.com/251204962817155" className={styles.waiverLink}>
-                          Spanish
-                        </Link>
-                        )
-                      </span>
-                    </>
-                  )}
+                <div className={styles.waiverStatusRow}>
+                  <div className={styles.inputReadOnly}>
+                    {hasSignedWaiver ? (
+                      "Waiver completed"
+                    ) : (
+                      <>
+                        Incomplete{" "}
+                        <span className={styles.waiverText}>
+                          (Fill out the waiver -{" "}
+                          <Link href="https://form.jotform.com/70895957565174" className={styles.waiverLink}>
+                            English
+                          </Link>
+                          {" | "}
+                          <Link href="https://form.jotform.com/251204962817155" className={styles.waiverLink}>
+                            Spanish
+                          </Link>
+                          )
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.refreshWaiverButton}
+                    onClick={refreshWaiverStatus}
+                    disabled={waiverStatusLoading}
+                  >
+                    {waiverStatusLoading ? "Checking..." : "Reload"}
+                  </button>
                 </div>
               </div>
 
@@ -252,6 +263,8 @@ export default function AccountPage() {
                 </div>
               )}
             </form>
+
+            {isAdmin ? <RegistrationNotificationSettings /> : null}
 
             <section className={styles.deleteSection}>
               <h2 className={styles.deleteTitle}>Delete Account</h2>

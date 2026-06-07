@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AppEvent, isUpcomingEvent } from "@/data/events";
 
 type WaiverStatusResponse = {
@@ -27,67 +27,63 @@ export function useWaiverStatus(enabled: boolean) {
   const [completedSchools, setCompletedSchools] = useState<string[]>([]);
   const [waiverCompleted, setWaiverCompleted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const hasLoadedInitialStatus = useRef(false);
 
-  useEffect(() => {
+  const loadWaiverStatus = useCallback(async () => {
     if (!enabled) {
       setCompletedSchools([]);
       setWaiverCompleted(false);
       setError(null);
+      setLoading(false);
+      hasLoadedInitialStatus.current = false;
       return;
     }
 
-    let cancelled = false;
+    setLoading(true);
 
-    const loadWaiverStatus = async () => {
-      try {
-        const response = await fetch("/api/me/waiver-status", {
-          cache: "no-store",
-        });
+    try {
+      const response = await fetch("/api/me/waiver-status", {
+        cache: "no-store",
+      });
 
-        if (!response.ok) {
-          if (response.status === 401) {
-            if (!cancelled) {
-              setCompletedSchools([]);
-              setWaiverCompleted(false);
-              setError("unauthorized");
-            }
-            return;
-          }
-
-          const failed = (await response.json().catch(() => null)) as WaiverStatusResponse | null;
-
-          throw new Error(failed?.error || "Failed to load waiver status");
-        }
-
-        const data = (await response.json()) as WaiverStatusResponse;
-
-        if (!cancelled) {
-          setWaiverCompleted(Boolean(data.waiverCompleted));
-          setCompletedSchools(Array.isArray(data.completedSchools) ? data.completedSchools : []);
-          setError(null);
-        }
-      } catch (err) {
-        if (!cancelled) {
+      if (!response.ok) {
+        if (response.status === 401) {
           setCompletedSchools([]);
           setWaiverCompleted(false);
-          setError(err instanceof Error ? err.message : "Failed to load waiver status");
+          setError("unauthorized");
+          return;
         }
+
+        const failed = (await response.json().catch(() => null)) as WaiverStatusResponse | null;
+
+        throw new Error(failed?.error || "Failed to load waiver status");
       }
-    };
 
-    loadWaiverStatus();
+      const data = (await response.json()) as WaiverStatusResponse;
 
-    const interval = setInterval(loadWaiverStatus, 5000);
-    window.addEventListener("focus", loadWaiverStatus);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-      window.removeEventListener("focus", loadWaiverStatus);
-    };
+      setWaiverCompleted(Boolean(data.waiverCompleted));
+      setCompletedSchools(Array.isArray(data.completedSchools) ? data.completedSchools : []);
+      setError(null);
+    } catch (err) {
+      setCompletedSchools([]);
+      setWaiverCompleted(false);
+      setError(err instanceof Error ? err.message : "Failed to load waiver status");
+    } finally {
+      setLoading(false);
+    }
   }, [enabled]);
 
-  return { waiverCompleted, completedSchools, error };
+  useEffect(() => {
+    if (hasLoadedInitialStatus.current) {
+      return;
+    }
+
+    hasLoadedInitialStatus.current = true;
+    loadWaiverStatus();
+  }, [loadWaiverStatus]);
+
+  return { waiverCompleted, completedSchools, error, loading, refreshWaiverStatus: loadWaiverStatus };
 }
 
 function normalizeSchool(school: string): string {

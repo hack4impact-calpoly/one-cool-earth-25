@@ -195,6 +195,12 @@
     height: 38px;
     font-size: 0.9rem;
   }
+
+  .waiverStatusRow {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 .inputReadOnly {
@@ -208,6 +214,29 @@
   color: #222;
   outline: none;
   width: 100%;
+}
+
+.waiverStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.refreshWaiverButton {
+  min-width: 92px;
+  height: 34px;
+  border: 1px solid #7d9f69;
+  border-radius: 8px;
+  background: #cfe7bb;
+  color: #355235;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.refreshWaiverButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 /* Logout at bottom */
@@ -257,4 +286,12 @@
 
 .waiverLink:hover {
   opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .waiverStatusRow {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
 }

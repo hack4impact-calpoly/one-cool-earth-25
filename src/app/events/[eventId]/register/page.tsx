@@ -5,8 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import { StepCircle, StepLine } from "@/components/ui/Stepper";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useWaiverStatus } from "@/hooks/useWaiverStatus";
+import { AppEvent } from "@/data/events";
 
 type RegistrationMode = "loggedIn" | "guest";
 type RegistrationStep = 1 | 2 | 3;
@@ -44,6 +45,7 @@ export default function EventRegistrationPage() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [mode, setMode] = useState<RegistrationMode>("guest");
   const [step, setStep] = useState<RegistrationStep>(1);
+  const [event, setEvent] = useState<AppEvent | null>(null);
   const [guestName, setGuestName] = useState("John Doe");
   const [guestEmail, setGuestEmail] = useState("jdoe@gmail.com");
   const [partyMembers, setPartyMembers] = useState<AdditionalPartyMember[]>([emptyPartyMember(1)]);
@@ -54,18 +56,48 @@ export default function EventRegistrationPage() {
   const [partyMembersError, setPartyMembersError] = useState("");
   const [didHydrateMode, setDidHydrateMode] = useState(false);
   const [showRegisteredMessage, setShowRegisteredMessage] = useState(false);
+  const [registrationError, setRegistrationError] = useState("");
+  const [isSubmittingRegistration, setIsSubmittingRegistration] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const params = useParams();
   const id = params.eventId as string;
+  const shouldReturnToCheckin = searchParams.get("checkin") === "1";
 
-  const { waiverCompleted } = useWaiverStatus(isLoaded);
+  const { waiverCompleted, loading: waiverStatusLoading, refreshWaiverStatus } = useWaiverStatus(isLoaded);
 
   useEffect(() => {
     if (!isLoaded || didHydrateMode) return;
     setMode(isSignedIn ? "loggedIn" : "guest");
     setDidHydrateMode(true);
   }, [didHydrateMode, isLoaded, isSignedIn]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    async function fetchEvent() {
+      try {
+        const response = await fetch(`/api/events/${id}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to load event");
+        }
+
+        setEvent({
+          ...data,
+          startTime: new Date(data.startTime),
+          endTime: new Date(data.endTime),
+        });
+      } catch (error) {
+        console.error("Failed to load event:", error);
+        setEvent(null);
+      }
+    }
+
+    void fetchEvent();
+  }, [id]);
 
   const primaryName = useMemo(() => {
     if (mode === "loggedIn") {
@@ -187,6 +219,8 @@ export default function EventRegistrationPage() {
   };
 
   const handleRegistration = async () => {
+    if (isSubmittingRegistration) return;
+
     let tempPartyMembers = partyMembers
       .filter((pm) => pm.name && pm.email)
       .map((pm) => {
@@ -218,13 +252,45 @@ export default function EventRegistrationPage() {
       additionalComments: notes,
     };
 
-    const response = await fetch(`/api/events/registration`, {
-      method: "POST",
-      body: JSON.stringify(registrationBody),
-    });
+    try {
+      setIsSubmittingRegistration(true);
+      setRegistrationError("");
 
-    router.push("/events");
+      const response = await fetch(`/api/events/registration`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registrationBody),
+      });
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to register");
+      }
+
+      router.push(shouldReturnToCheckin ? `/checkin/${id}` : `/events/${id}?registered=1`);
+    } catch (error) {
+      setRegistrationError(error instanceof Error ? error.message : "Failed to register");
+      setIsSubmittingRegistration(false);
+    }
   };
+
+  const eventTitle = event?.title ?? DEMO_EVENT.title;
+  const eventLocation = event?.location ?? DEMO_EVENT.location;
+  const eventDateTime = event
+    ? `${event.startTime.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })}, ${event.startTime.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      })} - ${event.endTime.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      })}`
+    : DEMO_EVENT.dateTime;
 
   return (
     <div className="min-h-screen bg-[#f7f7f2] font-lora text-[#161616]">
@@ -232,9 +298,9 @@ export default function EventRegistrationPage() {
 
       <main className="mx-auto max-w-5xl px-6 pb-20 pt-10">
         <header className="text-center">
-          <h1 className="text-5xl font-bold">{DEMO_EVENT.title}</h1>
-          <p className="mt-3 text-3xl font-semibold text-[#6d6666]">{DEMO_EVENT.location}</p>
-          <p className="mt-2 text-2xl font-semibold text-[#9d9d9d]">{DEMO_EVENT.dateTime}</p>
+          <h1 className="text-5xl font-bold">{eventTitle}</h1>
+          <p className="mt-3 text-3xl font-semibold text-[#6d6666]">{eventLocation}</p>
+          <p className="mt-2 text-2xl font-semibold text-[#9d9d9d]">{eventDateTime}</p>
         </header>
 
         <section className="mt-16 flex flex-wrap items-center justify-center gap-5">
@@ -293,7 +359,11 @@ export default function EventRegistrationPage() {
               organization={organization}
               notes={notes}
               waiverCompleted={waiverCompleted}
+              waiverStatusLoading={waiverStatusLoading}
               showRegisteredMessage={showRegisteredMessage}
+              registrationError={registrationError}
+              isSubmittingRegistration={isSubmittingRegistration}
+              onRefreshWaiverStatus={refreshWaiverStatus}
               onBack={() => {
                 setShowRegisteredMessage(false);
                 setStep(2);
@@ -520,7 +590,11 @@ function ReviewStep({
   organization,
   notes,
   waiverCompleted,
+  waiverStatusLoading,
   showRegisteredMessage,
+  registrationError,
+  isSubmittingRegistration,
+  onRefreshWaiverStatus,
   onBack,
   onRegister,
 }: {
@@ -530,7 +604,11 @@ function ReviewStep({
   organization: string;
   notes: string;
   waiverCompleted: boolean;
+  waiverStatusLoading: boolean;
   showRegisteredMessage: boolean;
+  registrationError: string;
+  isSubmittingRegistration: boolean;
+  onRefreshWaiverStatus: () => void;
   onBack: () => void;
   onRegister: () => void;
 }) {
@@ -549,7 +627,17 @@ function ReviewStep({
           <p>
             <span className="font-bold">Waiver Signed:</span>{" "}
             {waiverCompleted ? (
-              "Yes"
+              <>
+                Yes{" "}
+                <button
+                  type="button"
+                  onClick={onRefreshWaiverStatus}
+                  disabled={waiverStatusLoading}
+                  className="ml-2 rounded-md border border-[#7d9f69] bg-[#cfe7bb] px-3 py-1 text-sm font-semibold text-[#355235] disabled:cursor-not-allowed disabled:opacity-65"
+                >
+                  {waiverStatusLoading ? "Checking..." : "Reload"}
+                </button>
+              </>
             ) : (
               <>
                 No{" "}
@@ -564,6 +652,14 @@ function ReviewStep({
                   </Link>
                   )
                 </span>
+                <button
+                  type="button"
+                  onClick={onRefreshWaiverStatus}
+                  disabled={waiverStatusLoading}
+                  className="ml-2 rounded-md border border-[#7d9f69] bg-[#cfe7bb] px-3 py-1 text-sm font-semibold text-[#355235] disabled:cursor-not-allowed disabled:opacity-65"
+                >
+                  {waiverStatusLoading ? "Checking..." : "Reload"}
+                </button>
               </>
             )}
           </p>
@@ -595,12 +691,17 @@ function ReviewStep({
           Demo registration complete. This button is UI-only in the current branch and does not submit data yet.
         </div>
       ) : null}
+      {registrationError ? (
+        <div className="rounded-2xl border border-red-300 bg-red-50 px-6 py-4 text-lg font-semibold text-red-700">
+          {registrationError}
+        </div>
+      ) : null}
 
       <div className="flex items-center justify-between">
         <FlowButton variant="secondary" onClick={onBack}>
           back
         </FlowButton>
-        <FlowButton onClick={onRegister}>register</FlowButton>
+        <FlowButton onClick={onRegister}>{isSubmittingRegistration ? "registering..." : "register"}</FlowButton>
       </div>
     </div>
   );

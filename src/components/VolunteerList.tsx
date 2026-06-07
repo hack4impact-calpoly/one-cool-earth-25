@@ -12,6 +12,8 @@ import hoveredAttended from "../icons/hoverAttended.svg";
 import mail from "../icons/mail.svg";
 
 type Volunteer = {
+  registrationId: string;
+  memberIndex: number;
   name: string;
   email: string;
   waiver: any;
@@ -47,6 +49,7 @@ export default function VolunteerList({ canViewVolunteers = false, eventId }: Vo
   const [selectedTemplate, setSelectedTemplate] = useState("No Template");
   const [message, setMessage] = useState("Dear [Volunteer],");
   const [loading, setLoading] = useState(false);
+  const [savingAttendanceIds, setSavingAttendanceIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!canViewVolunteers || !eventId) return;
@@ -67,6 +70,8 @@ export default function VolunteerList({ canViewVolunteers = false, eventId }: Vo
             .forEach((member, index) => {
               const waiverSigned = Boolean(member.waiverSigned);
               result[`${registration._id}-${index}`] = {
+                registrationId: registration._id,
+                memberIndex: index,
                 name: member.name,
                 email: member.email,
                 waiver: waiverSigned ? approvedWaiver : missingWaiver,
@@ -97,11 +102,44 @@ export default function VolunteerList({ canViewVolunteers = false, eventId }: Vo
   const volunteerEntries = Object.entries(volunteers);
   const selectedVolunteers = volunteerEntries.filter(([id]) => selectedVolunteerIds.includes(id));
 
-  const toggleAttendance = (id: string) => {
+  const toggleAttendance = async (id: string) => {
+    const volunteer = volunteers[id];
+
+    if (!volunteer || savingAttendanceIds.includes(id)) return;
+
+    const nextAttendance = !volunteer.attendance;
+
     setVolunteers((prev) => ({
       ...prev,
-      [id]: { ...prev[id], attendance: !prev[id].attendance },
+      [id]: { ...prev[id], attendance: nextAttendance },
     }));
+    setSavingAttendanceIds((prev) => [...prev, id]);
+
+    try {
+      const response = await fetch(`/api/events/registration/${volunteer.registrationId}/attendance`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          memberIndex: volunteer.memberIndex,
+          attended: nextAttendance,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(data?.error || "Failed to update attendance");
+      }
+    } catch (error) {
+      console.error("Failed to update attendance:", error);
+      setVolunteers((prev) => ({
+        ...prev,
+        [id]: { ...prev[id], attendance: volunteer.attendance },
+      }));
+    } finally {
+      setSavingAttendanceIds((prev) => prev.filter((savingId) => savingId !== id));
+    }
   };
 
   const toggleVolunteerSelection = (id: string) => {
@@ -178,10 +216,13 @@ export default function VolunteerList({ canViewVolunteers = false, eventId }: Vo
                     <button
                       type="button"
                       className={styles.iconButton}
-                      onClick={() => toggleAttendance(id)}
+                      onClick={() => {
+                        void toggleAttendance(id);
+                      }}
                       onMouseEnter={() => setHoveredId(id)}
                       onMouseLeave={() => setHoveredId(null)}
                       title={volunteer.attendance ? "mark as not attended" : "mark as attended"}
+                      disabled={savingAttendanceIds.includes(id)}
                     >
                       <Image
                         src={

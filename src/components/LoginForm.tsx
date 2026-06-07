@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useSignIn, useClerk } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../styles/LoginForm.module.css";
 import Image from "next/image";
 import eyeClosed from "../icons/eyeClosed.svg";
@@ -32,6 +32,10 @@ export default function LoginForm() {
   const { signIn, isLoaded } = useSignIn();
   const { setActive } = useClerk();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get("redirect");
+  const redirectPath =
+    redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : "/calendar";
 
   const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +65,7 @@ export default function LoginForm() {
 
     if (result.status === "complete" && result.createdSessionId) {
       await setActive({ session: result.createdSessionId });
-      router.replace("/calendar");
+      router.replace(redirectPath);
       return;
     }
 
@@ -105,7 +109,7 @@ export default function LoginForm() {
 
       if (result.status === "complete" && result.createdSessionId) {
         await setActive({ session: result.createdSessionId });
-        router.replace("/calendar");
+        router.replace(redirectPath);
         return;
       }
 
