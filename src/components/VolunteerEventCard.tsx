@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import { AppEvent, isUpcomingEvent } from "@/data/events";
@@ -45,6 +46,8 @@ export default function VolunteerEventCard({
   registrationId?: string;
 }) {
   const router = useRouter();
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [usesTapInteraction, setUsesTapInteraction] = useState(false);
 
   const monthLabel = event.startTime.toLocaleString("en-US", { month: "long" });
   const dayNumber = event.startTime.getDate();
@@ -54,8 +57,25 @@ export default function VolunteerEventCard({
   const registrationPath = `/events/${event.id}/register`;
   const editRegistrationPath = registrationId ? `/edit-registration/${registrationId}` : registrationPath;
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: none) and (pointer: coarse)");
+    const updateInteractionMode = () => setUsesTapInteraction(mediaQuery.matches);
+
+    updateInteractionMode();
+    mediaQuery.addEventListener("change", updateInteractionMode);
+
+    return () => mediaQuery.removeEventListener("change", updateInteractionMode);
+  }, []);
+
   return (
-    <div className={`${styles.card} ${canRegister ? styles.cardHoverEnabled : ""}`}>
+    <div
+      className={`${styles.card} ${canRegister ? styles.cardHoverEnabled : ""} ${panelOpen ? styles.cardPanelOpen : ""}`}
+      onClick={() => {
+        if (usesTapInteraction) {
+          setPanelOpen((open) => !open);
+        }
+      }}
+    >
       <div className={styles.cardBg} style={event.imageUrl ? { backgroundImage: `url(${event.imageUrl})` } : {}} />
       <div className={styles.cardOverlay} />
 
