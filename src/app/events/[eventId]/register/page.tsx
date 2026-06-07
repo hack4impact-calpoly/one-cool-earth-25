@@ -6,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import { StepCircle, StepLine } from "@/components/ui/Stepper";
 import { useParams, useRouter } from "next/navigation";
+import { useWaiverStatus } from "@/hooks/useWaiverStatus";
 
 type RegistrationMode = "loggedIn" | "guest";
 type RegistrationStep = 1 | 2 | 3;
@@ -57,6 +58,8 @@ export default function EventRegistrationPage() {
 
   const params = useParams();
   const id = params.eventId as string;
+
+  const { waiverCompleted } = useWaiverStatus(isLoaded);
 
   useEffect(() => {
     if (!isLoaded || didHydrateMode) return;
@@ -190,7 +193,7 @@ export default function EventRegistrationPage() {
         return {
           name: pm.name,
           email: pm.email,
-          waiverSigned: false,
+          waiverSigned: waiverCompleted,
           registrant: false,
           attending: true,
           attended: false,
@@ -200,7 +203,7 @@ export default function EventRegistrationPage() {
     const registrant = {
       name: mode == "loggedIn" ? primaryName : guestName,
       email: mode == "loggedIn" ? primaryEmail : guestEmail,
-      waiverSigned: false,
+      waiverSigned: waiverCompleted,
       registrant: true,
       attending: true,
       attended: false,
@@ -289,6 +292,7 @@ export default function EventRegistrationPage() {
               partyMembers={filledPartyMembers}
               organization={organization}
               notes={notes}
+              waiverCompleted={waiverCompleted}
               showRegisteredMessage={showRegisteredMessage}
               onBack={() => {
                 setShowRegisteredMessage(false);
@@ -515,6 +519,7 @@ function ReviewStep({
   partyMembers,
   organization,
   notes,
+  waiverCompleted,
   showRegisteredMessage,
   onBack,
   onRegister,
@@ -524,6 +529,7 @@ function ReviewStep({
   partyMembers: AdditionalPartyMember[];
   organization: string;
   notes: string;
+  waiverCompleted: boolean;
   showRegisteredMessage: boolean;
   onBack: () => void;
   onRegister: () => void;
@@ -538,6 +544,28 @@ function ReviewStep({
           </p>
           <p>
             <span className="font-bold">Email:</span> {email}
+          </p>
+
+          <p>
+            <span className="font-bold">Waiver Signed:</span>{" "}
+            {waiverCompleted ? (
+              "Yes"
+            ) : (
+              <>
+                No{" "}
+                <span className="text-base" style={{ textDecoration: "none" }}>
+                  ( Fill out waiver -{" "}
+                  <Link href="https://form.jotform.com/70895957565174" className="underline">
+                    English
+                  </Link>
+                  {" | "}
+                  <Link href="https://form.jotform.com/251204962817155" className="underline">
+                    Spanish
+                  </Link>
+                  )
+                </span>
+              </>
+            )}
           </p>
 
           <div className="mt-4">

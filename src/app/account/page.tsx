@@ -8,6 +8,7 @@ import { LoaderCircle } from "lucide-react";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/Account.module.css";
 import { useRole } from "@/hooks/useRole";
+import { useWaiverStatus } from "@/hooks/useWaiverStatus";
 
 type NotificationOption = "Text" | "Email" | "Both" | "None";
 
@@ -30,6 +31,9 @@ export default function AccountPage() {
   const [isEditing, setIsEditing] = useState(false);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
+  const { waiverCompleted } = useWaiverStatus(true);
+
+  const hasSignedWaiver = waiverCompleted;
 
   const [formData, setFormData] = useState<AccountFormData>({
     firstName: "",
@@ -206,6 +210,29 @@ export default function AccountPage() {
                 ) : (
                   <div className={styles.inputReadOnly}>••••••••</div>
                 )}
+              </div>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>Waiver Status</label>
+                <div className={styles.inputReadOnly}>
+                  {hasSignedWaiver ? (
+                    "Waiver completed"
+                  ) : (
+                    <>
+                      Incomplete{" "}
+                      <span className={styles.waiverText}>
+                        (Fill out the waiver -{" "}
+                        <Link href="https://form.jotform.com/70895957565174" className={styles.waiverLink}>
+                          English
+                        </Link>
+                        {" | "}
+                        <Link href="https://form.jotform.com/251204962817155" className={styles.waiverLink}>
+                          Spanish
+                        </Link>
+                        )
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
 
               {!isEditing ? (

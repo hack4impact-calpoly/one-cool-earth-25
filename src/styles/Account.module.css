@@ -242,3 +242,19 @@
   margin-top: 0.5rem;
   text-align: center;
 }
+
+.waiverText {
+  display: inline;
+  font-size: 0.85rem;
+}
+
+.waiverLink {
+  font-size: 0.85rem;
+  margin: 0 2px;
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.waiverLink:hover {
+  opacity: 0.8;
+}

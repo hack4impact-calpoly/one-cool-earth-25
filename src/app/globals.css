@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Patua+One&display=swap");
+@import url("https://fonts.cdnfonts.com/css/aller");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -114,133 +115,184 @@ body {
 
 /* styles/footer.css */
 
+.footer-wrap {
+  background: #ececec;
+}
+
+.footer {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 55px 24px 50px;
+  display: grid;
+  grid-template-columns: 41% 59%;
+  gap: 24px;
+  align-items: start;
+}
+
+/* LEFT SIDE */
+
+.socials {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 28px;
+}
+
+.socials a {
+  color: black;
+  font-size: 20px;
+  font-weight: lighter;
+}
+
+.contact-info {
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.contact-info p {
+  margin-bottom: 14px;
+  font-family: "Aller", sans-serif;
+}
+
+.contact-info strong {
+  font-weight: 700;
+}
+
+.contact-info a {
+  color: black;
+  text-decoration: underline;
+}
+
+.copyright {
+  font-family: "Aller", sans-serif;
+  margin-top: 30px;
+  font-size: 8px;
+  letter-spacing: 0.2px;
+}
+
+/* RIGHT SIDE */
+
+.newsletter-card {
+  background: #f8f8f8;
+  padding: 26px 28px;
+  width: 100%;
+  max-width: 620px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.newsletter-card h2 {
+  font-size: 20px;
+  line-height: 1.3;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.required-note {
+  font-size: 12px;
+  margin-bottom: 18px;
+  text-align: right;
+}
+
+.required-note span,
+.mc-field-group span {
+  color: #c0392b;
+}
+
+.mc-field-group {
+  margin-bottom: 18px;
+}
+
+.mc-field-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.mc-field-group input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #c9c9c9;
+  padding: 0 10px;
+  font-size: 14px;
+  background: white;
+}
+
+.newsletter-card button {
+  background: #aaaaaa;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 4px 23px;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.newsletter-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  gap: 20px;
+}
+
+.mailchimp-logo {
+  width: 180px;
+  height: auto;
+}
+
+/* WAIVER SECTION */
+
 .waiver-section {
-  background: #647fc0;
-  padding: 50px 20px 70px;
+  background: #5c79b9;
+  padding: 60px 24px 75px;
   text-align: center;
 }
 
 .waiver-section h2 {
-  color: #f3e7a8;
-  font-size: 2.5rem;
-  margin-bottom: 45px;
-  font-weight: light;
-}
+  font-family: var(--font-lora);
+  font-size: 37px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.2;
+  color: #f7e8a8;
+  margin-bottom: 42px;
 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 .waiver-buttons {
   display: flex;
   justify-content: center;
-  gap: 200px;
+  gap: 360px;
   flex-wrap: wrap;
 }
 
-.waiver-buttons button {
+.waiver-button {
   background: white;
-  padding: 10px 45px;
-  font-size: 1.05rem;
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  font-family: serif;
+  color: #222;
+  border: 1px solid #d7d7d7;
+  padding: 14px 34px;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-family: "Times New Roman", Times, serif;
+  letter-spacing: 0.3px;
 }
+
+/* MOBILE */
 
 @media (max-width: 768px) {
   .footer {
-    padding: 50px 24px;
-  }
-
-  .waiver-section h2 {
-    font-size: 2.2rem;
+    grid-template-columns: 1fr;
+    padding: 42px 20px;
   }
 
   .waiver-buttons {
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
   }
 
-  .waiver-buttons button {
-    width: 240px;
+  .waiver-section h2 {
+    font-size: 28px;
   }
-}
-
-.footer {
-  background: #e9e9e9;
-  display: flex;
-  justify-content: space-between;
-  gap: 60px;
-  padding: 80px 120px;
-  flex-wrap: wrap;
-}
-
-.footer-left {
-  max-width: 320px;
-}
-
-.socials {
-  display: flex;
-  gap: 18px;
-  font-size: 2rem;
-  margin-bottom: 50px;
-}
-
-.contact-info p {
-  margin: 0 0 12px;
-  font-size: 1.15rem;
-}
-
-.contact-info a {
-  color: black;
-  font-weight: 600;
-}
-
-.copyright {
-  margin-top: 60px;
-  font-size: 0.4rem;
-  font-weight: lighter;
-}
-
-.footer-right {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.newsletter-card {
-  background: #f4f4f4;
-  padding: 40px;
-  width: 100%;
-  max-width: 700px;
-}
-
-.newsletter-card h3 {
-  font-size: 2rem;
-  margin-bottom: 30px;
-}
-
-.newsletter-card form {
-  display: flex;
-  flex-direction: column;
-}
-
-.newsletter-card label {
-  margin-bottom: 10px;
-  font-size: 1rem;
-}
-
-.newsletter-card input {
-  height: 52px;
-  border: 1px solid #bfbfbf;
-  margin-bottom: 28px;
-  padding: 0 14px;
-  font-size: 1rem;
-}
-
-.newsletter-card button {
-  width: 160px;
-  height: 52px;
-  border: none;
-  background: #bcbcbc;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
 }
