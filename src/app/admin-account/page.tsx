@@ -20,6 +20,7 @@ export default function AccountPage() {
       <NavBarWrapper />
       <main className="p-8 font-lora">
         <h1 className="text-4xl font-bold">My Account</h1>
+
         <div className="mt-8">
           <button
             type="button"

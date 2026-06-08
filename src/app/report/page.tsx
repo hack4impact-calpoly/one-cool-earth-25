@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
 import styles from "../../styles/WorkdayReport.module.css";
@@ -14,28 +14,62 @@ type Table = {
   hours: number;
 };
 
-type TableMap = Record<string, Table>;
-
-const schoolData: TableMap = {
-  entry1: { name: "School 1", events: 3, volunteers: 15, hours: 40 },
-  entry2: { name: "School 2", events: 2, volunteers: 17, hours: 28 },
-  entry3: { name: "School 3", events: 4, volunteers: 23, hours: 52 },
-  entry4: { name: "School 4", events: 2, volunteers: 8, hours: 28 },
-  entry5: { name: "School 5", events: 1, volunteers: 17, hours: 20 },
-};
-
-const organizationData: TableMap = {
-  entry1: { name: "Company Name 1", events: 3, volunteers: 15, hours: 40 },
-  entry2: { name: "Company Name 2", events: 2, volunteers: 17, hours: 28 },
-  entry3: { name: "Company Name 3", events: 4, volunteers: 23, hours: 52 },
-  entry4: { name: "Company Name 4", events: 2, volunteers: 8, hours: 28 },
-  entry5: { name: "Company Name 5", events: 1, volunteers: 17, hours: 20 },
+type ReportData = {
+  summary: {
+    volunteers: number;
+    returning: number;
+    events: number;
+    hours: number;
+  };
+  schools: Table[];
+  organizations: Table[];
 };
 
 export default function WorkdayReport() {
   const { isLoaded } = useUser();
   const [startDate, setStartDate] = useState("2025-01-01");
   const [endDate, setEndDate] = useState("2025-12-31");
+  const [reportData, setReportData] = useState<ReportData | null>(null);
+  const [isReportLoading, setIsReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+
+  const fetchReport = useCallback(async () => {
+    if (!isLoaded) return;
+
+    setIsReportLoading(true);
+    setReportError(null);
+
+    try {
+      const params = new URLSearchParams({
+        startDate,
+        endDate,
+      });
+
+      const response = await fetch(`/api/report?${params.toString()}`, {
+        cache: "no-store",
+      });
+      const data = (await response.json().catch(() => null)) as (ReportData & { error?: string }) | null;
+
+      if (!response.ok || !data) {
+        throw new Error(data?.error || "Failed to load report");
+      }
+
+      setReportData({
+        summary: data.summary,
+        schools: data.schools,
+        organizations: data.organizations,
+      });
+    } catch (error) {
+      setReportData(null);
+      setReportError(error instanceof Error ? error.message : "Failed to load report");
+    } finally {
+      setIsReportLoading(false);
+    }
+  }, [endDate, isLoaded, startDate]);
+
+  useEffect(() => {
+    void fetchReport();
+  }, [fetchReport]);
 
   const handleDownloadPdf = () => {
     window.print();
@@ -93,7 +127,15 @@ export default function WorkdayReport() {
                 onChange={(e) => setEndDate(e.target.value)}
                 className={styles.dateInput}
               />
-              <button type="button" className={styles.arrowButton}>
+              <button
+                type="button"
+                className={styles.arrowButton}
+                onClick={() => {
+                  void fetchReport();
+                }}
+                disabled={isReportLoading}
+                aria-label="Refresh report"
+              >
                 →
               </button>
             </div>
@@ -102,30 +144,44 @@ export default function WorkdayReport() {
           <div className={styles.summaryRow}>
             <div className={styles.summaryBox}>
               <div className={styles.summaryItem}>
-                <span className={styles.summaryValueBold}>54 volunteers</span>
+                <span className={styles.summaryValueBold}>{reportData?.summary.volunteers ?? 0} volunteers</span>
               </div>
 
               <div className={styles.summaryItem}>
-                <span className={styles.summaryValue}>12 returning</span>
+                <span className={styles.summaryValue}>{reportData?.summary.returning ?? 0} returning</span>
               </div>
             </div>
 
             <div className={styles.summaryBox}>
               <div className={styles.summaryItem}>
-                <span className={styles.summaryValueBold}>12 events</span>
+                <span className={styles.summaryValueBold}>{reportData?.summary.events ?? 0} events</span>
               </div>
 
               <div className={styles.summaryItem}>
-                <span className={styles.summaryValue}>120 hours</span>
+                <span className={styles.summaryValue}>{reportData?.summary.hours ?? 0} hours</span>
               </div>
             </div>
           </div>
 
+          {isReportLoading ? (
+            <div className={styles.reportStatus}>Loading report data...</div>
+          ) : reportError ? (
+            <div className={styles.reportError}>{reportError}</div>
+          ) : null}
+
           <div className={styles.subTitle}>Schools</div>
-          <WorkdayReportCard tableData={schoolData} />
+          {reportData && reportData.schools.length > 0 ? (
+            <WorkdayReportCard tableData={reportData.schools} />
+          ) : (
+            <div className={styles.emptyReport}>No school data found for this date range.</div>
+          )}
 
           <div className={styles.subTitle}>Organizations</div>
-          <WorkdayReportCard tableData={organizationData} />
+          {reportData && reportData.organizations.length > 0 ? (
+            <WorkdayReportCard tableData={reportData.organizations} />
+          ) : (
+            <div className={styles.emptyReport}>No organization data found for this date range.</div>
+          )}
         </div>
       )}
     </div>

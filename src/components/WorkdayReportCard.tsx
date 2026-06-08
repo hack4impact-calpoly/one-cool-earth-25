@@ -9,10 +9,8 @@ type Table = {
   hours: number;
 };
 
-type TableMap = Record<string, Table>;
-
 type Props = {
-  tableData: TableMap;
+  tableData: Table[];
 };
 
 export default function WorkdayReportCard({ tableData }: Props) {
@@ -20,8 +18,8 @@ export default function WorkdayReportCard({ tableData }: Props) {
     <div className={styles.card}>
       <table className={styles.table}>
         <tbody>
-          {Object.entries(tableData).map(([id, data], index) => (
-            <tr key={id} className={`${styles.row} ${index % 2 === 0 ? styles.rowLight : styles.rowDark}`}>
+          {tableData.map((data, index) => (
+            <tr key={data.name} className={`${styles.row} ${index % 2 === 0 ? styles.rowLight : styles.rowDark}`}>
               <td className={styles.nameCell}>{data.name}</td>
 
               <td className={styles.infoCell}>

@@ -163,6 +163,17 @@
   white-space: nowrap;
 }
 
+.confirmationBanner {
+  width: 100%;
+  border: 1px solid #7cb25a;
+  border-radius: 10px;
+  background: #eef9df;
+  color: #356943;
+  padding: 14px 16px;
+  font-weight: 800;
+  margin: 8px 0 18px;
+}
+
 .volunteerEventOnly {
   display: block;
   width: 100%;
@@ -171,6 +182,34 @@
 .fullEventCard {
   width: 100%;
   max-width: none;
+}
+
+.volunteerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.primaryAction,
+.secondaryAction {
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primaryAction {
+  border: 1px solid #7cb25a;
+  background: #d7f1b6;
+  color: #356943;
+}
+
+.secondaryAction {
+  border: 1px solid #568264;
+  background: #ffffff;
+  color: #568264;
 }
 
 @media (max-width: 768px) {
@@ -186,6 +225,15 @@
 
   .backBtn {
     height: auto;
+  }
+
+  .volunteerActions {
+    justify-content: stretch;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
   }
 }
 

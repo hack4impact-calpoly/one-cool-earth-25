@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
 import { useRole } from "@/hooks/useRole";
@@ -9,18 +9,29 @@ import VolunteerList from "@/components/VolunteerList";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import styles from "@/styles/events.module.css";
 import { useEffect, useState } from "react";
-import { AppEvent } from "@/data/events";
+import { AppEvent, isUpcomingEvent } from "@/data/events";
+
+type RegistrationLookup = {
+  _id: string;
+  eventId?: {
+    _id?: string;
+    id?: string;
+  };
+};
 
 export default function EventPage() {
   const role = useRole();
-  const { isLoaded } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
   const isAdminView = role === "admin";
   const isVolunteerView = !isAdminView;
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const eventId = params?.eventId as string;
   const [event, setEvent] = useState<AppEvent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [registrationId, setRegistrationId] = useState<string | null>(null);
+  const showRegistrationConfirmation = searchParams.get("registered") === "1";
 
   useEffect(() => {
     if (!eventId) return;
@@ -51,6 +62,46 @@ export default function EventPage() {
 
     fetchEvent();
   }, [eventId]);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || isAdminView || !eventId) {
+      setRegistrationId(null);
+      return;
+    }
+
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+
+    if (!userEmail) {
+      setRegistrationId(null);
+      return;
+    }
+    const encodedUserEmail = encodeURIComponent(userEmail);
+
+    async function fetchRegistrationStatus() {
+      try {
+        const response = await fetch(`/api/events/registration/users/${encodedUserEmail}`, {
+          cache: "no-store",
+        });
+        const data = (await response.json().catch(() => null)) as { registrations?: RegistrationLookup[] } | null;
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch registration status");
+        }
+
+        const matchingRegistration = data?.registrations?.find((registration) => {
+          const populatedId = registration.eventId?._id ?? registration.eventId?.id ?? registration.eventId;
+          return String(populatedId) === eventId;
+        });
+
+        setRegistrationId(matchingRegistration?._id ?? null);
+      } catch (error) {
+        console.error("Failed to fetch registration status:", error);
+        setRegistrationId(null);
+      }
+    }
+
+    void fetchRegistrationStatus();
+  }, [eventId, isAdminView, isLoaded, isSignedIn, user?.primaryEmailAddress?.emailAddress]);
 
   if (!isLoaded || loading) {
     return (
@@ -87,6 +138,10 @@ export default function EventPage() {
           </div>
         )}
 
+        {showRegistrationConfirmation && (
+          <div className={styles.confirmationBanner}>Registration confirmed. You are signed up for this event.</div>
+        )}
+
         <div className={styles.titleRow}>
           <h1 className={styles.pageTitle}>{event?.title ?? "Event Not Found"}</h1>
 
@@ -98,6 +153,36 @@ export default function EventPage() {
         <section className={isAdminView ? styles.grid : styles.volunteerEventOnly}>
           <div className={isAdminView ? styles.eventCard : styles.fullEventCard}>
             <EventDetails event={event} isEditable={isAdminView} />
+            {isVolunteerView && event ? (
+              <div className={styles.volunteerActions}>
+                {registrationId ? (
+                  <>
+                    <button
+                      type="button"
+                      className={styles.primaryAction}
+                      onClick={() => router.push(`/checkin/${eventId}`)}
+                    >
+                      Check In
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.secondaryAction}
+                      onClick={() => router.push(`/edit-registration/${registrationId}`)}
+                    >
+                      Edit Registration
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.primaryAction}
+                    onClick={() => router.push(isUpcomingEvent(event) ? `/events/${eventId}/register` : "/calendar")}
+                  >
+                    {isUpcomingEvent(event) ? "Register for This Event" : "Back to Calendar"}
+                  </button>
+                )}
+              </div>
+            ) : null}
           </div>
 
           {isAdminView && <VolunteerList canViewVolunteers eventId={eventId} />}

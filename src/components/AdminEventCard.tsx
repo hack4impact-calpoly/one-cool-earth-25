@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/VolunteerEventsPage.module.css";
 import { AppEvent, isPastEvent } from "@/data/events";
@@ -24,11 +25,32 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
   const monthLabel = event.startTime.toLocaleString("en-US", { month: "long" });
   const dayLabel = getOrdinalDay(event.startTime.getDate());
   const router = useRouter();
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [usesTapInteraction, setUsesTapInteraction] = useState(false);
   const eventHref = `/events/${event.id}`;
   const isPast = isPastEvent(event);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: none) and (pointer: coarse)");
+    const updateInteractionMode = () => setUsesTapInteraction(mediaQuery.matches);
+
+    updateInteractionMode();
+    mediaQuery.addEventListener("change", updateInteractionMode);
+
+    return () => mediaQuery.removeEventListener("change", updateInteractionMode);
+  }, []);
+
   return (
-    <div className={`${styles.card} ${styles.cardHoverEnabled} ${styles.adminCard}`}>
+    <div
+      className={`${styles.card} ${styles.cardHoverEnabled} ${styles.adminCard} ${
+        panelOpen ? styles.cardPanelOpen : ""
+      }`}
+      onClick={() => {
+        if (usesTapInteraction) {
+          setPanelOpen((open) => !open);
+        }
+      }}
+    >
       <div className={styles.cardBg} style={event.imageUrl ? { backgroundImage: `url(${event.imageUrl})` } : {}} />
       <div className={styles.cardOverlay} />
       <div style={{ color: "red", fontWeight: "bold", fontSize: "24px" }}>ADMIN CARD</div>
@@ -63,7 +85,14 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
           <div className={styles.hoverText}>{event.location}</div>
 
           <div className={styles.hoverButtons}>
-            <button type="button" className={styles.hoverBtnDark} onClick={() => router.push(eventHref)}>
+            <button
+              type="button"
+              className={styles.hoverBtnDark}
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(eventHref);
+              }}
+            >
               {isPast ? "Event Report" : "View Event Info"}
             </button>
           </div>

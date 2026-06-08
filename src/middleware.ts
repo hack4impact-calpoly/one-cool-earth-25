@@ -9,7 +9,7 @@ const isAdminRoute = createRouteMatcher([
   "/report(.*)",
 ]);
 
-const isLoggedInRoute = createRouteMatcher(["/account(.*)", "/checkin(.*)", "/edit-registration(.*)", "/events(.*)"]);
+const isLoggedInRoute = createRouteMatcher(["/account(.*)", "/edit-registration(.*)", "/events(.*)"]);
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -17,6 +17,7 @@ const isPublicRoute = createRouteMatcher([
   "/login(.*)",
   "/create-account(.*)",
   "/forgot-password(.*)",
+  "/checkin(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

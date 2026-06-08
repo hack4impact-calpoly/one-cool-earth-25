@@ -234,59 +234,7 @@
   }
 
   .eventsRow {
-    grid-auto-columns: 95px;
-    gap: 8px;
-    padding-bottom: 8px;
-  }
-
-  .eventsRow > div {
-    height: 120px;
-    border-radius: 8px;
-  }
-
-  .eventsRow > div > div:nth-child(3) {
-    top: 4px;
-    padding-right: 4px;
-  }
-
-  .eventsRow > div > div:nth-child(3) > div {
-    font-size: 8px;
-    gap: 4px;
-    padding: 2px 6px;
-    border-width: 1px;
-  }
-
-  .eventsRow > div > div:nth-child(3) > div > span:first-child {
-    font-size: 8px;
-  }
-
-  .eventsRow > div > div:nth-child(4) > div:first-child > div:first-child {
-    font-size: 14px;
-  }
-
-  .eventsRow > div > div:nth-child(4) > div:first-child > div:last-child {
-    margin-top: 3px;
-    font-size: 13px;
-  }
-
-  .eventsRow > div > div:nth-child(4) > div:last-child {
-    left: 6px;
-    right: 6px;
-    bottom: 6px;
-    gap: 4px;
-    font-size: 7px;
-  }
-
-  .eventsRow > div > div:nth-child(4) > div:last-child > span:first-child {
-    font-size: 8px;
-  }
-
-  .eventsRow > div > div:nth-child(4) > div:last-child > span:last-child {
-    max-width: 82px;
-  }
-
-  .eventsRow > div > div:last-child {
-    display: none;
+    margin-bottom: 14px;
   }
 
   .responsibilitiesSection {

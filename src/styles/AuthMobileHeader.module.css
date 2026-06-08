@@ -7,6 +7,7 @@
   justify-content: space-between;
   padding: 20px 24px;
   color: black;
+  position: relative;
 }
 
 .title {
@@ -17,14 +18,63 @@
 
 .menuButton {
   display: inline-flex;
-  height: 32px;
-  width: 32px;
+  width: 33px;
+  height: 33px;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  padding: 0;
+}
+
+.menuLine {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #000;
   border-radius: 999px;
+}
+
+.mobileMenu {
+  display: none;
+}
+
+.mobileMenuOpen {
+  display: flex;
+  width: calc(100% - 48px);
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background: #fff;
+  gap: 10px;
+  position: absolute;
+  top: 62px;
+  right: 24px;
+  z-index: 10;
+}
+
+.mobileLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  width: 100%;
+  border: 1px solid transparent;
+  font-family: "Patua One", serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 100%;
+  text-decoration: none;
   color: black;
   background: transparent;
-  border: none;
 }
 
 @media (min-width: 768px) {
