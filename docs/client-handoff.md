@@ -90,17 +90,8 @@ Checklist:
 
 ### Resend Email
 
-Preferred option: One Cool Earth owns the Resend account, verified sending domain, and billing.
-
-Checklist:
-
-- Invite the client as admin/owner in Resend or create a client-owned account.
-- Verify the sender domain or sender email used by `REGISTRATION_NOTIFICATION_FROM`.
-- Confirm DNS records for SPF/DKIM/DMARC if using a domain sender.
-- Generate a new `RESEND_API_KEY`.
-- Update `RESEND_API_KEY` and `REGISTRATION_NOTIFICATION_FROM` in Vercel.
-- Send a test registration and confirm recipients receive the email.
-- Remove old API keys.
+1. Create a new Resend account
+2. Generate new key and update the .envs
 
 ### Mailchimp
 
@@ -154,19 +145,6 @@ Use this sequence to minimize downtime:
 - GitHub Actions build succeeds.
 - Vercel production deployment succeeds.
 - Old personal/student access has been removed.
-
-## Known Issues and Handoff Notes
-
-- `README.md` and `docs/getting-started.md` still contain template placeholders and should be cleaned up before final client delivery.
-- `npm run build` was verified successfully during handoff review. The build needs network access because `next/font` fetches Google Fonts during compilation.
-- `npm test` is a placeholder and does not run real automated tests.
-- `npm run lint` currently passes with one warning in `src/components/Footer.tsx` for using a raw `<img>` instead of Next.js `<Image>`.
-- Admin assignment is hardcoded to `admin@garden.com` in `src/app/api/user/route.ts`; this should be changed or formally documented before production handoff.
-- Some organization options are hardcoded in UI files instead of coming from the `organizations` collection.
-- The waiver status route currently checks Jotform submissions by email and stores completed waivers as `General`; school-specific parsing appears to be intentionally disabled/commented out.
-- API route authorization is inconsistent: some event and registration mutation routes do not call `requireAdmin`. Page-level middleware protects some UI pages, but direct API protection should be reviewed before final production ownership.
-- There is no deployment config file in the repository; actual hosting settings must be documented from the deployment provider dashboard.
-- The current worktree showed local modifications to `.env` and `package-lock.json` during this handoff review. Confirm whether those changes should be committed, ignored, or reverted before final delivery.
 
 ## Final Handoff Checklist
 
