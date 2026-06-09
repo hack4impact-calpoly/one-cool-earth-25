@@ -24,7 +24,7 @@ By centralizing volunteer event operations into a single platform, the applicati
 The {non-profit name} team consists of {#} Cal Poly students. Over the course of about 9 months, we worked as a team to deploy this web application. The team members are listed below:
 
 - [Sydney Lynch](https://www.linkedin.com/in/sydneymlynch/) - Project Manager
-- [Ella Hagen](https://www.linkedin.com/ella-hagen-133152296) - Designer
+- [Ella Hagen](https://www.linkedin.com/ella-hagen-133152296) - Designer & Software Developer
 - [Emily Yarvis](https://www.linkedin.com/in/emily-yarvis/) - Tech Lead
 - [Jodi Yamane](https://www.linkedin.com/in/jodi-yamane-615708253/) - Tech Lead
 - [Parshana Sekhon](https://www.linkedin.com/parshana-sekhon) - Software Developer
