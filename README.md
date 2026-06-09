@@ -1,6 +1,6 @@
 # One Cool Earth
 
-{One sentence description of the project}
+A volunteer event management and public event calendar platform for One Cool Earth that integrates with their website and streamlines volunteer registration, attendance tracking, and event administration.
 
 ## Table of Contents
 
@@ -13,14 +13,18 @@
 
 ### Purpose
 
-{Short paragraph description of the non-profit mission and the purpose of this project. Who will this project help, why is it necessary. Impact of the project.}
+One Cool Earth is a nonprofit organization dedicated to cultivating healthy communities through garden-based education, environmental stewardship, and hands-on learning opportunities. This project provides a volunteer event management platform that integrates with One Cool Earth's website, giving community members a central place to discover and participate in upcoming volunteer opportunities.
+
+The application features a public event calendar, volunteer registration and account management, waiver verification, attendance tracking, and event check-in functionality. Volunteers can browse upcoming workdays, register themselves and additional party members, and manage their registrations. Administrators can create and manage events, monitor attendance, communicate with volunteers, and generate reports on participation and community engagement.
+
+By centralizing volunteer event operations into a single platform, the application reduces administrative overhead, improves the volunteer experience, and helps One Cool Earth more effectively coordinate and measure the impact of its community programs.
 
 ### Team
 
 The {non-profit name} team consists of {#} Cal Poly students. Over the course of about 9 months, we worked as a team to deploy this web application. The team members are listed below:
 
 - [Sydney Lynch](https://www.linkedin.com/in/sydneymlynch/) - Project Manager
-- [First Last](https://www.linkedin.com/) - Designer
+- [Ella Hagen](https://www.linkedin.com/ella-hagen-133152296) - Designer & Software Developer
 - [Emily Yarvis](https://www.linkedin.com/in/emily-yarvis/) - Tech Lead
 - [Jodi Yamane](https://www.linkedin.com/in/jodi-yamane-615708253/) - Tech Lead
 - [Parshana Sekhon](https://www.linkedin.com/parshana-sekhon) - Software Developer
