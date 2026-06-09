@@ -49,17 +49,7 @@ Checklist:
 
 ### Domain and DNS
 
-This repository does not identify the production domain. The domain registrar and DNS host need to be confirmed separately.
-
-Checklist:
-
-- Identify the domain registrar.
-- Identify the DNS provider.
-- Transfer domain ownership to One Cool Earth or confirm it is already owned by them.
-- Confirm admin access to DNS records.
-- Confirm records for Vercel or the actual hosting provider.
-- Confirm any DNS records needed by Clerk, Resend, Mailchimp, or other services.
-- Document renewal date and billing owner.
+No custom production domain is currently configured. The application is deployed using the default Vercel domain.
 
 ### MongoDB
 
@@ -95,17 +85,8 @@ Checklist:
 
 ### Jotform Waiver Forms
 
-Preferred option: One Cool Earth owns both waiver forms and the API key.
-
-Checklist:
-
-- Transfer ownership of the English waiver form `70895957565174`.
-- Transfer ownership of the Spanish waiver form `251204962817155`.
-- Confirm public form URLs still work after transfer.
-- Generate a new Jotform API key under the client's account.
-- Update `JOTFORM_API_KEY`, `JOTFORM_BASE_URL`, `JOTFORM_ENGLISH_WAIVER_FORM_ID`, and `JOTFORM_SPANISH_WAIVER_FORM_ID` in Vercel and local environments.
-- Verify `/api/me/waiver-status` can read submissions from both forms.
-- Confirm whether school-specific waiver parsing is required; the related code is currently commented out.
+- Confirm One Cool Earth ownership and access.
+- Verify API access used by the application.
 
 ### Resend Email
 
@@ -127,10 +108,8 @@ The footer includes a Mailchimp embedded signup endpoint. The app does not use a
 
 Checklist:
 
-- Confirm the Mailchimp account is One Cool Earth-owned.
-- Confirm the embedded form endpoint still points to the correct audience.
-- Confirm the client owns billing and list management.
-- Replace the footer endpoint if the newsletter list changes.
+- Confirm One Cool Earth ownership.
+- Verify embedded signup form still points to the correct audience.
 
 ### Social Media Links
 
