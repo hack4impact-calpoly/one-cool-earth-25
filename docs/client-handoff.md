@@ -11,7 +11,7 @@ Do not paste raw secrets, passwords, API keys, database URIs, or recovery codes 
 - **Primary purpose:** Allow volunteers to view upcoming One Cool Earth workdays/events, create accounts, register themselves and party members, check in, and allow admins to manage events, attendance, registration notifications, and reports.
 - **Primary users:** One Cool Earth volunteers and One Cool Earth administrative staff.
 - **Production URL:** https://one-cool-earth-25.vercel.app/
-- **Admin contact after handoff:** McKenna Lenhart (mckennal@onecoolearth.org), Director of Communications and Operations
+- **Admin contact after handoff:** Sydney Lynch (sydlyn626@gmail.com)
 
 ## Account Transfer Plan
 
