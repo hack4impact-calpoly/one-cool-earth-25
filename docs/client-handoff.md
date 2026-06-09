@@ -11,9 +11,9 @@ Do not paste raw secrets, passwords, API keys, database URIs, or recovery codes 
 - **Primary purpose:** Allow volunteers to view upcoming One Cool Earth workdays/events, create accounts, register themselves and party members, check in, and allow admins to manage events, attendance, registration notifications, and reports.
 - **Primary users:** One Cool Earth volunteers and One Cool Earth administrative staff.
 - **Current codebase status:** Next.js web application with MongoDB persistence, Clerk authentication, Jotform waiver lookup, Vercel Blob image storage, and Resend email notifications.
-- **Production URL:** TODO
-- **Staging URL:** TODO, if applicable
-- **Admin contact after handoff:** TODO
+- **Production URL:** https://one-cool-earth-25.vercel.app/
+- **Staging URL:** Vercel Preview Deployments (example: https://one-cool-earth-25-6lun6pa8k-jodi-yamanes-projects.vercel.app) 
+- **Admin contact after handoff:** McKenna Lenhart (mckennal@onecoolearth.org), Director of Communications and Operations
 
 ## 2. Application Features
 
@@ -202,7 +202,7 @@ Useful commands:
 
 ## 11. Deployment
 
-The code uses Vercel Blob, and the app is a standard Next.js application, so Vercel is the most likely hosting target. If the application is deployed elsewhere, update this section with the actual provider.
+The application is currently deployed on Vercel and uses Vercel Blob for image storage.
 
 ### Vercel Deployment Checklist
 
@@ -437,20 +437,20 @@ Use this sequence to minimize downtime:
 
 ## 17. Final Handoff Checklist
 
-- GitHub ownership/access transferred.
-- Hosting ownership/access transferred.
-- Domain/DNS ownership transferred or confirmed.
-- MongoDB ownership/access transferred.
-- Clerk ownership/access transferred.
-- Jotform ownership/access transferred.
-- Resend ownership/access transferred.
-- Mailchimp ownership/access confirmed.
-- Vercel Blob ownership/access confirmed.
-- Production environment variables configured under client-owned accounts.
-- GitHub Actions secrets configured.
-- Client admin accounts created and verified.
-- Production smoke test completed.
-- Backups enabled and tested.
-- Old secrets revoked.
-- Student/personal accounts removed from production services.
-- Known issues reviewed with the client.
+- [ ] GitHub ownership/access transferred.
+- [ ] Hosting ownership/access transferred.
+- [ ] Domain/DNS ownership transferred or confirmed.
+- [ ] MongoDB ownership/access transferred.
+- [ ] Clerk ownership/access transferred.
+- [ ] Jotform ownership/access transferred.
+- [ ] Resend ownership/access transferred.
+- [ ] Mailchimp ownership/access confirmed.
+- [ ] Vercel Blob ownership/access confirmed.
+- [ ] Production environment variables configured under client-owned accounts.
+- [ ] GitHub Actions secrets configured.
+- [ ] Client admin accounts created and verified.
+- [ ] Production smoke test completed.
+- [ ] Backups enabled and tested.
+- [ ] Old secrets revoked.
+- [ ] Student/personal accounts removed from production services.
+- [ ] Known issues reviewed with the client.
