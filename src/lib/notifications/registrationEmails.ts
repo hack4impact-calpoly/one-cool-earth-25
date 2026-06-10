@@ -1,7 +1,5 @@
 import NotificationSettings, { REGISTRATION_NOTIFICATION_SETTINGS_KEY } from "@/database/models/NotificationSettings";
-import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 type PartyMember = {
   name?: string;
   email?: string;
@@ -149,9 +147,10 @@ export async function sendRegistrationNotificationEmail(registration: PopulatedR
 
 export async function sendRegistrationConfirmationEmails(registration: any) {
   const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.REGISTRATION_NOTIFICATION_FROM;
 
-  if (!apiKey) {
-    console.error("Volunteer confirmation email skipped: missing RESEND_API_KEY.");
+  if (!apiKey || !from) {
+    console.info("Volunteer confirmation email skipped: missing RESEND_API_KEY or REGISTRATION_NOTIFICATION_FROM.");
     return;
   }
 
@@ -159,29 +158,37 @@ export async function sendRegistrationConfirmationEmails(registration: any) {
 
   const uniqueEmails = emails.filter((email: string, index: number, self: string[]) => self.indexOf(email) === index);
 
-  console.log("Volunteer confirmation email recipients:", uniqueEmails);
+  if (uniqueEmails.length === 0) return;
 
-  if (uniqueEmails.length === 0) {
-    console.error("Volunteer confirmation email skipped: no recipient emails found.");
-    return;
-  }
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: uniqueEmails,
+      subject: "Garden Workday Signup Confirmation",
+      html: `
+        <p>Thank you so much for signing up for a garden workday! We are excited to have you join us and truly appreciate your support.</p>
 
-  const response = await resend.emails.send({
-    from: "One Cool Earth <onboarding@resend.dev>",
-    // change to to: ["eyarvis@calpol.edu"] to test
-    to: uniqueEmails,
-    subject: "Garden Workday Signup Confirmation",
-    html: `
-      <p>Thank you so much for signing up for a garden workday! We are excited to have you join us and truly appreciate your support.</p>
-      <p>Please note that all workdays are weather dependent. If you have any questions about whether a workday is happening or need additional information, please email <a href="mailto:action@onecoolearth.org">action@onecoolearth.org</a> or text us at 805.242.6301.</p>
-      <p>Before arriving, please remember to:</p>
-      <ul>
-        <li>Bring a hat, sunscreen, plenty of water, and closed toed shoes</li>
-        <li>Complete our volunteer waiver in advance: English Waiver Spanish Waiver</li>
-      </ul>
-      <p>Thank you again for helping care for our school gardens and community spaces. We look forward to seeing you soon!!</p>
-    `,
+        <p>Please note that all workdays are weather dependent. If you have any questions about whether a workday is happening or need additional information, please email <a href="mailto:action@onecoolearth.org">action@onecoolearth.org</a> or text us at 805.242.6301.</p>
+
+        <p>Before arriving, please remember to:</p>
+
+        <ul>
+          <li>Bring a hat, sunscreen, plenty of water, and closed toed shoes</li>
+          <li>Complete our volunteer waiver in advance: English Waiver Spanish Waiver</li>
+        </ul>
+
+        <p>Thank you again for helping care for our school gardens and community spaces. We look forward to seeing you soon!!</p>
+      `,
+    }),
   });
 
-  console.log("Volunteer confirmation email Resend response:", response);
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(`Volunteer confirmation email failed with ${response.status}: ${body}`);
+  }
 }
