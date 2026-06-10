@@ -1,7 +1,10 @@
 import connectDB from "@/database/db";
 import { NextResponse } from "next/server";
 import Registration from "@/database/models/Registration";
-import { sendRegistrationNotificationEmail } from "@/lib/notifications/registrationEmails";
+import {
+  sendRegistrationConfirmationEmails,
+  sendRegistrationNotificationEmail,
+} from "@/lib/notifications/registrationEmails";
 
 //Return all registrations from all events
 export async function GET() {
@@ -30,10 +33,15 @@ export async function POST(request: Request) {
     });
 
     await newRegistration.save();
+
     const populatedRegistration = await newRegistration.populate("eventId");
 
     await sendRegistrationNotificationEmail(populatedRegistration).catch((error) => {
-      console.error("Registration notification email failed:", error);
+      console.error("Admin registration notification email failed:", error);
+    });
+
+    await sendRegistrationConfirmationEmails(populatedRegistration).catch((error) => {
+      console.error("Volunteer confirmation email failed:", error);
     });
 
     return NextResponse.json({ message: "Registration created successfully" }, { status: 201 });
