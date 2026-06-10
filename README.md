@@ -29,6 +29,7 @@ The {non-profit name} team consists of {#} Cal Poly students. Over the course of
 - [Jodi Yamane](https://www.linkedin.com/in/jodi-yamane-615708253/) - Tech Lead
 - [Parshana Sekhon](https://www.linkedin.com/parshana-sekhon) - Software Developer
 - [Messiah Afzalyar](https://www.linkedin.com/in/messiah-afzalyar-1a8631253/) - Software Developer
+- [Aryan Sippy](https://www.linkedin.com/in/aryan-sippy) - Software Developer
 
 ## Getting Started And Contributing
 
