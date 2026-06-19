@@ -1,0 +1,21 @@
+yaml
+name: Mirror to client fork
+
+on:
+  push:
+  delete:
+  workflow\_dispatch:
+
+jobs:
+  mirror:
+    # Only runs on the original repo, never on the mirrored copy
+    if: github.repository == 'hack4impact-calpoly/one-cool-earth-25'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target\_repo\_url: git@github.com:onecoolearth/one-cool-earth-25.git
+          ssh\_private\_key: ${{ secrets.MIRROR_SSH_KEY }}
