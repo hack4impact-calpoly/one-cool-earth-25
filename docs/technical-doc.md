@@ -13,7 +13,7 @@ Do not paste raw secrets, passwords, API keys, database URIs, or recovery codes 
 - **Current codebase status:** Next.js web application with MongoDB persistence, Clerk authentication, Jotform waiver lookup, Vercel Blob image storage, and Resend email notifications.
 - **Production URL:** https://one-cool-earth-25.vercel.app/
 - **Staging URL:** Vercel Preview Deployments (example: https://one-cool-earth-25-6lun6pa8k-jodi-yamanes-projects.vercel.app)
-- **Admin contact after handoff:** Sydney Lynch (sydlyn626@gmail.com)
+- **Admin contact after handoff:** calpoly@hack4impact.org [Email Sydney Lynch (sydlyn626@gmail.com) for any immediate issues up until 7/15/2026]
 
 ## 2. Application Features
 

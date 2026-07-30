@@ -11,7 +11,7 @@ Do not paste raw secrets, passwords, API keys, database URIs, or recovery codes 
 - **Primary purpose:** Allow volunteers to view upcoming One Cool Earth workdays/events, create accounts, register themselves and party members, check in, and allow admins to manage events, attendance, registration notifications, and reports.
 - **Primary users:** One Cool Earth volunteers and One Cool Earth administrative staff.
 - **Production URL:** https://one-cool-earth-25.vercel.app/
-- **Admin contact after handoff:** Sydney Lynch (sydlyn626@gmail.com)
+- **Admin contact after handoff:** calpoly@hack4impact.org [Email Sydney Lynch (sydlyn626@gmail.com) for any immediate issues up until 7/15/2026]
 
 ## Account Transfer Plan
 
