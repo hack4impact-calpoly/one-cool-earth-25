@@ -9,11 +9,12 @@ const isAdminRoute = createRouteMatcher([
   "/report(.*)",
 ]);
 
-const isLoggedInRoute = createRouteMatcher(["/account(.*)", "/edit-registration(.*)", "/events(.*)"]);
+const isLoggedInRoute = createRouteMatcher(["/account(.*)", "/edit-registration(.*)"]);
 
 const isPublicRoute = createRouteMatcher([
   "/",
   "/calendar(.*)",
+  "/events(.*)",
   "/login(.*)",
   "/create-account(.*)",
   "/forgot-password(.*)",
