@@ -30,6 +30,9 @@ The {non-profit name} team consists of {#} Cal Poly students. Over the course of
 - [Parshana Sekhon](https://www.linkedin.com/parshana-sekhon) - Software Developer
 - [Messiah Afzalyar](https://www.linkedin.com/in/messiah-afzalyar-1a8631253/) - Software Developer
 - [Amogh Arora](https://www.linkedin.com/in/amogharora76/) - Software Developer
+- [Aryan Sippy](https://www.linkedin.com/in/aryan-sippy) - Software Developer
+- [Lorinc Heutchy](https://www.linkedin.com/in/lorinc-heutchy/) - Software Developer
+- [Travis Biehle](https://www.linkedin.com/in/travisbiehle/) - Software Developer
 
 ## Getting Started And Contributing
 
