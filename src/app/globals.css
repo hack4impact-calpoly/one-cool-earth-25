@@ -6,11 +6,39 @@
 
 :root {
   --font-patua: "Patua One", serif;
+  --font-lora: "Lora", serif;
+  --brand-sky: #bae1f3;
+  --brand-mint: #e2ebe3;
+  --brand-navy: #223955;
 }
 
 html,
 body {
-  font-family: var(--font-patua);
+  font-family: var(--font-lora);
+  background: var(--brand-mint);
+  color: var(--brand-navy);
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-lora);
+  font-weight: 700;
+  color: var(--brand-navy);
+}
+
+p,
+span,
+div,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-lora);
 }
 
 .fc .fc-cell-shaded,
@@ -48,9 +76,19 @@ body {
 }
 
 .fc .fc-day-today .fc-daygrid-day-number {
-  background-color: #226999 !important;
+  background-color: var(--brand-navy) !important;
   color: white !important;
   opacity: 1 !important;
+}
+
+.fc .fc-day-today {
+  background-color: var(--brand-sky) !important;
+  background: var(--brand-sky) !important;
+}
+
+.fc .fc-daygrid-day {
+  background-color: var(--brand-mint) !important;
+  background: var(--brand-mint) !important;
 }
 
 .fc .fc-daygrid-event {
@@ -108,7 +146,7 @@ body {
 }
 
 .fc .fc-day-today .fc-daygrid-day-number {
-  background-color: #226999 !important;
+  background-color: var(--brand-navy) !important;
   color: white !important;
   opacity: 1 !important;
 }

@@ -53,7 +53,6 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
     >
       <div className={styles.cardBg} style={event.imageUrl ? { backgroundImage: `url(${event.imageUrl})` } : {}} />
       <div className={styles.cardOverlay} />
-      <div style={{ color: "red", fontWeight: "bold", fontSize: "24px" }}>ADMIN CARD</div>
 
       <div className={styles.adminStatusWrap}>
         <div className={styles.registered}>Registered: {event.registeredCount}</div>
@@ -82,7 +81,7 @@ export default function AdminEventCard({ event }: { event: AppEvent }) {
           <div className={styles.hoverText}>
             {formatTime(event.startTime)} - {formatTime(event.endTime)}
           </div>
-          <div className={styles.hoverText}>{event.location}</div>
+          <div className={`${styles.hoverText} ${styles.hoverLocation}`}>{event.location}</div>
 
           <div className={styles.hoverButtons}>
             <button

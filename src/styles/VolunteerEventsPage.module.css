@@ -339,6 +339,14 @@
   margin: 4px 0;
 }
 
+.hoverLocation {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Buttons */
 .hoverButtons {
   display: grid;
