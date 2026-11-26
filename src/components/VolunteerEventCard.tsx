@@ -107,7 +107,7 @@ export default function VolunteerEventCard({
           <div className={styles.hoverText}>
             {formatTime(event.startTime)} - {formatTime(event.endTime)}
           </div>
-          <div className={styles.hoverText}>{event.location}</div>
+          <div className={`${styles.hoverText} ${styles.hoverLocation}`}>{event.location}</div>
 
           {/* TODO: Fix this */}
           <div className={styles.hoverButtons}>

@@ -210,7 +210,7 @@ export default function CalendarPage() {
 
   const responsibilities = [
     { label: "Planting", Icon: Leaf },
-    { label: "Building Plant Beds", Icon: House },
+    { label: "Building Garden Beds", Icon: House },
     { label: "Weeding", Icon: Sprout },
     { label: "Spreading Mulch & Woodchips", Icon: Shovel },
     { label: "Creating Garden Art", Icon: BookOpen },
